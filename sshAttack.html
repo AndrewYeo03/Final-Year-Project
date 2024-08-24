@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>SSH Attack - TARUMT Cyber Range</title>
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            .top-nav {
+                background-color: #f8f9fa;
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .top-nav .btn {
+                background-color: #0d6efd;
+                color: white;
+                padding: 8px 12px;
+                border: none;
+                cursor: pointer;
+                margin-right: 10px;
+            }
+
+            .top-nav .btn:hover {
+                background-color: #c0392b;
+            }
+
+            /* Overlay */
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+
+            /* Hint Box */
+            .hint-box {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: white;
+                border: 1px solid #ddd;
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+                width: 500px; /* Increased width */
+                border-radius: 8px;
+            }
+
+            .hint-box p {
+            margin: 0;
+            text-align: justify;
+        }
+
+            .hint-box button {
+                margin-top: 10px;
+                background-color: #e74c3c;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3" href="index.html">TARUMT Cyber Range</a>
+            <!-- Sidebar Toggle-->
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+            <!-- Navbar Search-->
+            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                <div class="input-group">
+                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+            <!-- Navbar-->
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#!">Settings</a></li>
+                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Core</div>
+                            <a class="nav-link" href="index.html">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Dashboard
+                            </a>
+                            <div class="sb-sidenav-menu-heading">Interface</div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseStudents" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                Student
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseStudents" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="#">Member Of Groups</a>
+                                    <a class="nav-link" href="allScenario.html">Scenarios</a>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small">Logged in as:</div>
+                        Andrew Yeo
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">SSH Attack</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">SSH Attack</li>
+                        </ol>
+                        <!-- Top nav bar -->
+                        <div class="top-nav">
+                            <button class="btn" onclick="showHint()">Show hints</button>
+                        </div>
+                        <!-- Overlay -->
+                        <div id="overlay" class="overlay"></div>
+
+                        <!-- Hint Box -->
+                        <div id="hintBox" class="hint-box">
+                            <p><b>Student Task:</b><br>
+                                1) Students are expected to use this pre-prepared script to execute the brute force attack.<br><br>
+                                2) The script has been configured to run with the preloaded users.txt and passwords.txt files, ensuring a controlled environment for the exercise.<br><br>
+                                With this setup, students must successfully brute force the SSH credentials to uncover the flag, which is the correct username and password combination. Only by successfully obtaining these credentials through the brute force process will they be able to submit the flag. If students fail to crack the SSH credentials, they will not be able to access or submit the flag, emphasizing the importance of mastering the brute force technique.
+                            </p>
+                            <button onclick="closeHint()">Close</button>
+                        </div>
+
+                    </div>
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; TARUMT Cyber Range 2023</div>
+                            <div>
+                                <a href="#">Privacy Policy</a>
+                                &middot;
+                                <a href="#">Terms &amp; Conditions</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    <script>
+        function showHint() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('hintBox').style.display = 'block';
+        }
+
+        function closeHint() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('hintBox').style.display = 'none';
+        }
+    </script>
+    </body>
+</html>
