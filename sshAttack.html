@@ -20,16 +20,18 @@
                 align-items: center;
             }
 
-            .top-nav .btn {
-                background-color: #0d6efd;
-                color: white;
-                padding: 8px 12px;
-                border: none;
+            .top-nav .open-button {
+                font-size: 18px;
+                padding: 10px 20px;
                 cursor: pointer;
-                margin-right: 10px;
+                background-color: #f44336; /* Red background */
+                color: white;
+                border: none;
+                border-radius: 5px;
+                margin-bottom: 20px;
             }
 
-            .top-nav .btn:hover {
+            .top-nav .open-button:hover {
                 background-color: #c0392b;
             }
 
@@ -43,36 +45,110 @@
                 height: 100%;
                 background-color: rgba(0, 0, 0, 0.5);
                 z-index: 999;
+                display: none;
             }
 
-            /* Hint Box */
             .hint-box {
-                display: none;
                 position: fixed;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                background-color: white;
-                border: 1px solid #ddd;
+                background-color: rgba(211, 211, 211, 0.95); /* Light grey with opacity */
                 padding: 20px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                z-index: 1000;
-                width: 500px; /* Increased width */
-                border-radius: 8px;
+                width: 80%;
+                max-height: 70%; /* Set a maximum height */
+                overflow-y: auto; /* Add scroll for overflow */
+                border-radius: 10px;
+                box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
             }
 
-            .hint-box p {
-            margin: 0;
-            text-align: justify;
-        }
-
-            .hint-box button {
-                margin-top: 10px;
-                background-color: #e74c3c;
-                color: white;
+            .close-button {
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                font-size: 24px;
+                background: none;
                 border: none;
-                padding: 5px 10px;
                 cursor: pointer;
+            }
+
+            .hint-content {
+                font-family: 'Courier New', Courier, monospace; /* Use Courier New font */
+                text-align: justify; /* Justify the text */
+                padding-right: 10px; /* Add padding to avoid scroll bar overlap */
+            }
+
+            pre {
+                background-color: #f4f4f4; /* Light grey background for code blocks */
+                padding: 10px;
+                border-radius: 5px;
+                overflow-x: auto; /* Allow horizontal scroll for long code lines */
+            }
+
+            /* Nav Menu */
+            .nav-menu {
+                display: flex;
+                justify-content: flex-start;
+                align-items: start;
+                margin: 15px 0px;
+                font-size: 10px;
+            }
+
+            .nav-menu a {
+                display: inline-block;
+                padding: 10px 15px;
+                margin: 0 5px;
+                text-decoration: none;
+                color: white;
+                background-color: red;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .nav-menu a.submitted {
+                background-color: green;
+            }
+
+            .nav-menu a i {
+                font-size: 12px;
+            }
+
+            /* Submission Area */
+            .flag-container {
+                padding: 20px;
+                border: 2px solid #FF0000;
+                border-radius: 5px;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                background-color: rgba(211, 211, 211, 0.7);
+            }
+
+            .feedback {
+                margin-top: 10px;
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .feedback.correct {
+                color: green;
+            }
+
+            .feedback.incorrect {
+                color: red;
+            }
+
+            #flagInput {
+                width: 100%;
+                padding: 8px;
+                box-sizing: border-box; /* Ensure padding doesn't affect total width */
+            }
+
+            #submitButton {
+                font-size: 12px;
+                margin-top: 10px;
+                padding: 8px 16px;
+                border-radius: 5px
             }
         </style>
     </head>
@@ -141,19 +217,70 @@
                         </ol>
                         <!-- Top nav bar -->
                         <div class="top-nav">
-                            <button class="btn" onclick="showHint()">Show hints</button>
+                            <button id="openHintBox" class="open-button">Show Hints</button>
                         </div>
                         <!-- Overlay -->
                         <div id="overlay" class="overlay"></div>
 
                         <!-- Hint Box -->
                         <div id="hintBox" class="hint-box">
-                            <p><b>Student Task:</b><br>
-                                1) Students are expected to use this pre-prepared script to execute the brute force attack.<br><br>
-                                2) The script has been configured to run with the preloaded users.txt and passwords.txt files, ensuring a controlled environment for the exercise.<br><br>
-                                With this setup, students must successfully brute force the SSH credentials to uncover the flag, which is the correct username and password combination. Only by successfully obtaining these credentials through the brute force process will they be able to submit the flag. If students fail to crack the SSH credentials, they will not be able to access or submit the flag, emphasizing the importance of mastering the brute force technique.
-                            </p>
-                            <button onclick="closeHint()">Close</button>
+                            <button id="closeHintBox" class="close-button">&times;</button>
+                            <div class="hint-content">
+                                <p><strong>Use Nmap to Identify Targets:</strong></p>
+                                <p>Start by scanning your network to identify which hosts have port 22 (SSH) open.<br>
+                                For example, use the following command to discover active hosts with SSH open:</p>
+                                <pre><code>nmap 192.168.43.0/24 -p 22 --open</code></pre>
+
+                                <p><strong>Prepare Username and Password Lists:</strong></p>
+                                <p>Create your lists of potential usernames and passwords to use for brute force attacks.<br>
+                                Example commands:</p>
+                                <pre><code>cat > users.txt</code></pre>
+                                <pre><code>cat > passwords.txt</code></pre>
+
+                                <p><strong>Set Up the Backdoor with SSH Key Authentication:</strong></p>
+                                <p>After gaining access, copy your public key to the target machine to establish persistent access. Since SSH supports various authentication mechanisms, we'll focus on key-based authentication.<br>
+                                Generate your SSH key pair on the attacker machine:</p>
+                                <pre><code>ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa</code></pre>
+
+                                <p>View your public key:</p>
+                                <pre><code>cat ~/.ssh/id_rsa.pub</code></pre>
+
+                                <p>Copy this public key for use on the target machine.</p>
+                                <p><strong>Create .ssh Directory on the Target and Paste Your Public Key:</strong></p>
+                                <p>On the target machine, create the necessary directories and paste your public key.<br>
+                                Command to create the directory:</p>
+                                <pre><code>mkdir -p ~/.ssh</code></pre>
+                                <p>Remember to change the directory and file permissions to ensure authentication succeeds:</p>
+                                <pre><code>chmod 700 ~/.ssh</code></pre>
+                                <p>Paste your public key in the victim’s machine in <code>~/.ssh/authorized_keys</code>:</p>
+                                <pre><code>echo "&lt;PasteYourPublicKeyHere&gt;" >> ~/.ssh/authorized_keys</code></pre>
+
+                                <p><strong>SSH Into the Target Without a Password:</strong></p>
+                                <p>With your public key in place, you should be able to SSH into the target machine without needing a password from your attacker machine.<br>
+                                For example, you can SSH into the target machine by:</p>
+                                <pre><code>ssh -i ~/.ssh/id_rsa TargetHostName@TargetHostIP</code></pre>
+                                <pre><code>ssh TargetHostName@TargetHostIP</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Nav Menu -->
+                        <div class="nav-menu">
+                            <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                            <a href="#" class="nav-link" data-number="1">1</a>
+                            <a href="#" class="nav-link" data-number="2">2</a>
+                            <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
+                        </div>
+
+                        <!-- Main Content/ Description of Scenario -->
+
+                        <!-- Submission Flag Area-->
+                        <div class="flag-container">
+                            <label for="flagInput1">Enter Username:</label>
+                            <input type="text" id="flagInput1" placeholder="Enter username" style="width: 100%; padding: 8px;">
+                            <label for="flagInput2">Enter Password:</label>
+                            <input type="text" id="flagInput2" placeholder="Enter password" style="width: 100%; padding: 8px;">
+                            <button id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
+                            <div id="feedback" class="feedback"></div>
                         </div>
 
                     </div>
@@ -173,15 +300,40 @@
             </div>
         </div>
     <script>
-        function showHint() {
-            document.getElementById('overlay').style.display = 'block';
+        document.getElementById('openHintBox').addEventListener('click', function() {
             document.getElementById('hintBox').style.display = 'block';
-        }
+        });
 
-        function closeHint() {
-            document.getElementById('overlay').style.display = 'none';
+        document.getElementById('closeHintBox').addEventListener('click', function() {
             document.getElementById('hintBox').style.display = 'none';
-        }
+        });
+
+
+        // Example of how to change background color after submitting
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                this.classList.add('submitted');
+            });
+        });
+
+        //Submission of flag
+        const correctUsername = "yiyangtan0519"; // Replace this with linking to database in future
+        const correctPassword = "abc123"; //Replace this with linking to database in future
+
+        document.getElementById('submitButton').addEventListener('click', function() {
+            const userFlag1 = document.getElementById('flagInput1').value;
+            const userFlag2 = document.getElementById('flagInput2').value;
+            const feedback = document.getElementById('feedback');
+
+            if (userFlag1 === correctUsername && userFlag2 === correctPassword) {
+                feedback.textContent = "Correct answer!";
+                feedback.className = "feedback correct";
+            } else {
+                feedback.textContent = "Flag is incorrect. Please try again.";
+                feedback.className = "feedback incorrect";
+            }
+        });
     </script>
     </body>
 </html>
