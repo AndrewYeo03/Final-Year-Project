@@ -1,0 +1,200 @@
+.top-nav {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-nav .open-button {
+    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.top-nav .open-button:hover {
+    background-color: #c0392b;
+}
+
+/* Overlay */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+}
+
+.hint-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(211, 211, 211, 0.95);
+    padding: 20px;
+    width: 80%;
+    max-height: 70%;
+    overflow-y: auto;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 1100;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.hint-content {
+    font-family: 'Courier New', Courier, monospace;
+    text-align: justify;
+    padding-right: 10px;
+}
+
+pre {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+/* Nav Menu */
+.nav-menu {
+    display: flex;
+    justify-content: flex-start;
+    align-items: start;
+    margin: 15px 0px;
+    font-size: 10px;
+}
+
+.nav-menu a {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 0 5px;
+    text-decoration: none;
+    color: white;
+    background-color: red;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.nav-menu a.submitted {
+    background-color: green;
+}
+
+.nav-menu a i {
+    font-size: 12px;
+}
+
+/* Main Content */
+.main-content {
+    background-color: #f8f9fa;
+    border: 2px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Learning Objectives */
+.learning-objectives h2 {
+    color: #007bff;
+    margin-bottom: 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.learning-objectives ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.learning-objectives li {
+    margin-bottom: 10px;
+    font-size: 16px;
+    line-height: 1.6;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Question */
+.question h2 {
+    color: #28a745;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.question p {
+    font-size: 16px;
+    line-height: 1.6;
+    font-family: 'Arial', sans-serif;
+    text-align: justify;
+    padding-left: 20px;
+}
+
+/* Submission Area */
+.flag-container {
+    padding: 20px;
+    border: 2px solid #FF0000;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    background-color: rgba(211, 211, 211, 0.7);
+}
+
+.flag-title {
+    color: #000;
+    font-size: 25px;
+    margin-bottom: 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: start;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.feedback {
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.feedback.correct {
+    color: green;
+}
+
+.feedback.incorrect {
+    color: red;
+}
+
+#flagInput {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box; /* Ensure padding doesn't affect total width */
+}
+
+#submitButton {
+    font-size: 12px;
+    margin-top: 10px;
+    padding: 8px 16px;
+    border-radius: 5px
+}
+
+/* Side Navigation Bar */
+.sb-sidenav {
+    z-index: 1000; /* Default z-index of the side navigation bar */
+}

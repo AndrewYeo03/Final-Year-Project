@@ -6,212 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>SSH Attack - TARUMT Cyber Range</title>
+        <title>Exploitation of SSH (Secure Shell) Protocol - TARUMT Cyber Range</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
+        <link href="css/questionLayout.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-        <style>
-            .top-nav {
-                background-color: #f8f9fa;
-                padding: 10px;
-                border-bottom: 1px solid #ddd;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .top-nav .open-button {
-                font-size: 18px;
-                padding: 10px 20px;
-                cursor: pointer;
-                background-color: #f44336;
-                color: white;
-                border: none;
-                border-radius: 5px;
-            }
-
-            .top-nav .open-button:hover {
-                background-color: #c0392b;
-            }
-
-            /* Overlay */
-            .overlay {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                z-index: 1050;
-            }
-
-            .hint-box {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color: rgba(211, 211, 211, 0.95);
-                padding: 20px;
-                width: 80%;
-                max-height: 70%;
-                overflow-y: auto;
-                border-radius: 10px;
-                box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-                display: none;
-                z-index: 1100;
-            }
-
-            .close-button {
-                position: absolute;
-                top: 10px;
-                right: 20px;
-                font-size: 24px;
-                background: none;
-                border: none;
-                cursor: pointer;
-            }
-
-            .hint-content {
-                font-family: 'Courier New', Courier, monospace;
-                text-align: justify;
-                padding-right: 10px;
-            }
-
-            pre {
-                background-color: #f4f4f4;
-                padding: 10px;
-                border-radius: 5px;
-                overflow-x: auto;
-            }
-
-            /* Nav Menu */
-            .nav-menu {
-                display: flex;
-                justify-content: flex-start;
-                align-items: start;
-                margin: 15px 0px;
-                font-size: 10px;
-            }
-
-            .nav-menu a {
-                display: inline-block;
-                padding: 10px 15px;
-                margin: 0 5px;
-                text-decoration: none;
-                color: white;
-                background-color: red;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-
-            .nav-menu a.submitted {
-                background-color: green;
-            }
-
-            .nav-menu a i {
-                font-size: 12px;
-            }
-
-            /* Main Content */
-            .main-content {
-                background-color: #f8f9fa;
-                border: 2px solid #ccc;
-                padding: 20px;
-                border-radius: 10px;
-                margin-bottom: 20px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-
-            /* Learning Objectives */
-            .learning-objectives h2 {
-                color: #007bff;
-                margin-bottom: 15px;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-            }
-
-            .learning-objectives ul {
-                list-style-type: disc;
-                padding-left: 20px;
-            }
-
-            .learning-objectives li {
-                margin-bottom: 10px;
-                font-size: 16px;
-                line-height: 1.6;
-                font-family: 'Arial', sans-serif;
-            }
-
-            /* Question */
-            .question h2 {
-                color: #28a745;
-                margin-top: 30px;
-                margin-bottom: 15px;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-            }
-
-            .question p {
-                font-size: 16px;
-                line-height: 1.6;
-                font-family: 'Arial', sans-serif;
-                text-align: justify;
-                padding-left: 20px;
-            }
-
-            /* Submission Area */
-            .flag-container {
-                padding: 20px;
-                border: 2px solid #FF0000;
-                border-radius: 5px;
-                width: 100%;
-                max-width: 100%;
-                box-sizing: border-box;
-                background-color: rgba(211, 211, 211, 0.7);
-            }
-
-            .flag-title {
-                color: #000;
-                font-size: 25px;
-                margin-bottom: 15px;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                text-align: start;
-                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-            }
-
-            .feedback {
-                margin-top: 10px;
-                padding: 10px;
-                font-size: 14px;
-            }
-
-            .feedback.correct {
-                color: green;
-            }
-
-            .feedback.incorrect {
-                color: red;
-            }
-
-            #flagInput {
-                width: 100%;
-                padding: 8px;
-                box-sizing: border-box; /* Ensure padding doesn't affect total width */
-            }
-
-            #submitButton {
-                font-size: 12px;
-                margin-top: 10px;
-                padding: 8px 16px;
-                border-radius: 5px
-            }
-
-            /* Side Navigation Bar */
-            .sb-sidenav {
-                z-index: 1000; /* Default z-index of the side navigation bar */
-            }
-        </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -272,10 +71,10 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">SSH Attack</h1>
+                        <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">SSH Attack</li>
-                            <li class="breadcrumb-item active">Suggest Duration: 1 Hour</li>
+                            <li class="breadcrumb-item active">Offensive Exercise </li>
+                            <li class="breadcrumb-item active">Difficulty Level: Beginner</li>
                         </ol>
                         <!-- Top nav bar -->
                         <div class="top-nav">
@@ -329,12 +128,19 @@
                         <!-- Nav Menu -->
                         <div class="nav-menu">
                             <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
-                            <a href="#" class="nav-link" data-number="1">1</a>
-                            <a href="#" class="nav-link" data-number="2">2</a>
+                            <a href="sshAttackAi.html" class="nav-link" data-number="1">1</a>
+                            <a href="sshAttackAii.html" class="nav-link" data-number="2">2</a>
+                            <a href="sshAttackBi.html" class="nav-link" data-number="2">3</a>
+                            <a href="sshAttackBii.html" class="nav-link" data-number="2">4</a>
+                            <a href="sshDefendA.html" class="nav-link" data-number="2">5</a>
+                            <a href="sshDefendB.html" class="nav-link" data-number="2">6</a>
+                            <a href="sshDefendC.html" class="nav-link" data-number="2">7</a>
+                            <a href="#" class="nav-link" data-number="2">8</a>
                             <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
                         </div>
 
                         <!-- Main Content/ Description of Scenario -->
+                        <h2 class="mt-4" style="padding: 0px 10px;">Exercise A (ii)<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
                         <div class="main-content">
                             <div class="learning-objectives">
                                 <h2>Learning Objectives</h2>
@@ -357,10 +163,8 @@
                         <!-- Submission Flag Area-->
                         <div class="flag-container">
                             <h2 class="flag-title">Submission of flag</h2>
-                            <label for="flagInput1">Enter Username:</label>
-                            <input type="text" id="flagInput1" placeholder="Enter username" style="width: 100%; padding: 8px;">
-                            <label for="flagInput2">Enter Password:</label>
-                            <input type="text" id="flagInput2" placeholder="Enter password" style="width: 100%; padding: 8px;">
+                            <label for="flagInput1">Enter Passcode (Auto generate when configuring remote access success):</label>
+                            <input type="text" id="flagInput1" placeholder="Enter passcode" style="width: 100%; padding: 8px;">
                             <button id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
                             <div id="feedback" class="feedback"></div>
                         </div>
@@ -395,25 +199,15 @@
                 document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
             });
 
-
-            // Example of how to change background color after submitting
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    this.classList.add('submitted');
-                });
-            });
-
             //Submission of flag
             const correctUsername = "yiyangtan0519"; // Replace this with linking to database in future
             const correctPassword = "abc123"; //Replace this with linking to database in future
 
             document.getElementById('submitButton').addEventListener('click', function() {
                 const userFlag1 = document.getElementById('flagInput1').value;
-                const userFlag2 = document.getElementById('flagInput2').value;
                 const feedback = document.getElementById('feedback');
 
-                if (userFlag1 === correctUsername && userFlag2 === correctPassword) {
+                if (userFlag1 === correctUsername) {
                     feedback.textContent = "Correct answer!";
                     feedback.className = "feedback correct";
                 } else {
