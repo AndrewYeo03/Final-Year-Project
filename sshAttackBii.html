@@ -135,27 +135,25 @@
                             <a href="sshDefendA.html" class="nav-link" data-number="2">5</a>
                             <a href="sshDefendB.html" class="nav-link" data-number="2">6</a>
                             <a href="sshDefendC.html" class="nav-link" data-number="2">7</a>
-                            <a href="#" class="nav-link" data-number="2">8</a>
                             <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
                         </div>
 
                         <!-- Main Content/ Description of Scenario -->
-                        <h2 class="mt-4" style="padding: 0px 10px;">Exercise B (ii)<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
+                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise B (ii): Creating Backdoor Using Reverse SSH Tunnel<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
                         <div class="main-content">
                             <div class="learning-objectives">
                                 <h2>Learning Objectives</h2>
                                 <ul>
-                                    <li>Understand the basics of SSH brute force attacks.</li>
-                                    <li>Gain experience with different SSH brute force tools like Metasploit, Hydra, Patator, and Medusa.</li>
-                                    <li>Learn how to configure and execute both manual and automated SSH brute force attacks.</li>
-                                    <li>Understand the implications of SSH vulnerabilities on system security.</li>
-                                    <li>Learn how to establish persistence on a compromised system using SSH backdoors.</li>
+                                    <li>Understand the concept of reverse SSH tunneling and how it can be used to maintain persistence.</li>
+                                    <li>Gain experience in configuring SSH tunnels for remote access on compromised systems.</li>
+                                    <li>Learn techniques for establishing a backdoor in a secured environment.</li>
+                                    <li>Explore the ethical and defensive implications of persistent access techniques.</li>
                                 </ul>
                             </div>
 
                             <div class="question">
                                 <h2>Question</h2>
-                                <p>In this exercise, you are required to conduct a brute force attack on an SSH server using manual methods. You will utilize tools such as Hydra and Metasploit to gain unauthorized access to the target machine. Once access is obtained, you must establish persistence by setting up SSH key-based authentication. The goal is to understand the process of brute forcing, gain access, and secure it through public key authentication, simulating a real-world attack scenario.</p>
+                                <p>In this advanced exercise, after successfully brute-forcing the SSH login credentials, you are required to create a backdoor by <code>setting up a reverse SSH tunnel</code> from the compromised server to your attack machine. This tunnel will simulate persistence, enabling future access to the compromised system.</p>
                             </div>
                         </div>
 

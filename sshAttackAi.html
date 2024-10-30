@@ -90,38 +90,15 @@
                                 <p><strong>Use Nmap to Identify Targets:</strong></p>
                                 <p>Start by scanning your network to identify which hosts have port 22 (SSH) open.<br>
                                 For example, use the following command to discover active hosts with SSH open:</p>
-                                <pre><code>nmap 192.168.43.0/24 -p 22 --open</code></pre>
-
+                                <pre><code>nmap &lt;network_address&gt; -p 22 --open</code></pre>
                                 <p><strong>Prepare Username and Password Lists:</strong></p>
                                 <p>Create your lists of potential usernames and passwords to use for brute force attacks.<br>
                                 Example commands:</p>
                                 <pre><code>cat > users.txt</code></pre>
                                 <pre><code>cat > passwords.txt</code></pre>
-
-                                <p><strong>Set Up the Backdoor with SSH Key Authentication:</strong></p>
-                                <p>After gaining access, copy your public key to the target machine to establish persistent access. Since SSH supports various authentication mechanisms, we'll focus on key-based authentication.<br>
-                                Generate your SSH key pair on the attacker machine:</p>
-                                <pre><code>ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa</code></pre>
-
-                                <p>View your public key:</p>
-                                <pre><code>cat ~/.ssh/id_rsa.pub</code></pre>
-
-                                <p>Copy this public key for use on the target machine.</p>
-                                <p><strong>Create .ssh Directory on the Target and Paste Your Public Key:</strong></p>
-                                <p>On the target machine, create the necessary directories and paste your public key.<br>
-                                Command to create the directory:</p>
-                                <pre><code>mkdir -p ~/.ssh</code></pre>
-                                <p>Remember to change the directory and file permissions to ensure authentication succeeds:</p>
-                                <pre><code>chmod 700 ~/.ssh</code></pre>
-                                <p>Paste your public key in the victim’s machine in <code>~/.ssh/authorized_keys</code>:</p>
-                                <pre><code>echo "&lt;PasteYourPublicKeyHere&gt;" >> ~/.ssh/authorized_keys</code></pre>
-
-                                <p><strong>SSH Into the Target Without a Password:</strong></p>
-                                <p>With your public key in place, you should be able to SSH into the target machine without needing a password from your attacker machine.<br>
-                                For example, you can SSH into the target machine by:</p>
-                                <pre><code>ssh -i ~/.ssh/id_rsa TargetHostName@TargetHostIP</code></pre>
-                                <p>or</p>
-                                <pre><code>ssh TargetHostName@TargetHostIP</code></pre>
+                                <p><strong>If using Metasploit Framework:</strong></p>
+                                <p>Once in the Metasploit console, load the SSH login module:</p>
+                                <pre><code>use auxiliary/scanner/ssh/ssh_login</code></pre>
                             </div>
                         </div>
 
@@ -135,26 +112,25 @@
                             <a href="sshDefendA.html" class="nav-link" data-number="2">5</a>
                             <a href="sshDefendB.html" class="nav-link" data-number="2">6</a>
                             <a href="sshDefendC.html" class="nav-link" data-number="2">7</a>
-                            <a href="#" class="nav-link" data-number="2">8</a>
                             <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
                         </div>
 
                         <!-- Main Content/ Description of Scenario -->
-                        <h2 class="mt-4" style="padding: 0px 10px;">Exercise A (i)<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 30 Minutes</span></h2>
+                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise A (i): Brute forcing SSH Using Command-line Tools<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 30 Minutes</span></h2>
                         <div class="main-content">
                             <div class="learning-objectives">
                                 <h2>Learning Objectives</h2>
                                 <ul>
                                     <li>Understand the basics of SSH brute force attacks.</li>
                                     <li>Gain experience with different SSH brute force tools like Metasploit, Hydra, Patator, and Medusa.</li>
-                                    <li>Learn how to configure and execute manual SSH brute force attack with commands</li>
+                                    <li>Learn how to configure and execute manual SSH brute force attack with commands.</li>
                                     <li>Understand the implications of SSH vulnerabilities on system security.</li>
                                 </ul>
                             </div>
 
                             <div class="question">
                                 <h2>Question</h2>
-                                <p>In this exercise, you are required to conduct a brute force attack on an SSH server using manual methods. You can utilize tools such as Hydra and Metasploit to gain unauthorized access to the target machine. Your objective is to explore the process of brute forcing by identifying valid credentials and establishing access. After you brute force successful, submit your results here!</p>
+                                <p>In this exercise, you are required to <code>conduct a brute force attack</code> on an SSH server using manual input command. You can utilize tools such as <code>Hydra</code> and <code>Metasploit</code> to gain unauthorized access to the target machine. Your objective is to explore the process of brute forcing by identifying valid credentials and establishing access. After you brute force successful, submit your results here!</p>
                             </div>
                         </div>
 
@@ -187,7 +163,7 @@
             </div>
         </div>
 
-        <script>
+        <script>    
             document.getElementById('openHintBox').addEventListener('click', function() {
                 document.getElementById('hintBox').style.display = 'block';
                 document.getElementById('overlay').style.display = 'block';

@@ -40,7 +40,7 @@
     transform: translate(-50%, -50%);
     background-color: rgba(211, 211, 211, 0.95);
     padding: 20px;
-    width: 80%;
+    width: 60%;
     max-height: 70%;
     overflow-y: auto;
     border-radius: 10px;
@@ -110,24 +110,53 @@ pre {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.question-title {
+    color: #130901;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+    font-size: 30px;
+    padding: 10px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.question-title span {
+    color: #555;
+    font-weight: normal;
+    font-size: large;
+    text-align: right;
+}
+
+
 /* Learning Objectives */
 .learning-objectives h2 {
     color: #007bff;
+    margin-top: 10px;
     margin-bottom: 15px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+    font-size: 28px;
+    font-weight: bold;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
 }
 
 .learning-objectives ul {
     list-style-type: disc;
-    padding-left: 20px;
+    padding-left: 25px;
+    margin-top: 10px;
 }
 
 .learning-objectives li {
     margin-bottom: 10px;
-    font-size: 16px;
-    line-height: 1.6;
+    font-size: 17px;
+    line-height: 1.8;
     font-family: 'Arial', sans-serif;
+    color: #333;
+    padding-left: 5px;
 }
 
 /* Question */
@@ -136,16 +165,48 @@ pre {
     margin-top: 30px;
     margin-bottom: 15px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+    font-size: 28px;
+    font-weight: bold;
+    border-bottom: 2px solid #28a745;
+    padding-bottom: 8px;
 }
 
 .question p {
-    font-size: 16px;
-    line-height: 1.6;
+    font-size: 17px;
+    line-height: 1.8;
     font-family: 'Arial', sans-serif;
     text-align: justify;
-    padding-left: 20px;
+    padding-left: 25px;
+    padding-right: 25px;
+    color: #333;
 }
+
+/* Scenario Header */
+.scenario h2 {
+    color: #ee6f1b;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+    font-size: 28px;
+    font-weight: bold;
+    border-bottom: 2px solid #ee6f1b;
+    padding-bottom: 8px;
+}
+
+/* Scenario Paragraph */
+.scenario p {
+    font-size: 17px;
+    line-height: 1.8;
+    font-family: 'Arial', sans-serif;
+    text-align: justify;
+    padding-left: 25px;
+    padding-right: 25px;
+    color: #333;
+}
+
+
 
 /* Submission Area */
 .flag-container {

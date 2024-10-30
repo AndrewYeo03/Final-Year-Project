@@ -11,6 +11,79 @@
         <link href="css/styles.css" rel="stylesheet" />
         <link href="css/questionLayout.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            .flag-container {
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                background-color: #f9f9f9;
+                font-family: Arial, sans-serif;
+            }
+        
+            .flag-title {
+                text-align: center;
+                color: #333;
+                margin-bottom: 20px;
+                font-weight: bold;
+            }
+        
+            .input-group {
+                margin-bottom: 15px;
+            }
+        
+            label {
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+                color: #555;
+            }
+        
+            input[type="text"] {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 16px;
+                box-sizing: border-box;
+            }
+        
+            /* Radio Button Styles */
+            input[type="radio"] {
+                margin-right: 5px;
+            }
+        
+            .input-group label {
+                display: inline-flex;
+                align-items: center;
+                margin-right: 20px;
+                color: #333;
+            }
+        
+            #submitButton {
+                width: 100%;
+                padding: 10px;
+                background-color: #4CAF50;
+                color: white;
+                font-size: 16px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+        
+            #submitButton:hover {
+                background-color: #45a049;
+            }
+        
+            .feedback {
+                margin-top: 15px;
+                text-align: center;
+                font-size: 14px;
+                color: #d9534f; /* Optional: red color for error messages */
+            }
+        </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -73,8 +146,8 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Offensive Exercise </li>
-                            <li class="breadcrumb-item active">Difficulty Level: Advanced</li>
+                            <li class="breadcrumb-item active">Defensive Exercise </li>
+                            <li class="breadcrumb-item active">Difficulty Level: Beginner</li>
                         </ol>
                         <!-- Top nav bar -->
                         <div class="top-nav">
@@ -87,23 +160,12 @@
                         <div id="hintBox" class="hint-box">
                             <button id="closeHintBox" class="close-button">&times;</button>
                             <div class="hint-content">
-                                <p><strong>Use Nmap to Identify Targets:</strong></p>
-                                <p>Start by scanning your network to identify which hosts have port 22 (SSH) open.<br>
-                                For example, use the following command to discover active hosts with SSH open:</p>
-                                <pre><code>nmap &lt;network_address&gt; -p 22 --open</code></pre>
-                                <p><strong>Prepare Username and Password Lists:</strong></p>
-                                <p>Create your lists of potential usernames and passwords to use for brute force attacks.<br>
-                                Example commands:</p>
-                                <pre><code>cat > users.txt</code></pre>
-                                <pre><code>cat > passwords.txt</code></pre>
-                                <p><strong>If using Metasploit Framework:</strong></p>
-                                <p>Once in the Metasploit console, load the SSH login module:</p>
-                                <pre><code>use auxiliary/scanner/ssh/ssh_login</code></pre>
-                                <p><strong>To automate the brute force attack using the provided Python script:</strong></p>
-                                <p>Install necessary Python libraries:</p>
-                                <pre><code>Install necessary Python libraries</code></pre>
-                                <p>Execute the script to perform the brute force attack:</p>
-                                <pre><code>python async-ssh-bruteforcer.py &lt;target-ip&gt; -u &lt;username&gt; -w &lt;wordlist&gt; -p &lt;port&gt;</code></pre>
+                                <p><strong>Edit the SSH configuration file using your preferred text editor.</strong></p>
+                                <pre>For example, issue command <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">nano &lt;pathname&gt;</code></pre>
+                                <p><strong>Review the configuration settings in the SSH configuration file.</strong></p>
+                                <pre>Set a value for <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">MaxAuthTries</code></pre>
+                                <p><strong>Reload the SSH service to apply the changes</strong></p>
+                                <pre>For example, issue command <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">sudo systemctl reload ssh</code></pre>
                             </div>
                         </div>
 
@@ -121,35 +183,51 @@
                         </div>
 
                         <!-- Main Content/ Description of Scenario -->
-                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise B (i): Automating SSH Brute Force Attack<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 30 Minutes</span></h2>
+                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise B: Limit Maximum Number of SSH Authentication Attempts<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 10 Minutes</span></h2>
                         <div class="main-content">
                             <div class="learning-objectives">
                                 <h2>Learning Objectives</h2>
                                 <ul>
-                                    <li>Understand the fundamentals of automating SSH brute force attacks.</li>
-                                    <li>Gain hands-on experience with Python scripting to perform brute force attacks.</li>
-                                    <li>Explore common libraries for automation such as asyncssh, paramiko, and termcolor.</li>
-                                    <li>Learn to implement automated scripts for identifying valid SSH login credentials.</li>
+                                    <li>Understand the importance of limiting failed SSH authentication attempts to protect against brute force attacks.</li>
+                                    <li>Gain hands-on experience with configuring SSH server settings to prevent excessive login attempts.</li>
+                                    <li>Learn how to test and verify the effectiveness of authentication attempt limits.</li>
                                 </ul>
                             </div>
 
+                            <div class="scenario">
+                                <h2>Example Scenario</h2>
+                                <p>As part of your role in securing an organization’s SSH server, you discover that there is no limit on the number of failed login attempts. This lack of restriction makes the server vulnerable to brute force attacks. To mitigate this risk, the organization wants the server to automatically terminate connections after a few failed login attempts.</p>
+                            </div>
+
                             <div class="question">
-                                <h2>Question</h2>
-                                <p>In this exercise, you are required to <code>automate a brute force attack</code> on an SSH server using a <code>Python script</code>. Write your own script or modify an existing one to systematically attempt login credentials until access is granted. Utilize libraries like asyncssh and termcolor to enhance the functionality and readability of your script. Once access is achieved, submit your findings here.</p>
-                                
-                                <p><strong>You can use the provided script here:</strong> <a href="BruteForceAutomationScript.txt" download class="download-link">BruteForceAutomationScript.txt</a></p>
+                                <h2>Your task</h2>
+                                <p>Your task is to configure the SSH server to <code>limit failed login attempts</code> to a maximum of <code>3</code>. Once configured, verify that the setting is effective by testing with multiple failed login attempts. This measure should reduce the risk of brute force attacks and unauthorized access.</p>
                             </div>
                         </div>
 
 
                         <!-- Submission Flag Area-->
                         <div class="flag-container">
-                            <h2 class="flag-title">Submission of flag</h2>
-                            <label for="flagInput1">Enter Username:</label>
-                            <input type="text" id="flagInput1" placeholder="Enter username" style="width: 100%; padding: 8px;">
-                            <label for="flagInput2">Enter Password:</label>
-                            <input type="text" id="flagInput2" placeholder="Enter password" style="width: 100%; padding: 8px;">
-                            <button id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
+                            <h2 class="flag-title">Try it out!</h2>
+                        
+                            <!-- SSH Configuration File Name -->
+                            <div class="input-group">
+                                <label for="flagInput1" style="font-size: 18px;">What is the SSH configuration file name to be edited?</label>
+                                <input type="text" id="flagInput1" placeholder="Enter pathname">
+                            </div>
+                        
+                            <label style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">How this configuration setting needs to be set?</label>
+                            <!-- Password Authentication Options -->
+                            <div class="input-group">
+                                <label><code>MaxAuthTries:</code></label>
+                                <label><input type="num" name="passwordAuth" id="flagInput2"></label>
+                            </div>
+                    
+                        
+                            <!-- Submit Button -->
+                            <button id="submitButton">Submit</button>
+                            
+                            <!-- Feedback Message -->
                             <div id="feedback" class="feedback"></div>
                         </div>
 

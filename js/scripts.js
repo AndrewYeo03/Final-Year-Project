@@ -24,3 +24,44 @@ window.addEventListener('DOMContentLoaded', event => {
     }
 
 });
+
+// Array of page links in sequence
+const pages = [
+    "sshAttackAi.html",
+    "sshAttackAii.html",
+    "sshAttackBi.html",
+    "sshAttackBii.html",
+    "sshDefendA.html",
+    "sshDefendB.html",
+    "sshDefendC.html"
+];
+
+// Get the current page URL
+const currentPage = window.location.pathname.split("/").pop();
+
+// Find the index of the current page in the pages array
+const currentIndex = pages.indexOf(currentPage);
+
+// Select the back and next buttons
+const backButton = document.querySelector(".back-button");
+const nextButton = document.querySelector(".next-button");
+
+// Set the back and next buttons' href if there's a previous or next page
+if (currentIndex > 0) {
+    backButton.href = pages[currentIndex - 1];
+} else {
+    backButton.style.display = "none"; // Hide if no previous page
+}
+
+if (currentIndex < pages.length - 1) {
+    nextButton.href = pages[currentIndex + 1];
+} else {
+    nextButton.style.display = "none"; // Hide if no next page
+}
+
+// Highlight the current page link
+document.querySelectorAll(".nav-link").forEach(link => {
+    if (link.getAttribute("href") === currentPage) {
+        link.classList.add("active");
+    }
+});

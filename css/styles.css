@@ -3717,6 +3717,13 @@ textarea.form-control-lg {
   background-color: var(--bs-nav-pills-link-active-bg);
 }
 
+/* Style for the active page */
+.nav-link.active {
+  background-color: #f3b8b8; /* Light red color */
+  color: #000; /* Black text color for better readability */
+  font-weight: bold; /* Optional: Make text bold */
+}
+
 .nav-fill > .nav-link,
 .nav-fill .nav-item {
   flex: 1 1 auto;
