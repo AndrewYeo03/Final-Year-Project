@@ -163,7 +163,7 @@
                                 <p><strong>Edit the SSH configuration file using your preferred text editor.</strong></p>
                                 <pre>For example, issue command <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">nano &lt;pathname&gt;</code></pre>
                                 <p><strong>Review the configuration settings in the SSH configuration file.</strong></p>
-                                <pre>Change the value of <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">PasswordAuthentication</code> and <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">PubkeyAuthentication</code> </pre>
+                                <pre>Change the value of <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">PasswordAuthentication</code></pre>
                                 <p><strong>Reload the SSH service to apply the changes</strong></p>
                                 <pre>For example, issue command <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">sudo systemctl reload ssh</code></pre>
                             </div>
@@ -183,7 +183,7 @@
                         </div>
 
                         <!-- Main Content/ Description of Scenario -->
-                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise A: Securing SSH with Key-Based Authentication<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 10 Minutes</span></h2>
+                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise A: Disable SSH Password Authentication<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 10 Minutes</span></h2>
                         <div class="main-content">
                             <div class="learning-objectives">
                                 <h2>Learning Objectives</h2>
@@ -201,7 +201,7 @@
 
                             <div class="question">
                                 <h2>Your task</h2>
-                                <p>Your task is to secure the SSH server by <code>disabling password-based authentication</code> and <code>enabling SSH key-based authentication</code>. This requires you to modify the SSH configuration file to ensure that only users with a valid SSH key pair can log in. After making these changes, confirm that password-based login is disabled and that key-based login works as expected.</p>
+                                <p>Your task is to secure the SSH server by <code>disabling password-based authentication</code>. This requires you to modify the SSH configuration file to ensure that only users with a valid SSH key pair can log in. After making these changes, confirm that password-based login is disabled and that key-based login works as expected. Remember to remove <code>#</code> if nessessary.</p>
                             </div>
                         </div>
 
@@ -216,19 +216,12 @@
                                 <input type="text" id="flagInput1" placeholder="Enter pathname">
                             </div>
                         
-                            <label style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">How these configuration settings needs to be set?</label>
+                            <label style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">How this configuration settings needs to be set?</label>
                             <!-- Password Authentication Options -->
                             <div class="input-group">
                                 <label><code>PasswordAuthentication:</code></label>
                                 <label><input type="radio" name="passwordAuth" id="flagInput2"> Yes</label>
                                 <label><input type="radio" name="passwordAuth" id="flagInput3"> No</label>
-                            </div>
-                        
-                            <!-- Pubkey Authentication Options -->
-                            <div class="input-group">
-                                <label><code>PubkeyAuthentication:</code></label>
-                                <label><input type="radio" name="pubkeyAuth" id="flagInput4"> Yes</label>
-                                <label><input type="radio" name="pubkeyAuth" id="flagInput5"> No</label>
                             </div>
                         
                             <!-- Submit Button -->
