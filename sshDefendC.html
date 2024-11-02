@@ -1,219 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Exploitation of SSH (Secure Shell) Protocol - TARUMT Cyber Range</title>
-        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-        <link href="css/styles.css" rel="stylesheet" />
-        <link href="css/questionLayout.css" rel="stylesheet" />
-        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    </head>
-    <body class="sb-nav-fixed">
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="index.html">TARUMT Cyber Range</a>
-            <!-- Sidebar Toggle-->
-            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-            <!-- Navbar Search-->
-            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-                <div class="input-group">
-                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
-                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Exploitation of SSH (Secure Shell) Protocol - TARUMT Cyber Range</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <link href="css/questionLayout.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <style>
+        .flag-container {
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            font-family: Arial, sans-serif;
+        }
+
+        .flag-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        /* Radio Button Styles */
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        .input-group label {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 20px;
+            color: #333;
+        }
+
+        #submitButton {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #submitButton:hover {
+            background-color: #45a049;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #d9534f;
+            /* Optional: red color for error messages */
+        }
+
+        .command-box {
+            background-color: #f1f1f1;
+            max-width: 35%;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <!-- Navbar Brand-->
+        <a class="navbar-brand ps-3" href="index.html">TARUMT Cyber Range</a>
+        <!-- Sidebar Toggle-->
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
+                class="fas fa-bars"></i></button>
+        <!-- Navbar Search-->
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+            <div class="input-group">
+                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..."
+                    aria-describedby="btnNavbarSearch" />
+                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i
+                        class="fas fa-search"></i></button>
+            </div>
+        </form>
+        <!-- Navbar-->
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="#!">Settings</a></li>
+                    <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
+                    <li><a class="dropdown-item" href="#!">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <div class="sb-sidenav-menu-heading">Core</div>
+                        <a class="nav-link" href="index.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Dashboard
+                        </a>
+                        <div class="sb-sidenav-menu-heading">Interface</div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                            data-bs-target="#collapseStudents" aria-expanded="false" aria-controls="collapseLayouts">
+                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                            Student
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseStudents" aria-labelledby="headingOne"
+                            data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="#">Member Of Groups</a>
+                                <a class="nav-link" href="allScenario.html">Scenarios</a>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
-            </form>
-            <!-- Navbar-->
-            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#!">Settings</a></li>
-                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-        <div id="layoutSidenav">
-            <div id="layoutSidenav_nav">
-                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                    <div class="sb-sidenav-menu">
-                        <div class="nav">
-                            <div class="sb-sidenav-menu-heading">Core</div>
-                            <a class="nav-link" href="index.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Dashboard
-                            </a>
-                            <div class="sb-sidenav-menu-heading">Interface</div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseStudents" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Student
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseStudents" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="#">Member Of Groups</a>
-                                    <a class="nav-link" href="allScenario.html">Scenarios</a>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="sb-sidenav-footer">
-                        <div class="small">Logged in as:</div>
-                        Andrew Yeo
-                    </div>
-                </nav>
-            </div>
-            <div id="layoutSidenav_content">
-                <main>
-                    <div class="container-fluid px-4">
-                        <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Defensive Exercise </li>
-                            <li class="breadcrumb-item active">Difficulty Level: Advanced</li>
-                        </ol>
-                        <!-- Top nav bar -->
-                        <div class="top-nav">
-                            <button id="openHintBox" class="open-button">Show Hints</button>
-                        </div>
-                        <!-- Overlay -->
-                        <div id="overlay" class="overlay"></div>
-
-                        <!-- Hint Box -->
-                        <div id="hintBox" class="hint-box">
-                            <button id="closeHintBox" class="close-button">&times;</button>
-                            <div class="hint-content">
-                                <p><strong>Use Nmap to Identify Targets:</strong></p>
-                                <p>Start by scanning your network to identify which hosts have port 22 (SSH) open.<br>
-                                For example, use the following command to discover active hosts with SSH open:</p>
-                                <pre><code>nmap 192.168.43.0/24 -p 22 --open</code></pre>
-
-                                <p><strong>Prepare Username and Password Lists:</strong></p>
-                                <p>Create your lists of potential usernames and passwords to use for brute force attacks.<br>
-                                Example commands:</p>
-                                <pre><code>cat > users.txt</code></pre>
-                                <pre><code>cat > passwords.txt</code></pre>
-
-                                <p><strong>Set Up the Backdoor with SSH Key Authentication:</strong></p>
-                                <p>After gaining access, copy your public key to the target machine to establish persistent access. Since SSH supports various authentication mechanisms, we'll focus on key-based authentication.<br>
-                                Generate your SSH key pair on the attacker machine:</p>
-                                <pre><code>ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa</code></pre>
-
-                                <p>View your public key:</p>
-                                <pre><code>cat ~/.ssh/id_rsa.pub</code></pre>
-
-                                <p>Copy this public key for use on the target machine.</p>
-                                <p><strong>Create .ssh Directory on the Target and Paste Your Public Key:</strong></p>
-                                <p>On the target machine, create the necessary directories and paste your public key.<br>
-                                Command to create the directory:</p>
-                                <pre><code>mkdir -p ~/.ssh</code></pre>
-                                <p>Remember to change the directory and file permissions to ensure authentication succeeds:</p>
-                                <pre><code>chmod 700 ~/.ssh</code></pre>
-                                <p>Paste your public key in the victim’s machine in <code>~/.ssh/authorized_keys</code>:</p>
-                                <pre><code>echo "&lt;PasteYourPublicKeyHere&gt;" >> ~/.ssh/authorized_keys</code></pre>
-
-                                <p><strong>SSH Into the Target Without a Password:</strong></p>
-                                <p>With your public key in place, you should be able to SSH into the target machine without needing a password from your attacker machine.<br>
-                                For example, you can SSH into the target machine by:</p>
-                                <pre><code>ssh -i ~/.ssh/id_rsa TargetHostName@TargetHostIP</code></pre>
-                                <p>or</p>
-                                <pre><code>ssh TargetHostName@TargetHostIP</code></pre>
-                            </div>
-                        </div>
-
-                        <!-- Nav Menu -->
-                        <div class="nav-menu">
-                            <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
-                            <a href="sshAttackAi.html" class="nav-link" data-number="1">1</a>
-                            <a href="sshAttackAii.html" class="nav-link" data-number="2">2</a>
-                            <a href="sshAttackBi.html" class="nav-link" data-number="2">3</a>
-                            <a href="sshAttackBii.html" class="nav-link" data-number="2">4</a>
-                            <a href="sshDefendA.html" class="nav-link" data-number="2">5</a>
-                            <a href="sshDefendB.html" class="nav-link" data-number="2">6</a>
-                            <a href="sshDefendC.html" class="nav-link" data-number="2">7</a>
-                            <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
-                        </div>
-
-                        <!-- Main Content/ Description of Scenario -->
-                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise C: Implement Fail2ban Intrusion Prevention Tool<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
-                        <div class="main-content">
-                            <div class="learning-objectives">
-                                <h2>Learning Objectives</h2>
-                                <ul>
-                                    <li>Understand the use of Fail2ban as a defense mechanism against SSH brute force attacks.</li>
-                                    <li>Gain experience configuring Fail2ban to automatically detect and block suspicious IPs.</li>
-                                    <li>Learn to set up alerts and whitelist trusted IPs to enhance SSH security without impacting trusted users.</li>
-                                </ul>
-                            </div>
-
-                            <div class="scenario">
-                                <h2>Example Scenario</h2>
-                                <p>The company’s SSH server has experienced multiple unauthorized login attempts originating from various IP addresses. To secure the server, you have been assigned to implement Fail2ban, an intrusion prevention tool that can automatically detect and block IPs showing suspicious behavior, such as repeated failed login attempts within a short period.</p>
-                            </div>
-
-                            <div class="question">
-                                <h2>Your task</h2>
-                                <p>Install and configure Fail2ban on the SSH server to monitor failed login attempts and ban any IP address that has 3 failed login attempts within a 10-minute period. Set the ban duration for 10 minutes. Additionally, configure optional email alerts for banned IP addresses, and whitelist any trusted IP addresses to prevent them from being banned.</p>
-                            </div>
-                        </div>
-
-
-                        <!-- Submission Flag Area-->
-
-
-                    </div>
-                </main>
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid px-4">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; TARUMT Cyber Range 2023</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+                <div class="sb-sidenav-footer">
+                    <div class="small">Logged in as:</div>
+                    Andrew Yeo
+                </div>
+            </nav>
         </div>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item active">Defensive Exercise </li>
+                        <li class="breadcrumb-item active">Difficulty Level: Advanced</li>
+                    </ol>
+                    <!-- Top nav bar -->
+                    <div class="top-nav">
+                        <button id="openHintBox" class="open-button">Show Hints</button>
+                    </div>
+                    <!-- Overlay -->
+                    <div id="overlay" class="overlay"></div>
 
-        <script>
-            document.getElementById('openHintBox').addEventListener('click', function() {
-                document.getElementById('hintBox').style.display = 'block';
-                document.getElementById('overlay').style.display = 'block';
-                document.getElementById('layoutSidenav_nav').style.zIndex = '900'; // Temporarily lower z-index of sidebar
-            });
+                    <!-- Hint Box -->
+                    <div id="hintBox" class="hint-box">
+                        <button id="closeHintBox" class="close-button">&times;</button>
+                        <div class="hint-content">
+                            <p><strong>Install Fail2Ban:</strong></p>
+                            <p>Remember to update your packages and install fail2ban:</p>
+                            <pre><code>sudo apt update</code></pre>
+                            <pre><code>apt-get install fail2ban -y</code></pre>
 
-            document.getElementById('closeHintBox').addEventListener('click', function() {
-                document.getElementById('hintBox').style.display = 'none';
-                document.getElementById('overlay').style.display = 'none';
-                document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
-            });
+                            <p><strong>Create the Configuration File:</strong></p>
+                            <p>Instead of editing the default configuration <code>/etc/fail2ban/jail.conf</code>, create
+                                a local override file for customization. This way, updates won’t overwrite your changes:
+                            </p>
+                            <pre><code>sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local</code></pre>
 
-            //Submission of flag
-            const correctUsername = "yiyangtan0519"; // Replace this with linking to database in future
-            const correctPassword = "abc123"; //Replace this with linking to database in future
+                            <p><strong>Enable Fail2ban to start on boot:</strong></p>
+                            <pre><code>sudo systemctl enable --now fail2ban </code></pre>
 
-            document.getElementById('submitButton').addEventListener('click', function() {
-                const userFlag1 = document.getElementById('flagInput1').value;
-                const userFlag2 = document.getElementById('flagInput2').value;
-                const feedback = document.getElementById('feedback');
+                            <p>Check current status of the Fail2ban service:</p>
+                            <pre><code>sudo systemctl status -l fail2ban </code></pre>
 
-                if (userFlag1 === correctUsername && userFlag2 === correctPassword) {
-                    feedback.textContent = "Correct answer!";
-                    feedback.className = "feedback correct";
-                } else {
-                    feedback.textContent = "Flag is incorrect. Please try again.";
-                    feedback.className = "feedback incorrect";
-                }
-            });
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
-    </body>
+                            <p><strong>Configure and Edit SSH Jail Configuration:</strong></p>
+                            <p>Open the Fail2ban configuration file for SSH jail settings:</p>
+                            <pre><code>sudo nano /etc/fail2ban/jail.local</code></pre>
+
+                            <p><strong>Additional info:</strong></p>
+                            <p>Review the log file (monitoring Fail2ban's actions):</p>
+                            <pre><code>sudo tail -f /var/log/fail2ban.log</code></pre>
+                            <p>See if any IPs have been banned:</p>
+                            <pre><code>sudo fail2ban-client status sshd</code></pre>
+                            <p>Unblock a banned IP address:</p>
+                            <pre><code>sudo fail2ban-client unban &lt;ip_address&gt;</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Nav Menu -->
+                    <div class="nav-menu">
+                        <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                        <a href="sshAttackAi.html" class="nav-link" data-number="1">1</a>
+                        <a href="sshAttackAii.html" class="nav-link" data-number="2">2</a>
+                        <a href="sshAttackBi.html" class="nav-link" data-number="2">3</a>
+                        <a href="sshAttackBii.html" class="nav-link" data-number="2">4</a>
+                        <a href="sshDefendA.html" class="nav-link" data-number="2">5</a>
+                        <a href="sshDefendB.html" class="nav-link" data-number="2">6</a>
+                        <a href="sshDefendC.html" class="nav-link" data-number="2">7</a>
+                        <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
+                    </div>
+
+                    <!-- Main Content/ Description of Scenario -->
+                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise C: Implement Fail2ban Intrusion
+                        Prevention Tool<span style="float: right; font-weight: normal; font-size:large;">Suggested
+                            Duration: 20 Minutes</span></h2>
+                    <div class="main-content">
+                        <div class="learning-objectives">
+                            <h2>Learning Objectives</h2>
+                            <ul>
+                                <li>Understand the use of Fail2ban as a defense mechanism against SSH brute force
+                                    attacks.</li>
+                                <li>Gain experience configuring Fail2ban to automatically detect and block suspicious
+                                    IPs.</li>
+                                <li>Learn to set up alerts and whitelist trusted IPs to enhance SSH security without
+                                    impacting trusted users.</li>
+                            </ul>
+                        </div>
+
+                        <div class="scenario">
+                            <h2>Example Scenario</h2>
+                            <p>The company’s SSH server has experienced multiple unauthorized login attempts originating
+                                from various IP addresses. To secure the server, you have been assigned to implement
+                                Fail2ban, an intrusion prevention tool that can automatically detect and block IPs
+                                showing suspicious behavior, such as repeated failed login attempts within a short
+                                period.</p>
+                        </div>
+
+                        <div class="question">
+                            <h2>Your task</h2>
+                            <p>Install and configure <code>Fail2ban</code> on the SSH server to monitor failed login
+                                attempts. Set it to ban any IP address with <code>3 failed login attempts</code> within
+                                a <code>1-minute period</code>. Set the <code>ban duration for 24 hours</code> to
+                                prevent persistent brute-force attacks. Further configurations can be added by yourself
+                                to enhance the security.</p>
+                        </div>
+                    </div>
+
+                    <!-- Submission Flag Area-->
+                    <div class="flag-container">
+                        <h2 class="flag-title">Try it out!</h2>
+
+                        <label
+                            style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">How
+                            these configuration settings needs to be set?</label>
+                        <div class="command-box">
+                            <pre><code style="color: var(--bs-code-color); word-wrap: break-word;">[sshd]<br>enabled = true<br>port = ssh<br>filter = sshd<br>logpath = /var/log/auth.log<br>maxretry = ???<br>bantime = ???<br>findtime = ???</code></pre>
+                        </div>
+                        <div class="input-group">
+                            <label>Changes to: </label>
+                            <label><code>maxretry = <input type="num" name="passwordAuth" id="ans1"></code></label>
+                            <label><code>bantime = <input type="num" name="passwordAuth" id="ans1"></code></label>
+                            <label><code>findtime = <input type="num" name="passwordAuth" id="ans1"></code></label>
+                        </div>
+
+
+                        <!-- Submit Button -->
+                        <button id="submitButton">Submit</button>
+
+                        <!-- Feedback Message -->
+                        <div id="feedback" class="feedback"></div>
+                    </div>
+
+
+
+
+                </div>
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; TARUMT Cyber Range 2023</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('openHintBox').addEventListener('click', function () {
+            document.getElementById('hintBox').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('layoutSidenav_nav').style.zIndex = '900'; // Temporarily lower z-index of sidebar
+        });
+
+        document.getElementById('closeHintBox').addEventListener('click', function () {
+            document.getElementById('hintBox').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
+        });
+
+        //Submission of flag
+        const correctUsername = "yiyangtan0519"; // Replace this with linking to database in future
+        const correctPassword = "abc123"; //Replace this with linking to database in future
+
+        document.getElementById('submitButton').addEventListener('click', function () {
+            const userFlag1 = document.getElementById('flagInput1').value;
+            const userFlag2 = document.getElementById('flagInput2').value;
+            const feedback = document.getElementById('feedback');
+
+            if (userFlag1 === correctUsername && userFlag2 === correctPassword) {
+                feedback.textContent = "Correct answer!";
+                feedback.className = "feedback correct";
+            } else {
+                feedback.textContent = "Flag is incorrect. Please try again.";
+                feedback.className = "feedback incorrect";
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+</body>
+
 </html>
