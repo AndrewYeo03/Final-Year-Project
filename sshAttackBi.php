@@ -149,6 +149,10 @@
                             <input type="text" id="flagInput1" placeholder="Enter username" style="width: 100%; padding: 8px;">
                             <label for="flagInput2">Enter Password:</label>
                             <input type="text" id="flagInput2" placeholder="Enter password" style="width: 100%; padding: 8px;">
+                            
+                            <label for="flagInput3">Enter Video Link:</label>
+                            <input type="text" id="flagInput3" placeholder="Enter video link" style="width: 100%; padding: 8px;">
+                            
                             <button id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
                             <div id="feedback" class="feedback"></div>
                         </div>

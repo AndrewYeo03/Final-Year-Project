@@ -154,6 +154,10 @@
                             <h2 class="flag-title">Submission of flag</h2>
                             <label for="flagInput1">Enter Passcode (Auto generate when configuring remote access success):</label>
                             <input type="text" id="flagInput1" placeholder="Enter passcode" style="width: 100%; padding: 8px;">
+
+                            <label for="flagInput2">Enter Video Link:</label>
+                            <input type="text" name="flagInput3" id="flagInput3" placeholder="Enter video link" style="width: 100%; padding: 8px;">
+
                             <button id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
                             <div id="feedback" class="feedback"></div>
                         </div>
