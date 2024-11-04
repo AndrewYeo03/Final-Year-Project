@@ -110,13 +110,13 @@
                         <!-- Nav Menu -->
                         <div class="nav-menu">
                             <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
-                            <a href="sshAttackAi.html" class="nav-link" data-number="1">1</a>
-                            <a href="sshAttackAii.html" class="nav-link" data-number="2">2</a>
-                            <a href="sshAttackBi.html" class="nav-link" data-number="2">3</a>
-                            <a href="sshAttackBii.html" class="nav-link" data-number="2">4</a>
-                            <a href="sshDefendA.html" class="nav-link" data-number="2">5</a>
-                            <a href="sshDefendB.html" class="nav-link" data-number="2">6</a>
-                            <a href="sshDefendC.html" class="nav-link" data-number="2">7</a>
+                            <a href="sshAttackAi.php" class="nav-link" data-number="1">1</a>
+                            <a href="sshAttackAii.php" class="nav-link" data-number="2">2</a>
+                            <a href="sshAttackBi.php" class="nav-link" data-number="2">3</a>
+                            <a href="sshAttackBii.php" class="nav-link" data-number="2">4</a>
+                            <a href="sshDefendA.php" class="nav-link" data-number="2">5</a>
+                            <a href="sshDefendB.php" class="nav-link" data-number="2">6</a>
+                            <a href="sshDefendC.php" class="nav-link" data-number="2">7</a>
                             <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
                         </div>
 

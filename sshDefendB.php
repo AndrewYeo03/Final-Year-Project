@@ -169,7 +169,7 @@
                     <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
                     <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item active">Defensive Exercise </li>
-                        <li class="breadcrumb-item active">Difficulty Level: Advanced</li>
+                        <li class="breadcrumb-item active">Difficulty Level: Beginner</li>
                     </ol>
                     <!-- Top nav bar -->
                     <div class="top-nav">
@@ -182,101 +182,85 @@
                     <div id="hintBox" class="hint-box">
                         <button id="closeHintBox" class="close-button">&times;</button>
                         <div class="hint-content">
-                            <p><strong>Install Fail2Ban:</strong></p>
-                            <p>Remember to update your packages and install fail2ban:</p>
-                            <pre><code>sudo apt update</code></pre>
-                            <pre><code>apt-get install fail2ban -y</code></pre>
-
-                            <p><strong>Create the Configuration File:</strong></p>
-                            <p>Instead of editing the default configuration <code>/etc/fail2ban/jail.conf</code>, create
-                                a local override file for customization. This way, updates won’t overwrite your changes:
-                            </p>
-                            <pre><code>sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local</code></pre>
-
-                            <p><strong>Enable Fail2ban to start on boot:</strong></p>
-                            <pre><code>sudo systemctl enable --now fail2ban </code></pre>
-
-                            <p>Check current status of the Fail2ban service:</p>
-                            <pre><code>sudo systemctl status -l fail2ban </code></pre>
-
-                            <p><strong>Configure and Edit SSH Jail Configuration:</strong></p>
-                            <p>Open the Fail2ban configuration file for SSH jail settings:</p>
-                            <pre><code>sudo nano /etc/fail2ban/jail.local</code></pre>
-
-                            <p><strong>Additional info:</strong></p>
-                            <p>Review the log file (monitoring Fail2ban's actions):</p>
-                            <pre><code>sudo tail -f /var/log/fail2ban.log</code></pre>
-                            <p>See if any IPs have been banned:</p>
-                            <pre><code>sudo fail2ban-client status sshd</code></pre>
-                            <p>Unblock a banned IP address:</p>
-                            <pre><code>sudo fail2ban-client unban &lt;ip_address&gt;</code></pre>
+                            <p><strong>Edit the SSH configuration file using your preferred text editor.</strong></p>
+                            <pre>For example, issue command <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">nano &lt;pathname&gt;</code></pre>
+                            <p><strong>Review the configuration settings in the SSH configuration file.</strong></p>
+                            <pre>Set a value for <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">MaxAuthTries</code></pre>
+                            <p><strong>Reload the SSH service to apply the changes</strong></p>
+                            <pre>For example, issue command <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">sudo systemctl reload ssh</code></pre>
                         </div>
                     </div>
 
                     <!-- Nav Menu -->
                     <div class="nav-menu">
                         <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
-                        <a href="sshAttackAi.html" class="nav-link" data-number="1">1</a>
-                        <a href="sshAttackAii.html" class="nav-link" data-number="2">2</a>
-                        <a href="sshAttackBi.html" class="nav-link" data-number="2">3</a>
-                        <a href="sshAttackBii.html" class="nav-link" data-number="2">4</a>
-                        <a href="sshDefendA.html" class="nav-link" data-number="2">5</a>
-                        <a href="sshDefendB.html" class="nav-link" data-number="2">6</a>
-                        <a href="sshDefendC.html" class="nav-link" data-number="2">7</a>
+                        <a href="sshAttackAi.php" class="nav-link" data-number="1">1</a>
+                        <a href="sshAttackAii.php" class="nav-link" data-number="2">2</a>
+                        <a href="sshAttackBi.php" class="nav-link" data-number="2">3</a>
+                        <a href="sshAttackBii.php" class="nav-link" data-number="2">4</a>
+                        <a href="sshDefendA.php" class="nav-link" data-number="2">5</a>
+                        <a href="sshDefendB.php" class="nav-link" data-number="2">6</a>
+                        <a href="sshDefendC.php" class="nav-link" data-number="2">7</a>
                         <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
                     </div>
 
                     <!-- Main Content/ Description of Scenario -->
-                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise C: Implement Fail2ban Intrusion
-                        Prevention Tool<span style="float: right; font-weight: normal; font-size:large;">Suggested
-                            Duration: 20 Minutes</span></h2>
+                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise B: Limit Maximum Number of SSH
+                        Authentication Attempts<span
+                            style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 10
+                            Minutes</span></h2>
                     <div class="main-content">
                         <div class="learning-objectives">
                             <h2>Learning Objectives</h2>
                             <ul>
-                                <li>Understand the use of Fail2ban as a defense mechanism against SSH brute force
-                                    attacks.</li>
-                                <li>Gain experience configuring Fail2ban to automatically detect and block suspicious
-                                    IPs.</li>
-                                <li>Learn to set up alerts and whitelist trusted IPs to enhance SSH security without
-                                    impacting trusted users.</li>
+                                <li>Understand the importance of limiting failed SSH authentication attempts to protect
+                                    against brute force attacks.</li>
+                                <li>Gain hands-on experience with configuring SSH server settings to prevent excessive
+                                    login attempts.</li>
+                                <li>Learn how to test and verify the effectiveness of authentication attempt limits.
+                                </li>
                             </ul>
                         </div>
 
                         <div class="scenario">
                             <h2>Example Scenario</h2>
-                            <p>The company’s SSH server has experienced multiple unauthorized login attempts originating
-                                from various IP addresses. To secure the server, you have been assigned to implement
-                                Fail2ban, an intrusion prevention tool that can automatically detect and block IPs
-                                showing suspicious behavior, such as repeated failed login attempts within a short
-                                period.</p>
+                            <p>As part of your role in securing an organization’s SSH server, you discover that there is
+                                no limit on the number of failed login attempts. This lack of restriction makes the
+                                server vulnerable to brute force attacks. To mitigate this risk, the organization wants
+                                the server to automatically terminate connections after a few failed login attempts.</p>
                         </div>
 
                         <div class="question">
                             <h2>Your task</h2>
-                            <p>Install and configure <code>Fail2ban</code> on the SSH server to monitor failed login
-                                attempts. Set it to ban any IP address with <code>3 failed login attempts</code> within
-                                a <code>1-minute period</code>. Set the <code>ban duration for 24 hours</code> to
-                                prevent persistent brute-force attacks. Further configurations can be added by yourself
-                                to enhance the security.</p>
+                            <p>Your task is to configure the SSH server to <code>limit failed login attempts</code> to a
+                                maximum of <code>3</code>. Remember to remove <code>#</code> if nessessary. Once
+                                configured, verify that the setting is effective by testing with multiple failed login
+                                attempts. This measure should reduce the risk of brute force attacks and unauthorized
+                                access.</p>
                         </div>
                     </div>
+
 
                     <!-- Submission Flag Area-->
                     <div class="flag-container">
                         <h2 class="flag-title">Try it out!</h2>
 
+                        <!-- SSH Configuration File Name -->
+                        <div class="input-group">
+                            <label for="flagInput1" style="font-size: 18px;">What is the SSH configuration file name to
+                                be edited?</label>
+                            <input type="text" id="flagInput1" placeholder="Enter pathname">
+                        </div>
+
                         <label
                             style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">How
-                            these configuration settings needs to be set?</label>
+                            this configuration setting needs to be set?</label>
                         <div class="command-box">
-                            <pre><code style="color: var(--bs-code-color); word-wrap: break-word;">[sshd]<br>enabled = true<br>port = ssh<br>filter = sshd<br>logpath = /var/log/auth.log<br>maxretry = ???<br>bantime = ???<br>findtime = ???</code></pre>
+                            <pre><code style="color: var(--bs-code-color); word-wrap: break-word;">#Authentication:<br>#LoginGraceTime 2m<br>#PermitRootLogin prohibit-password<br>#StrictModes yes<br>#MaxAuthTries ???<br>#MaxSessions 10</code></pre>
                         </div>
                         <div class="input-group">
                             <label>Changes to: </label>
-                            <label><code>maxretry = <input type="num" name="passwordAuth" id="ans1"></code></label>
-                            <label><code>bantime = <input type="num" name="passwordAuth" id="ans1"></code></label>
-                            <label><code>findtime = <input type="num" name="passwordAuth" id="ans1"></code></label>
+                            <label><code>MaxAuthTries <input type="num" name="passwordAuth" id="flagInput2"></code></label>
                         </div>
 
 
@@ -286,9 +270,6 @@
                         <!-- Feedback Message -->
                         <div id="feedback" class="feedback"></div>
                     </div>
-
-
-
 
                 </div>
             </main>

@@ -11,6 +11,79 @@
         <link href="css/styles.css" rel="stylesheet" />
         <link href="css/questionLayout.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+            .flag-container {
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                background-color: #f9f9f9;
+                font-family: Arial, sans-serif;
+            }
+        
+            .flag-title {
+                text-align: center;
+                color: #333;
+                margin-bottom: 20px;
+                font-weight: bold;
+            }
+        
+            .input-group {
+                margin-bottom: 15px;
+            }
+        
+            label {
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+                color: #555;
+            }
+        
+            input[type="text"] {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 16px;
+                box-sizing: border-box;
+            }
+        
+            /* Radio Button Styles */
+            input[type="radio"] {
+                margin-right: 5px;
+            }
+        
+            .input-group label {
+                display: inline-flex;
+                align-items: center;
+                margin-right: 20px;
+                color: #333;
+            }
+        
+            #submitButton {
+                width: 100%;
+                padding: 10px;
+                background-color: #4CAF50;
+                color: white;
+                font-size: 16px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+        
+            #submitButton:hover {
+                background-color: #45a049;
+            }
+        
+            .feedback {
+                margin-top: 15px;
+                text-align: center;
+                font-size: 14px;
+                color: #d9534f; /* Optional: red color for error messages */
+            }
+        </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -73,7 +146,7 @@
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Offensive Exercise </li>
+                            <li class="breadcrumb-item active">Defensive Exercise </li>
                             <li class="breadcrumb-item active">Difficulty Level: Beginner</li>
                         </ol>
                         <!-- Top nav bar -->
@@ -87,62 +160,74 @@
                         <div id="hintBox" class="hint-box">
                             <button id="closeHintBox" class="close-button">&times;</button>
                             <div class="hint-content">
-                                <p><strong>Use Nmap to Identify Targets:</strong></p>
-                                <p>Start by scanning your network to identify which hosts have port 22 (SSH) open.<br>
-                                For example, use the following command to discover active hosts with SSH open:</p>
-                                <pre><code>nmap &lt;network_address&gt; -p 22 --open</code></pre>
-                                <p><strong>Make Use of Possible Username and Password Lists:</strong></p>
-                                <p>Utilize the provided lists of potential usernames and passwords to use for brute force attacks.<br>
-                                Example commands:</p>
-                                <pre><code>cat > users.txt</code></pre>
-                                <pre><code>cat > passwords.txt</code></pre>
-                                <p><strong>If using Metasploit Framework:</strong></p>
-                                <p>Once in the Metasploit console, load the SSH login module:</p>
-                                <pre><code>use auxiliary/scanner/ssh/ssh_login</code></pre>
+                                <p><strong>Edit the SSH configuration file using your preferred text editor.</strong></p>
+                                <pre>For example, issue command <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">nano &lt;pathname&gt;</code></pre>
+                                <p><strong>Review the configuration settings in the SSH configuration file.</strong></p>
+                                <pre>Change the value of <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">PasswordAuthentication</code></pre>
+                                <p><strong>Reload the SSH service to apply the changes</strong></p>
+                                <pre>For example, issue command <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">sudo systemctl reload ssh</code></pre>
                             </div>
                         </div>
 
                         <!-- Nav Menu -->
                         <div class="nav-menu">
                             <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
-                            <a href="sshAttackAi.html" class="nav-link" data-number="1">1</a>
-                            <a href="sshAttackAii.html" class="nav-link" data-number="2">2</a>
-                            <a href="sshAttackBi.html" class="nav-link" data-number="2">3</a>
-                            <a href="sshAttackBii.html" class="nav-link" data-number="2">4</a>
-                            <a href="sshDefendA.html" class="nav-link" data-number="2">5</a>
-                            <a href="sshDefendB.html" class="nav-link" data-number="2">6</a>
-                            <a href="sshDefendC.html" class="nav-link" data-number="2">7</a>
+                            <a href="sshAttackAi.php" class="nav-link" data-number="1">1</a>
+                            <a href="sshAttackAii.php" class="nav-link" data-number="2">2</a>
+                            <a href="sshAttackBi.php" class="nav-link" data-number="2">3</a>
+                            <a href="sshAttackBii.php" class="nav-link" data-number="2">4</a>
+                            <a href="sshDefendA.php" class="nav-link" data-number="2">5</a>
+                            <a href="sshDefendB.php" class="nav-link" data-number="2">6</a>
+                            <a href="sshDefendC.php" class="nav-link" data-number="2">7</a>
                             <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
                         </div>
 
                         <!-- Main Content/ Description of Scenario -->
-                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise A (i): Brute forcing SSH Using Command-line Tools<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
+                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise A: Disable SSH Password Authentication<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 10 Minutes</span></h2>
                         <div class="main-content">
                             <div class="learning-objectives">
                                 <h2>Learning Objectives</h2>
                                 <ul>
-                                    <li>Understand the basics of SSH brute force attacks.</li>
-                                    <li>Gain experience with different SSH brute force tools like Metasploit, Hydra, Patator, and Medusa.</li>
-                                    <li>Learn how to configure and execute manual SSH brute force attack with commands.</li>
-                                    <li>Understand the implications of SSH vulnerabilities on system security.</li>
+                                    <li>Understand the benefits of SSH key-based authentication over password-based methods.</li>
+                                    <li>Learn how to modify SSH server configurations to enforce key-based access.</li>
+                                    <li>Gain hands-on experience with securing an SSH server against brute force attacks.</li>
                                 </ul>
                             </div>
 
+                            <div class="scenario">
+                                <h2>Example Scenario</h2>
+                                <p>You are a security consultant hired by a company concerned about the security of their SSH server. During your security audit, you discover that the server allows password-based authentication, which is vulnerable to brute force attacks. The company has asked you to implement key-based authentication to strengthen server security.</p>
+                            </div>
+
                             <div class="question">
-                                <h2>Question</h2>
-                                <p>In this exercise, you are required to <code>conduct a brute force attack</code> on an SSH server using manual input command. You can utilize tools such as <code>Hydra</code> and <code>Metasploit</code> to gain unauthorized access to the target machine. Your objective is to explore the process of brute forcing by identifying valid credentials and establishing access. After you brute force successful, submit your results here!</p>
+                                <h2>Your task</h2>
+                                <p>Your task is to secure the SSH server by <code>disabling password-based authentication</code>. This requires you to modify the SSH configuration file to ensure that only users with a valid SSH key pair can log in. After making these changes, confirm that password-based login is disabled and that key-based login works as expected. Remember to remove <code>#</code> if nessessary.</p>
                             </div>
                         </div>
 
 
                         <!-- Submission Flag Area-->
                         <div class="flag-container">
-                            <h2 class="flag-title">Submission of flag</h2>
-                            <label for="flagInput1">Enter Username:</label>
-                            <input type="text" id="flagInput1" placeholder="Enter username" style="width: 100%; padding: 8px;">
-                            <label for="flagInput2">Enter Password:</label>
-                            <input type="text" id="flagInput2" placeholder="Enter password" style="width: 100%; padding: 8px;">
-                            <button id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
+                            <h2 class="flag-title">Try it out!</h2>
+                        
+                            <!-- SSH Configuration File Name -->
+                            <div class="input-group">
+                                <label for="flagInput1" style="font-size: 18px;">What is the SSH configuration file name to be edited?</label>
+                                <input type="text" id="flagInput1" placeholder="Enter pathname">
+                            </div>
+                        
+                            <label style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">How this configuration settings needs to be set?</label>
+                            <!-- Password Authentication Options -->
+                            <div class="input-group">
+                                <label><code>PasswordAuthentication:</code></label>
+                                <label><input type="radio" name="passwordAuth" id="flagInput2"> Yes</label>
+                                <label><input type="radio" name="passwordAuth" id="flagInput3"> No</label>
+                            </div>
+                        
+                            <!-- Submit Button -->
+                            <button id="submitButton">Submit</button>
+                            
+                            <!-- Feedback Message -->
                             <div id="feedback" class="feedback"></div>
                         </div>
 
@@ -163,7 +248,7 @@
             </div>
         </div>
 
-        <script>    
+        <script>
             document.getElementById('openHintBox').addEventListener('click', function() {
                 document.getElementById('hintBox').style.display = 'block';
                 document.getElementById('overlay').style.display = 'block';

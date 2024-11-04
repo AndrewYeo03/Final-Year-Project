@@ -27,13 +27,13 @@ window.addEventListener('DOMContentLoaded', event => {
 
 // Array of page links in sequence
 const pages = [
-    "sshAttackAi.html",
-    "sshAttackAii.html",
-    "sshAttackBi.html",
-    "sshAttackBii.html",
-    "sshDefendA.html",
-    "sshDefendB.html",
-    "sshDefendC.html"
+    "sshAttackAi.php",
+    "sshAttackAii.php",
+    "sshAttackBi.php",
+    "sshAttackBii.php",
+    "sshDefendA.php",
+    "sshDefendB.php",
+    "sshDefendC.php"
 ];
 
 // Get the current page URL
