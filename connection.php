@@ -1,9 +1,8 @@
 <?php
-// Database connection details
 $servername = "localhost";
-$username = "root"; // Your database username
-$password = ""; // Your database password
-$dbname = "cyberrange"; // Your database name
+$username = "root";
+$password = ""; 
+$dbname = "cyberrange"; 
 
 // Create a new MySQLi connection
 $conn = new mysqli($servername, $username, $password, $dbname);

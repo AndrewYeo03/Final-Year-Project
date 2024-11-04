@@ -1,3 +1,62 @@
+<?php
+session_start(); // Start the session
+include 'connection.php';
+
+// List of exercise pages
+$exercises = [
+    "sshAttackAi.php",        // Exercise 1
+    "sshAttackAii.php", // Exercise 2
+    "sshAttackBi.php",  // Exercise 3
+    "sshAttackBii.php", // Exercise 4
+    "sshDefendA.php",   // Exercise 5
+    "sshDefendB.php",   // Exercise 6
+    "sshDefendC.php"    // Exercise 7
+];
+
+// Initialize the current exercise if not set
+if (!isset($_SESSION['current_exercise'])) {
+    $_SESSION['current_exercise'] = 0; // Start from the first exercise
+}
+
+// Current exercise index
+$current_exercise_index = $_SESSION['current_exercise'];
+
+
+// Initialize error message variable
+$error_message = '';
+
+// Check if the form has been submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get user inputs
+    $user_input1 = $_POST['flagInput1'];
+    $user_input2 = $_POST['flagInput2'];
+
+    // Prepare SQL query to fetch flags from the database
+    $sql = "SELECT flag_value FROM flag WHERE flag_id IN ('fOA1', 'fOA2')";
+    $result = $conn->query($sql);
+
+    // Initialize an associative array to store flag values
+    $flags = [];
+
+    // Fetch the flag values from the database
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            // Store flag values in the array
+            $flags[] = $row['flag_value'];
+        }
+    }
+
+    // Compare user inputs with the flags from the database
+    if ($user_input1 === $flags[0] && $user_input2 === $flags[1]) {
+        // Flags match, navigate to submitVideoLink.php
+        header("Location: submitVideoLink.php");
+        exit();
+    } else {
+        // Flags do not match, set an error message
+        $error_message = "Flags are incorrect. Please try again.";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -144,18 +203,19 @@
 
                         <!-- Submission Flag Area-->
                         <div class="flag-container">
-                            <h2 class="flag-title">Submission of flag</h2>
+                        <h2 class="flag-title">Submission of flag</h2>
+                        <form method="POST" action="sshAttackBi.php">
                             <label for="flagInput1">Enter Username:</label>
-                            <input type="text" id="flagInput1" placeholder="Enter username" style="width: 100%; padding: 8px;">
+                            <input type="text" name="flagInput1" id="flagInput1" placeholder="Enter username" style="width: 100%; padding: 8px;">
+
                             <label for="flagInput2">Enter Password:</label>
-                            <input type="text" id="flagInput2" placeholder="Enter password" style="width: 100%; padding: 8px;">
-                            
-                            <label for="flagInput3">Enter Video Link:</label>
-                            <input type="text" id="flagInput3" placeholder="Enter video link" style="width: 100%; padding: 8px;">
-                            
-                            <button id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
-                            <div id="feedback" class="feedback"></div>
-                        </div>
+                            <input type="text" name="flagInput2" id="flagInput2" placeholder="Enter password" style="width: 100%; padding: 8px;">
+                            <button type="submit" id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
+                        </form><br>
+                        <?php if (!empty($error_message)): ?>
+            <p style="color: red;"><?php echo $error_message; ?></p>
+        <?php endif; ?>
+                    </div>
 
                     </div>
                 </main>
@@ -185,24 +245,6 @@
                 document.getElementById('hintBox').style.display = 'none';
                 document.getElementById('overlay').style.display = 'none';
                 document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
-            });
-
-            //Submission of flag
-            const correctUsername = "yiyangtan0519"; // Replace this with linking to database in future
-            const correctPassword = "abc123"; //Replace this with linking to database in future
-
-            document.getElementById('submitButton').addEventListener('click', function() {
-                const userFlag1 = document.getElementById('flagInput1').value;
-                const userFlag2 = document.getElementById('flagInput2').value;
-                const feedback = document.getElementById('feedback');
-
-                if (userFlag1 === correctUsername && userFlag2 === correctPassword) {
-                    feedback.textContent = "Correct answer!";
-                    feedback.className = "feedback correct";
-                } else {
-                    feedback.textContent = "Flag is incorrect. Please try again.";
-                    feedback.className = "feedback incorrect";
-                }
             });
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
