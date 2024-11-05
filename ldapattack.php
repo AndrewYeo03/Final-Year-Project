@@ -1,5 +1,5 @@
 <?php
-session_start(); // Start the session
+session_start();
 include 'connection.php';
 
 // Initialize error message variable
@@ -7,35 +7,63 @@ $error_message = '';
 
 // Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get user inputs
-    $user_input1 = $_POST['flagInput1'];
-    $user_input2 = $_POST['flagInput2'];
+    // Check if the flag only field is submitted
+    if (!empty($_POST['flagOnlyInput'])) {
+        // Process flag-only submission
+        $flagOnlyInput = trim($_POST['flagOnlyInput']);
 
-    // Prepare SQL query to fetch flags from the database
-    $sql = "SELECT flag_value FROM flag WHERE flag_id IN ('fldapOA')";
-    $result = $conn->query($sql);
+        // SQL query to fetch the specific flag for the 'flag only' option
+        $sql = "SELECT flag_value FROM flag WHERE flag_id = 'fldapOB'";
+        $result = $conn->query($sql);
 
-    // Initialize an associative array to store flag values
-    $flags = [];
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $flagValue = trim($row['flag_value']);
 
-    // Fetch the flag values from the database
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            // Store flag values in the array
-            $flags[] = $row['flag_value'];
+            if ($flagOnlyInput === $flagValue) {
+                // Flag matches, navigate to submitVideoLink.php
+                header("Location: submitVideoLink.php");
+                exit();
+            } else {
+                $error_message = "Flag is incorrect. Please try again.";
+            }
+        } else {
+            $error_message = "Flag not found in the database.";
         }
     }
+    // Check if username and password fields are submitted
+    elseif (!empty($_POST['flagInput1']) && !empty($_POST['flagInput2'])) {
+        $user_input1 = trim($_POST['flagInput1']);
+        $user_input2 = trim($_POST['flagInput2']);
 
-    // Compare user inputs with the flags from the database
-    if ($user_input1 === $flags[0] && $user_input2 === $flags[1]) {
-        // Flags match, navigate to submitVideoLink.php
-        header("Location: submitVideoLink.php");
-        exit();
+        // Prepare SQL query to fetch username and password flags
+        $sql = "SELECT flag_id, flag_value FROM flag WHERE flag_id IN ('fldapOA1', 'fldapOA2') ORDER BY flag_id";
+        $result = $conn->query($sql);
+
+        $flags = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $flags[$row['flag_id']] = trim($row['flag_value']);
+            }
+        }
+
+        // Validate username and password flags
+        if (isset($flags['fldapOA1']) && isset($flags['fldapOA2'])) {
+            if ($user_input1 === $flags['fldapOA1'] && $user_input2 === $flags['fldapOA2']) {
+                header("Location: submitVideoLink.php");
+                exit();
+            } else {
+                $error_message = "Username or password is incorrect. Please try again.";
+            }
+        } else {
+            $error_message = "Username and password flags not found in the database.";
+        }
     } else {
-        // Flags do not match, set an error message
-        $error_message = "Flags are incorrect. Please try again.";
+        $error_message = "Please fill out either the username and password or the flag.";
     }
 }
+?>
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -159,7 +187,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
 
-                    <!-- Submission Flag Area-->
                     <div class="flag-container">
                         <h2 class="flag-title">Submission of Flag</h2>
 
@@ -172,7 +199,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <span id="toggleLabel">Submit Username/Password</span>
                         </div>
 
-                        <form method="POST" action="sshAttackAi.php">
+                        <form method="POST" action="ldapattack.php">
                             <!-- Username and Password Input Fields -->
                             <div id="usernamePasswordFields">
                                 <label for="flagInput1">Enter Username:</label>
@@ -204,6 +231,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             document.getElementById('toggleLabel').innerText = isFlagOnly ? 'Submit Flag Only' : 'Submit Username/Password';
                         }
                     </script>
+
 
                 </div>
             </main>
