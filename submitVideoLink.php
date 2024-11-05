@@ -1,24 +1,20 @@
 <?php
-session_start(); // Start the session
+session_start();
 
-// Check if the user has submitted the video link
+// Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get the video link from the form
     $videoLink = $_POST['videoLink'];
 
-    // Here you might want to save the video link to the database or perform other operations
-
-    // Increment the current exercise session variable
+    // Increment the current exercise index if not completed
     if (!isset($_SESSION['current_exercise'])) {
-        $_SESSION['current_exercise'] = 0; // Initialize if not set
+        $_SESSION['current_exercise'] = 0;
+    } else {
+        $_SESSION['current_exercise']++;
     }
 
-    // Increment after successful submission
-    $_SESSION['current_exercise']++;
-
-    // List of exercise pages
+    // List of exercises
     $exercises = [
-        "sshAttackAi.php",        // Exercise 1
+        "sshAttackAi.php",  // Exercise 1
         "sshAttackAii.php", // Exercise 2
         "sshAttackBi.php",  // Exercise 3
         "sshAttackBii.php", // Exercise 4
@@ -27,13 +23,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         "sshDefendC.php"    // Exercise 7
     ];
 
-    // Check if the next exercise exists
-    if (isset($exercises[$_SESSION['current_exercise']])) {
-        // Redirect to the next exercise
+    // Redirect to next exercise if it exists
+    if ($_SESSION['current_exercise'] < count($exercises)) {
         header("Location: " . $exercises[$_SESSION['current_exercise']]);
         exit();
     } else {
-        // If there are no more exercises, you can display a completion message
         echo "<h1>All exercises completed!</h1>";
     }
 }

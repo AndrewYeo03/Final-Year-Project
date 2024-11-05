@@ -1,7 +1,5 @@
 <?php
 session_start(); // Start the session
-
-// Include the database connection
 include 'connection.php';
 
 // Initialize error message variable
@@ -41,37 +39,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Exploitation of SSH (Secure Shell) Protocol - TARUMT Cyber Range</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-    <link href="css/styles.css" rel="stylesheet" />
-    <link href="css/questionLayout.css" rel="stylesheet" />
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-</head>
-
 <body class="sb-nav-fixed">
-    <!-- Submission Flag Area-->
-    <div class="flag-container">
-        <h2 class="flag-title">Submission of flag</h2>
-        <form method="POST" action="">
-            <label for="flagInput1">Enter Username:</label>
-            <input type="text" name="flagInput1" id="flagInput1" placeholder="Enter username" style="width: 100%; padding: 8px;">
 
-            <label for="flagInput2">Enter Password:</label>
-            <input type="text" name="flagInput2" id="flagInput2" placeholder="Enter password" style="width: 100%; padding: 8px;">
-            <button type="submit" id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
-        </form>
-        <?php if (!empty($error)): ?>
-            <p style="color: red;"><?php echo $error; ?></p>
+                    <!-- Submission Flag Area-->
+                    <div class="flag-container">
+                        <h2 class="flag-title">Submission of flag</h2>
+                        <form method="POST" action="sshAttackAi.php">
+                            <label for="flagInput1">Enter Username:</label>
+                            <input type="text" name="flagInput1" id="flagInput1" placeholder="Enter username" style="width: 100%; padding: 8px;">
+
+                            <label for="flagInput2">Enter Password:</label>
+                            <input type="text" name="flagInput2" id="flagInput2" placeholder="Enter password" style="width: 100%; padding: 8px;">
+                            <button type="submit" id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
+                        </form><br>
+                        <?php if (!empty($error_message)): ?>
+            <p style="color: red;"><?php echo $error_message; ?></p>
         <?php endif; ?>
-    </div>
+        </div>
     </div>
 </body>
-
 </html>

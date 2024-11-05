@@ -28,10 +28,10 @@ $error_message = '';
 // Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get user inputs
-    $user_input1 = $_POST['flagInput1'];
+    $user_input1 = $_POST['passcode'];
 
     // Prepare SQL query to fetch flags from the database
-    $sql = "SELECT flag_value FROM flag WHERE flag_id IN ('fOA1')";
+    $sql = "SELECT flag_value FROM flag WHERE flag_id IN ('fOA3')";
     $result = $conn->query($sql);
 
     // Initialize an associative array to store flag values
@@ -55,7 +55,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error_message = "Flags are incorrect. Please try again.";
     }
 }
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -211,7 +212,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <h2 class="flag-title">Submission of flag</h2>
                             <form method="POST" action="sshAttackAii.php">
                             <label for="flagInput1">Enter Passcode (Auto generate when configuring remote access success):</label>
-                            <input type="text" id="flagInput1" placeholder="Enter passcode" style="width: 100%; padding: 8px;">
+                            <input type="text" name="passcode" id="flagInput1" placeholder="Enter passcode" style="width: 100%; padding: 8px;">
                             <button id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
                             </form><br>
                         <?php if (!empty($error_message)): ?>
