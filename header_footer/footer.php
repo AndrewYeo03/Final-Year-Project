@@ -12,13 +12,44 @@
         </div>
     </div>
 </footer>
+
+<style>
+    #layoutSidenav {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+    }
+    #layoutSidenav_content {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+    }
+    footer {
+        flex-shrink: 0;
+    }
+    #layoutSidenav .sb-sidenav {
+        width: 240px;
+        transition: width 0.3s;
+    }
+    #layoutSidenav .sb-sidenav.collapsed {
+        width: 58px;
+    }
+    #layoutSidenav_content {
+        margin-left: 240px;
+        transition: margin-left 0.3s;
+    }
+    #layoutSidenav .sb-sidenav.collapsed + #layoutSidenav_content {
+        margin-left: 58px;
+    }
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="../js/scripts.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-<script src="assets/demo/chart-area-demo.js"></script>
-<script src="assets/demo/chart-bar-demo.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-<script src="../js/datatables-simple-demo.js"></script>
+<script>
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+        const sidebar = document.querySelector('.sb-sidenav');
+        sidebar.classList.toggle('collapsed');
+    });
+</script>
 </body>
-
 </html>

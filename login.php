@@ -14,14 +14,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $user = $result->fetch_assoc();
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role_id'] = $user['role_id'];
+        $_SESSION['username'] = $user['username'];
 
         // Redirect by role
         if ($user['role_id'] == 1) {
-            header("Location: student_dashboard.php");
+            header("Location: student-dashboard/student_dashboard.php");
         } elseif ($user['role_id'] == 2) {
-            header("Location: instructor_dashboard.php");
+            header("Location: instructor-dashboard/instructor_dashboard.php");
         } elseif ($user['role_id'] == 3) {
-            header("Location: admin_dashboard.php");
+            header("Location: admin-dashboard/admin_dashboard.php");
         }
     } else {
         echo "<div class='error'>Login failed, email or password is incorrect</div>";

@@ -4,38 +4,47 @@ include('connection.php');
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = strtoupper($_POST['username']);
     $email = $_POST['email'];
-    $password = md5($_POST['password']);
-    $class = strtoupper($_POST['class']);  // Programme & Tutorial Group
-    $student_id = strtoupper($_POST['student_id']);  // Student ID
-    $role_id = 1; // Fixed as student role
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+    $class = strtoupper($_POST['class']);
+    $student_id = strtoupper($_POST['student_id']);
+    $role_id = 1;
 
-    // Check if the mailbox already exists
-    $checkEmail = "SELECT * FROM users WHERE email = '$email'";
-    $result = $conn->query($checkEmail);
-
-    if ($result->num_rows > 0) {
-        echo "This email has been registered";
+    // Password validation
+    if (strlen($password) < 6) {
+        echo "<div class='error'>Password must be at least 6 characters long</div>";
+    } elseif ($password !== $confirm_password) {
+        echo "<div class='error'>Passwords do not match</div>";
     } else {
-        // Insert user information
-        $sql = "INSERT INTO users (username, email, password, role_id) VALUES ('$username', '$email', '$password', '$role_id')";
+        $password_hashed = md5($password);
 
-        if ($conn->query($sql) === TRUE) {
-            $user_id = $conn->insert_id; // Get the ID of the newly inserted user
+        // Check if the email already exists
+        $checkEmail = "SELECT * FROM users WHERE email = '$email'";
+        $result = $conn->query($checkEmail);
 
-            // Insert student information
-            $sqlStudent = "INSERT INTO students (user_id, student_id, class) VALUES ('$user_id', '$student_id', '$class')";
-
-            if ($conn->query($sqlStudent) === TRUE) {
-                // Display success message and show JavaScript popup
-                echo "<script>
-                        alert('Student registration successful');
-                        window.location.href = 'login.php'; 
-                      </script>";
-            } else {
-                echo "<div class='error'>Failed to register student information: " . $conn->error . "</div>";
-            }
+        if ($result->num_rows > 0) {
+            echo "This email has been registered";
         } else {
-            echo "<div class='error'>Registration failed: " . $conn->error . "</div>";
+            // Insert user information
+            $sql = "INSERT INTO users (username, email, password, role_id) VALUES ('$username', '$email', '$password_hashed', '$role_id')";
+
+            if ($conn->query($sql) === TRUE) {
+                $user_id = $conn->insert_id;
+
+                // Insert student information
+                $sqlStudent = "INSERT INTO students (user_id, student_id, class) VALUES ('$user_id', '$student_id', '$class')";
+
+                if ($conn->query($sqlStudent) === TRUE) {
+                    echo "<script>
+                            alert('Student registration successful');
+                            window.location.href = 'login.php'; 
+                          </script>";
+                } else {
+                    echo "<div class='error'>Failed to register student information: " . $conn->error . "</div>";
+                }
+            } else {
+                echo "<div class='error'>Registration failed: " . $conn->error . "</div>";
+            }
         }
     }
 }
@@ -48,6 +57,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Registration</title>
     <link rel="stylesheet" href="css/register.css"> 
+    <script>
+        function validateForm() {
+            const password = document.querySelector('input[name="password"]').value;
+            const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+
+            if (password.length < 6) {
+                alert("Password must be at least 6 characters long");
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
 
@@ -63,6 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <label for="password">Password:</label><br>
             <input type="password" name="password" required><br><br>
+
+            <label for="confirm_password">Confirm Password:</label><br>
+            <input type="password" name="confirm_password" required><br><br>
 
             <label for="student_id">Student ID:</label><br>
             <input type="text" name="student_id" placeholder="12WMR12345" required><br><br>

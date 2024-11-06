@@ -1,9 +1,36 @@
 <?php
 session_start();
+include 'connection.php';
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $videoLink = $_POST['videoLink'];
+
+    $user_id = $_SESSION['user_id'];
+
+    
+    $sql = "SELECT student_id FROM students WHERE user_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+ 
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $student_id = $row['student_id'];
+        
+        $sql = "INSERT INTO video (student_id, video_link) VALUES (?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("is", $student_id, $videoLink);
+        
+        if ($stmt->execute()) {
+            echo "<script>alert('Video link submitted successfully!');</script>";
+        } else {
+            echo "<script>alert('Error submitting video link: " . $conn->error . "');</script>";
+        }
+    } else {
+        echo "<script>alert('Student not found!');</script>";
+    }
 
     // Increment the current exercise index if not completed
     if (!isset($_SESSION['current_exercise'])) {
