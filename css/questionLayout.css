@@ -206,6 +206,29 @@ pre {
     color: #333;
 }
 
+/* vncTitle Header */
+.vncTitle h2 {
+    color: #eb4123;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+    font-size: 28px;
+    font-weight: bold;
+    border-bottom: 2px solid #eb4123;
+    padding-bottom: 8px;
+}
+
+/* Scenario Paragraph */
+.vncTitle p {
+    font-size: 17px;
+    line-height: 1.8;
+    font-family: 'Arial', sans-serif;
+    text-align: justify;
+    padding-left: 25px;
+    padding-right: 25px;
+    color: #333;
+}
 
 
 /* Submission Area */
@@ -313,4 +336,74 @@ input:checked+.slider {
 
 input:checked+.slider:before {
     transform: translateX(30px);
+}
+
+/* VNC controls container to center buttons */
+.vnc-controls-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.vnc-controls {
+    display: flex;
+    justify-content: center;
+}
+
+.vnc-btn {
+    text-decoration: none;
+    padding: 12px 25px;
+    font-size: 18px;
+    border-radius: 5px;
+    margin: 5px 10px 20px 10px;
+    display: inline-block;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* Start VNC button style */
+.vnc-start {
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+
+/* Stop VNC button style */
+.vnc-stop {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+}
+
+/* Button hover effects */
+.vnc-btn:hover {
+    transform: scale(1.05);
+    color:#130901
+}
+
+.vnc-start:hover {
+    background-color: #218838;
+}
+
+.vnc-stop:hover {
+    background-color: #c82333;
+}
+
+/* VNC iframe container to center it */
+.iframe-container {
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    width: 100%; /* Take full width of the parent container */
+    max-width: 900px;  /* Optional: Limit max width of the iframe container */
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* iframe styling */
+iframe {
+    width: 100%;   /* Makes iframe responsive to container width */
+    padding-left: 10%;
+    padding-right: 10%;
 }

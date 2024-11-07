@@ -206,6 +206,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <h2>Question</h2>
                             <p>In this exercise, you are required to <code>conduct a brute force attack</code> on an SSH server using manual input command. You can utilize tools such as <code>Hydra</code> and <code>Metasploit</code> to gain unauthorized access to the target machine. Your objective is to explore the process of brute forcing by identifying valid credentials and establishing access. After you brute force successful, submit your results here!</p>
                         </div>
+                        <div class="vncTitle">
+                            <h2 class="scenario-title">Let's Try Using This Virtual Machine Here!</h2>
+
+                            <!-- Button Controls -->
+                            <div class="vnc-controls">
+                                <a href="sshAttackAi.php?action=start" class="vnc-btn vnc-start">Start VNC Server</a>
+                                <a href="sshAttackAi.php?action=stop" class="vnc-btn vnc-stop">Stop VNC Server</a>
+                            </div>
+
+                            <!-- VNC Viewer iframe -->
+                            <iframe src="http://192.168.43.130:6080/vnc.html?host=192.168.43.130&port=6080"
+                                width="800" height="600"
+                                frameborder="0" allow="fullscreen">
+                            </iframe>
+                        </div>
                     </div>
 
 
@@ -221,8 +236,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <button type="submit" id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
                         </form><br>
                         <?php if (!empty($error_message)): ?>
-            <p style="color: red;"><?php echo $error_message; ?></p>
-        <?php endif; ?>
+                            <p style="color: red;"><?php echo $error_message; ?></p>
+                        <?php endif; ?>
                     </div>
 
                 </div>

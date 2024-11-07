@@ -318,24 +318,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
         });
-
-        //Submission of flag
-        const correctUsername = "yiyangtan0519"; // Replace this with linking to database in future
-        const correctPassword = "abc123"; //Replace this with linking to database in future
-
-        document.getElementById('submitButton').addEventListener('click', function() {
-            const userFlag1 = document.getElementById('flagInput1').value;
-            const userFlag2 = document.getElementById('flagInput2').value;
-            const feedback = document.getElementById('feedback');
-
-            if (userFlag1 === correctUsername && userFlag2 === correctPassword) {
-                feedback.textContent = "Correct answer!";
-                feedback.className = "feedback correct";
-            } else {
-                feedback.textContent = "Flag is incorrect. Please try again.";
-                feedback.className = "feedback incorrect";
-            }
-        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
