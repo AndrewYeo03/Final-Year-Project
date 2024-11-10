@@ -2,6 +2,20 @@
 session_start();
 include 'connection.php';
 
+// List of exercise pages
+$exercises = [
+    "ldapattacka.php",        // Exercise 1
+    "ldapattackb.php", // Exercise 2
+];
+
+// Initialize the current exercise if not set
+if (!isset($_SESSION['current_exercise'])) {
+    $_SESSION['current_exercise'] = 0; // Start from the first exercise
+}
+
+// Current exercise index
+$current_exercise_index = $_SESSION['current_exercise'];
+
 // Initialize error message variable
 $error_message = '';
 
@@ -13,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $flagOnlyInput = trim($_POST['flagOnlyInput']);
 
         // SQL query to fetch the specific flag for the 'flag only' option
-        $sql = "SELECT flag_value FROM flag WHERE flag_id = 'fldapOB'";
+        $sql = "SELECT flag_value FROM flag WHERE flag_id = 'fldapOC'";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
@@ -29,34 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         } else {
             $error_message = "Flag not found in the database.";
-        }
-    }
-    // Check if username and password fields are submitted
-    elseif (!empty($_POST['flagInput1']) && !empty($_POST['flagInput2'])) {
-        $user_input1 = trim($_POST['flagInput1']);
-        $user_input2 = trim($_POST['flagInput2']);
-
-        // Prepare SQL query to fetch username and password flags
-        $sql = "SELECT flag_id, flag_value FROM flag WHERE flag_id IN ('fldapOA1', 'fldapOA2') ORDER BY flag_id";
-        $result = $conn->query($sql);
-
-        $flags = [];
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $flags[$row['flag_id']] = trim($row['flag_value']);
-            }
-        }
-
-        // Validate username and password flags
-        if (isset($flags['fldapOA1']) && isset($flags['fldapOA2'])) {
-            if ($user_input1 === $flags['fldapOA1'] && $user_input2 === $flags['fldapOA2']) {
-                header("Location: submitVideoLink.php");
-                exit();
-            } else {
-                $error_message = "Username or password is incorrect. Please try again.";
-            }
-        } else {
-            $error_message = "Username and password flags not found in the database.";
         }
     } else {
         $error_message = "Please fill out either the username and password or the flag.";
@@ -145,7 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <h1 class="mt-4">Exploitation of Lightweight Directory Access Protocol (LDAP) Protocol</h1>
                     <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item active">Offensive Exercise </li>
-                        <li class="breadcrumb-item active">Difficulty Level: Beginner</li>
+                        <li class="breadcrumb-item active">Difficulty Level: Intermediate</li>
                     </ol>
                     <!-- Top nav bar -->
                     <div class="top-nav">
@@ -158,63 +144,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div id="hintBox" class="hint-box">
                         <button id="closeHintBox" class="close-button">&times;</button>
                         <div class="hint-content">
-                            <p><strong>Identify the interface used by LDAP: </strong></p>
-                            <p>Pay attention to the network interface you select in Wireshark to capture the correct traffic</p>
-                            <p><strong>Explore LDAP commands: </strong></p>
-                            <p>Remember that LDAP queries can be made using simple command-line tools</p>
-                            <pre><code>- man ldapsearch</code></pre>
+                            <p><strong>Identify the source IP address of the LDAP Client</strong></p>
+                            <p>Check again the packet you captured in Wireshark</p>
+                            <p><strong>Change the IP address of Kali Linux into the same as the LDAP Client</strong></p>
+                            <p>If the LDAP Client can connect to the Server, why not try the same IP? Try using ip addr command to temporary add a IP address</p>
+                            <pre><code>- ip addr add [ip-address] dev [interface-name]</code></pre>
                         </div>
                     </div>
 
+                    <!-- Nav Menu -->
+                    <div class="nav-menu">
+                        <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                        <a href="ldapattacka.php" class="nav-link" data-number="1">1</a>
+                        <a href="ldapattackb.php" class="nav-link" data-number="2">2</a>
+                        <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
+                    </div>
+
                     <!-- Main Content/ Description of Scenario -->
-                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise A : LDAP Injection on a LDAP Server<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
+                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise B : LDAP Injection on a LDAP Server with Simple Firewall<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
                     <div class="main-content">
                         <div class="learning-objectives">
                             <h2>Learning Objectives</h2>
                             <ul>
-                                <li>Understand the risks associated with unencrypted LDAP traffic</li>
-                                <li>Learn how to capture and analyze LDAP traffic using tools like Wireshark.</li>
-                                <li>Gain hands-on experience with executing LDAP queries using intercepted credentials.</li>
-                                <li>Recognize the importance of implementing security measures such as encryption and access controls to protect directory services.</li>
+                                <li>Recognize the weakness of implementing security measures that is too simple such as basic firewall.</li>
+                                <li>Learn how to overcome firewall that is not carefully planned.</li>
                             </ul>
                         </div>
 
                         <div class="question">
                             <h2>Question</h2>
-                            <p>In this exercise, you are required to <code>conduct a LDAP Injection attack</code> on an LDAP server using manual input command. You can utilize tools such as <code>Wireshark</code> to gain unauthorized access to the target machine. Your objective is to explore the process of LDAP attack by identifying valid credentials and establishing access. After your attack successful, submit your results here!</p>
-                            <p>If you cannot complete the LDAP Injection, you can still submit the username and password retrieve during the process by toggling the submission space!</p>
+                            <p>In this exercise, you are required to <code>conduct a LDAP Injection attack</code> on an LDAP server using manual input command. It is different with <code>Exercise A</code> as it has already applied some simple firewall rules you have completed in <code>Defensive Exercise A</code>. Your objective is to explore the process of overcoming the security measure. After your attack successful, submit the new flag.</p>
                         </div>
                     </div>
 
 
                     <div class="flag-container">
                         <h2 class="flag-title">Submission of Flag</h2>
-
-                        <!-- Toggle Switch -->
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="toggleMode" onclick="toggleFormMode()">
-                                <span class="slider"></span>
-                            </label>
-                            <span id="toggleLabel">Submit Username/Password</span>
-                        </div>
-
-                        <form method="POST" action="ldapattack.php">
-                            <!-- Username and Password Input Fields -->
-                            <div id="usernamePasswordFields">
-                                <label for="flagInput1">Enter Username:</label>
-                                <input type="text" name="flagInput1" id="flagInput1" placeholder="Enter username" style="width: 100%; padding: 8px;">
-
-                                <label for="flagInput2">Enter Password:</label>
-                                <input type="text" name="flagInput2" id="flagInput2" placeholder="Enter password" style="width: 100%; padding: 8px;">
-                            </div>
-
-                            <!-- Flag Only Input Field -->
-                            <div id="flagField" style="display: none;">
+                        <form method="POST" action="ldapattackb.php">
+                            <div id="flagField">
                                 <label for="flagOnlyInput">Enter Flag:</label>
                                 <input type="text" name="flagOnlyInput" id="flagOnlyInput" placeholder="Enter flag" style="width: 100%; padding: 8px;">
                             </div>
-
                             <button type="submit" id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
                         </form><br>
 
@@ -222,16 +192,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <p style="color: red;"><?php echo $error_message; ?></p>
                         <?php endif; ?>
                     </div>
-
-                    <script>
-                        function toggleFormMode() {
-                            const isFlagOnly = document.getElementById('toggleMode').checked;
-                            document.getElementById('usernamePasswordFields').style.display = isFlagOnly ? 'none' : 'block';
-                            document.getElementById('flagField').style.display = isFlagOnly ? 'block' : 'none';
-                            document.getElementById('toggleLabel').innerText = isFlagOnly ? 'Submit Flag Only' : 'Submit Username/Password';
-                        }
-                    </script>
-
 
                 </div>
             </main>
@@ -262,9 +222,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const exercises = ["ldapattacka.php", "ldapattackb.php"];
+            const currentPage = window.location.pathname.split("/").pop();
+
+            const currentIndex = exercises.indexOf(currentPage);
+
+            document.querySelector('.back-button').addEventListener('click', function() {
+                if (currentIndex > 0) {
+                    window.location.href = exercises[currentIndex - 1];
+                } else {
+                    alert("You are on the first exercise."); // Optional alert
+                }
+            });
+
+            document.querySelector('.next-button').addEventListener('click', function() {
+                if (currentIndex < exercises.length - 1) {
+                    window.location.href = exercises[currentIndex + 1];
+                } else {
+                    alert("You are on the last exercise."); // Optional alert
+                }
+            });
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="js/scripts.js"></script>
 </body>
 
 </html>
