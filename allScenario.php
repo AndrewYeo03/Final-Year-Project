@@ -135,7 +135,7 @@
                                             <td>14/8/2024</td>
                                             <td>30/9/2024</td>
                                             <td>
-                                                <a href="ldapattack.php" class="blue">Start Scenario</a>
+                                                <a href="ldapattacka.php" class="blue">Start Scenario</a>
                                             </td>
                                         </tr>
                                     </tbody>

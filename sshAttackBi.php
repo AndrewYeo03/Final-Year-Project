@@ -197,6 +197,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <p>In this exercise, you are required to <code>automate a brute force attack</code> on an SSH server using a <code>Python script</code>. Write your own script or modify an existing one to systematically attempt login credentials until access is granted. Utilize libraries like asyncssh and termcolor to enhance the functionality and readability of your script. Once access is achieved, submit your findings here.</p>
                                 
                                 <p><strong>You can use the provided script here:</strong> <a href="BruteForceAutomationScript.txt" download class="download-link">BruteForceAutomationScript.txt</a></p>
+                                <div class="vncTitle">
+                            <h2>Let's Try Using This Virtual Machine Here!</h2>
+
+                            <!-- Button Controls -->
+                            <div class="vnc-controls">
+                                <a href="sshAttackAi.php?action=start" class="vnc-btn vnc-start">Start VNC Server</a>
+                                <a href="sshAttackAi.php?action=stop" class="vnc-btn vnc-stop">Stop VNC Server</a>
+                            </div>
+
+                            <!-- VNC Viewer iframe -->
+                            <h3 style="color: #ff0000;
+    margin-bottom: 2px;
+    margin-left: 15%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+    font-size: 26px;
+    font-weight: bold;font-style: italic;">[Attacker's Machine]</h3><iframe src="http://192.168.43.130:6080/vnc.html?host=192.168.43.130&port=6080"
+                                width="800" height="600"
+                                frameborder="0" allow="fullscreen">
+                            </iframe>
+                        </div>
                             </div>
                         </div>
 

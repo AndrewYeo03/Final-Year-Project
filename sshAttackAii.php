@@ -203,6 +203,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="question">
                                 <h2>Question</h2>
                                 <p>In this continuation exercise, you will build upon your success in conducting a brute force attack on the SSH server. Your task is to establish persistence by <code>configuring remote access</code> through <code>OpenSSH</code>. You need to use the <code>ssh-keygen</code> command to generate an SSH key pair, allowing you to create a backdoor on the target system. Through this hands-on experience, you will gain insights into the techniques used by attackers to ensure ongoing access to their targets.</p>
+                                <div class="vncTitle">
+                            <h2>Let's Try Using This Virtual Machine Here!</h2>
+
+                            <!-- Button Controls -->
+                            <div class="vnc-controls">
+                                <a href="sshAttackAi.php?action=start" class="vnc-btn vnc-start">Start VNC Server</a>
+                                <a href="sshAttackAi.php?action=stop" class="vnc-btn vnc-stop">Stop VNC Server</a>
+                            </div>
+
+                            <!-- VNC Viewer iframe -->
+                            <h3 style="color: #ff0000;
+    margin-bottom: 2px;
+    margin-left: 15%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+    font-size: 26px;
+    font-weight: bold;font-style: italic;">[Attacker's Machine]</h3><iframe src="http://192.168.43.130:6080/vnc.html?host=192.168.43.130&port=6080"
+                                width="800" height="600"
+                                frameborder="0" allow="fullscreen">
+                            </iframe>
+                        </div>
                             </div>
                         </div>
 
