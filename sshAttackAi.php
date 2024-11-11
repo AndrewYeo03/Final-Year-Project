@@ -207,7 +207,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <p>In this exercise, you are required to <code>conduct a brute force attack</code> on an SSH server using manual input command. You can utilize tools such as <code>Hydra</code> and <code>Metasploit</code> to gain unauthorized access to the target machine. Your objective is to explore the process of brute forcing by identifying valid credentials and establishing access. After you brute force successful, submit your results here!</p>
                         </div>
                         <div class="vncTitle">
-                            <h2 class="scenario-title">Let's Try Using This Virtual Machine Here!</h2>
+                            <h2>Let's Try Using This Virtual Machine Here!</h2>
 
                             <!-- Button Controls -->
                             <div class="vnc-controls">
@@ -216,7 +216,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
 
                             <!-- VNC Viewer iframe -->
-                            <iframe src="http://192.168.43.130:6080/vnc.html?host=192.168.43.130&port=6080"
+                            <h3 style="color: #ff0000;
+    margin-bottom: 2px;
+    margin-left: 15%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+    font-size: 26px;
+    font-weight: bold;font-style: italic;">[Attacker's Machine]</h3><iframe src="http://192.168.43.130:6080/vnc.html?host=192.168.43.130&port=6080"
                                 width="800" height="600"
                                 frameborder="0" allow="fullscreen">
                             </iframe>

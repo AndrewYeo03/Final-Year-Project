@@ -212,6 +212,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="question">
                                 <h2>Question</h2>
                                 <p>In this advanced exercise, after successfully brute-forcing the SSH login credentials, you are required to create a backdoor by <code>setting up a reverse SSH tunnel</code> from the compromised server to your attack machine. Due to firewall restrictions, external connections to internal machines are blocked, which would typically prevent direct access. However, we can bypass this limitation using an <code>SSH port forwarding tunnel</code>, commonly used by system administrators to access servers externally in a secure manner. By establishing a reverse SSH tunnel, you can initiate a secure connection from the compromised server back to your machine, enabling persistent access through an encrypted channel despite firewall restrictions.This tunnel will simulate persistence, enabling future access to the compromised system.</p>
+                                <div class="vncTitle">
+                            <h2>Let's Try Using This Virtual Machine Here!</h2>
+
+                            <!-- Button Controls -->
+                            <div class="vnc-controls">
+                                <a href="sshAttackAi.php?action=start" class="vnc-btn vnc-start">Start VNC Server</a>
+                                <a href="sshAttackAi.php?action=stop" class="vnc-btn vnc-stop">Stop VNC Server</a>
+                            </div>
+
+                            <!-- VNC Viewer iframe -->
+                            <h3 style="color: #ff0000;
+    margin-bottom: 2px;
+    margin-left: 15%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+    font-size: 26px;
+    font-weight: bold;font-style: italic;">[Attacker's Machine]</h3><iframe src="http://192.168.43.130:6080/vnc.html?host=192.168.43.130&port=6080"
+                                width="800" height="600"
+                                frameborder="0" allow="fullscreen">
+                            </iframe>
+                        </div>
                             </div>
                         </div>
 

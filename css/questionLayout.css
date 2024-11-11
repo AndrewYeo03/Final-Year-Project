@@ -206,6 +206,17 @@ pre {
     color: #333;
 }
 
+.attacker h2 {
+    color: #ff0000;
+    margin-top: 5px;
+    margin-bottom: 2px;
+    margin-left: 15%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+    font-size: 26px;
+    font-weight: bold;
+}
+
 /* vncTitle Header */
 .vncTitle h2 {
     color: #eb4123;
@@ -355,7 +366,7 @@ input:checked+.slider:before {
     padding: 12px 25px;
     font-size: 18px;
     border-radius: 5px;
-    margin: 5px 10px 20px 10px;
+    margin: 5px 10px 0px 10px;
     display: inline-block;
     transition: background-color 0.3s ease, transform 0.3s ease;
     cursor: pointer;
@@ -404,6 +415,30 @@ input:checked+.slider:before {
 /* iframe styling */
 iframe {
     width: 100%;   /* Makes iframe responsive to container width */
-    padding-left: 10%;
-    padding-right: 10%;
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+/* Title styling */
+.iframe-title-attacker {
+    color: #ff0000;
+    margin-bottom: 2px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+    font-size: 26px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;  /* Center the title above each iframe */
+}
+
+/* Title styling */
+.iframe-title-defender {
+    color: #0026ff;
+    margin-bottom: 2px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+    font-size: 26px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;  /* Center the title above each iframe */
 }
