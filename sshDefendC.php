@@ -139,14 +139,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: #45a049;
         }
 
-        .feedback {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 14px;
-            color: #d9534f;
-            /* Optional: red color for error messages */
-        }
-
         .command-box {
             background-color: #f1f1f1;
             max-width: 35%;
@@ -157,6 +149,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: 18px;
             color: #333;
         }
+        
+/* Parent container for centering the iframe container */
+.iframe-container-wrapper {
+    display: flex;
+    justify-content: center; /* Center the iframe container horizontally */
+    align-items: center;     /* Center the iframe container vertically (if needed) */
+}
+
+/* VNC iframe container */
+.iframe-container {
+    display: flex;
+    justify-content: space-between;  /* Distribute space between left and right */
+    width: 100%;
+    max-width: 1200px;  /* Optional: Limit the overall width */
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* Individual iframe sections (Left and Right) */
+.iframe-left, .iframe-right {
+    width: 48%;  /* Make each iframe take up almost 50% of the container */
+    margin: 0 1%;  /* Space between iframes */
+}
+
+/* Iframe styling */
+iframe {
+    width: 100%;  /* Full width of the parent div */
+    height: 400px;  /* Fixed height */
+    padding-left: 0%;
+    padding-right: 0%;
+}
     </style>
 </head>
 
@@ -320,6 +343,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 a <code>1-minute period</code>. Set the <code>ban duration for 24 hours</code> to
                                 prevent persistent brute-force attacks. Further configurations can be added by yourself
                                 to enhance the security.</p>
+                                <div class="vncTitle">
+                            <h2>Let's Try Using This Virtual Machine Here!</h2>
+<!-- VNC Viewer iframe Section -->
+<div class="iframe-container-wrapper">
+    <div class="iframe-container">
+        <!-- Left Iframe -->
+        <div class="iframe-left">
+            <h3 class="iframe-title-attacker">[Attacker's Host]</h3>
+            <iframe src="http://192.168.43.130:6080/vnc.html?host=192.168.43.130&port=6080" frameborder="0" allow="fullscreen"></iframe>
+        </div>
+        
+        <!-- Right Iframe -->
+        <div class="iframe-right">
+            <h3 class="iframe-title-defender">[Defender's Host]</h3>
+            <iframe src="http://192.168.43.133:6080/vnc.html?host=192.168.43.133&port=6080" frameborder="0" allow="fullscreen"></iframe>
+        </div>
+    </div>
+</div>
+
+
+                        </div>
                         </div>
                     </div>
 
