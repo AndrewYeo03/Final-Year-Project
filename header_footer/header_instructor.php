@@ -1,8 +1,27 @@
 <?php
 session_start();
+// Check if the user role is Instructor
+if ($_SESSION['role_id'] != 2) {
+    header("Location: ../unauthorized.php");
+    exit();
+}
+
 if (!isset($_SESSION['username'])) {
     header("Location: ../login.php");
     exit;
+}
+
+//Check if the session has expired
+if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SESSION['timeout_duration']) {
+    //Clear the session and redirect to the login page
+    session_unset();
+    session_destroy();
+    echo "<script>alert('Session expired. Please log in again.');</script>";
+    header("Location: ../login.php");
+    exit();
+} else {
+    //If the session has not expired, update login_time
+    $_SESSION['login_time'] = time();
 }
 ?>
 

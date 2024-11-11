@@ -55,7 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Registration</title>
+    <title>Create Account - TAR UMT Cyber Range</title>
+    <link rel="icon" href="../pictures/school_logo.png" type="image/png" sizes="64x64"/>
     <link rel="stylesheet" href="css/register.css"> 
     <script>
         function validateForm() {

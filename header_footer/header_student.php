@@ -4,6 +4,19 @@ if (!isset($_SESSION['username'])) {
     header("Location: ../login.php");
     exit;
 }
+
+//Check if the session has expired
+if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SESSION['timeout_duration']) {
+    //Clear the session and redirect to the login page
+    session_unset();
+    session_destroy();
+    echo "<script>alert('Session expired. Please log in again.');</script>";
+    header("Location: ../login.php");
+    exit();
+} else {
+    // If the session has not expired, update login_time
+    $_SESSION['login_time'] = time();
+}
 ?>
 
 <!DOCTYPE html>
@@ -15,17 +28,19 @@ if (!isset($_SESSION['username'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Student Dashboard - TARUMT Cyber Range</title>
-    <link rel="icon" href="../pictures/school_logo.png" type="image/png" sizes="64x64"/>
+    <title><?php echo htmlspecialchars($titleName); ?></title>
+    <link rel="icon" href="../pictures/school_logo.png" type="image/png" sizes="64x64" />
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="js/datatables-simple-demo.js"></script>
 </head>
 
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="index.php">TARUMT Cyber Range</a>
+        <a class="navbar-brand ps-3" href="../student-dashboard/student_dashboard.php">TARUMT Cyber Range</a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
         <!-- Navbar Search-->
@@ -56,7 +71,7 @@ if (!isset($_SESSION['username'])) {
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Core</div>
-                        <a class="nav-link" href="index.php">
+                        <a class="nav-link" href="../student-dashboard/student_dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
@@ -68,7 +83,7 @@ if (!isset($_SESSION['username'])) {
                         </a>
                         <div class="collapse" id="collapseStudents" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="#">Member Of Groups</a>
+                                <a class="nav-link" href="memberOfGroup.php">Member Of Groups</a>
                                 <a class="nav-link" href="allScenario.php">Scenarios</a>
                             </nav>
                         </div>
@@ -81,3 +96,4 @@ if (!isset($_SESSION['username'])) {
             </nav>
         </div>
         <div id="layoutSidenav_content">
+            <main>

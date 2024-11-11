@@ -1,8 +1,27 @@
 <?php
 session_start();
+// Check if the user role is Admin
+if ($_SESSION['role_id'] != 3) {
+    header("Location: ../unauthorized.php");
+    exit();
+}
+
 if (!isset($_SESSION['username'])) {
     header("Location: ../login.php");
     exit;
+}
+
+//Check if the session has expired
+if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SESSION['timeout_duration']) {
+    //Clear the session and redirect to the login page
+    session_unset();
+    session_destroy();
+    echo "<script>alert('Session expired. Please log in again.');</script>";
+    header("Location: ../login.php");
+    exit();
+} else {
+    //If the session has not expired, update login_time
+    $_SESSION['login_time'] = time();
 }
 ?>
 
@@ -63,17 +82,6 @@ if (!isset($_SESSION['username'])) {
                             Dashboard
                         </a>
                         <div class="sb-sidenav-menu-heading">Interface</div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseStudents" aria-expanded="false" aria-controls="collapseLayouts">
-                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                            Student
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseStudents" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="#">Member Of Groups</a>
-                                <a class="nav-link" href="allScenario.php">Scenarios</a>
-                            </nav>
-                        </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseInstructors" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                             Instructor

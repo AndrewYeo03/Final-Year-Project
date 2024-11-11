@@ -16,6 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['role_id'] = $user['role_id'];
         $_SESSION['username'] = $user['username'];
 
+        //Set the session start time and timeout period (1 hour = 3600 seconds)
+        $_SESSION['login_time'] = time();
+        $_SESSION['timeout_duration'] = 60;
+
         // Redirect by role
         if ($user['role_id'] == 1) {
             header("Location: student-dashboard/student_dashboard.php");
@@ -35,7 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - TAR UMT Cyber Range</title>
+    <link rel="icon" href="../pictures/school_logo.png" type="image/png" sizes="64x64"/>
     <link rel="stylesheet" href="css/login.css">
 </head>
 <body>

@@ -37,7 +37,7 @@ body::before {
 .register-box {
     background-color: rgba(255, 255, 255, 0.95); 
     backdrop-filter: blur(10px); 
-    padding: 40px 30px;
+    padding: 18px 18px;
     border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     width: 350px;
@@ -47,7 +47,7 @@ body::before {
 }
 
 .register-box h2 {
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     font-size: 24px;
     font-weight: bold;
     letter-spacing: 1px;
@@ -88,7 +88,6 @@ body::before {
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 15px;
     transition: all 0.3s ease-in-out;
 }
 
