@@ -2,6 +2,21 @@
 session_start(); // Start the session
 include 'connection.php';
 
+// List of exercise pages
+$exercises = [
+    "ldapattacka.php",        // Exercise 1
+    "ldapdefenda.php", // Exercise 2
+    "ldapattackb.php", // Exercise 3
+];
+
+// Initialize the current exercise if not set
+if (!isset($_SESSION['current_exercise'])) {
+    $_SESSION['current_exercise'] = 0; // Start from the first exercise
+}
+
+// Current exercise index
+$current_exercise_index = $_SESSION['current_exercise'];
+
 // Initialize error message variable
 $error_message = '';
 
@@ -201,14 +216,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                     </div>
 
+                    <!-- Nav Menu -->
+                    <div class="nav-menu">
+                        <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
+                        <a href="ldapattacka.php" class="nav-link" data-number="1">1</a>
+                        <a href="ldapdefenda.php" class="nav-link" data-number="2">2</a>
+                        <a href="ldapattackb.php" class="nav-link" data-number="2">3</a>
+                        <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
+                    </div>
+
                     <!-- Main Content/ Description of Scenario -->
-                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise A: Deny LDAP Packet Interception<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 10 Minutes</span></h2>
+                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Defensive Exercise A: Deny LDAP Injection<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 10 Minutes</span></h2>
                     <div class="main-content">
                         <div class="learning-objectives">
                             <h2>Learning Objectives</h2>
                             <ul>
-                                <li>Understand the benefits of hiding packets that contains credential</li>
-                                <li>Gain hands-on experience with securing an LDAP server against Man-in-the-middle attacks.</li>
+                                <li>Understand the benefits of setting up a firewall.</li>
+                                <li>Gain hands-on experience with deploying a firewall in Linux Server.</li>
                             </ul>
                         </div>
 
@@ -219,7 +243,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <div class="question">
                             <h2>Your task</h2>
-                            <p>Your task is to secure the LDAP server by <code>preventing criminals from reading content in LDAP packets</code>.</p>
+                            <p>Your task is to secure the LDAP server by <code>setting up a firewall so that only LDAP Client can access to LDAP Server</code>.</p>
                         </div>
                     </div>
 
@@ -227,20 +251,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <!-- Submission Flag Area-->
                     <div class="flag-container">
                         <h2 class="flag-title">Try it out!</h2>
-                        <form method="POST" action="sshDefendA.php">
-                            <label for="flagInput1" style="font-size: 18px;">1. </label>
-                            <!-- SSH Configuration File Name -->
+                        <form method="POST" action="ldapdefenda.php">
+                            <label for="flagInput1" style="font-size: 18px;">1. Which command is used to set the firewall for a Linux server?</label>
                             <div class="input-group">
-                                <label><code style="font-size: 18px;">nano </code></label>
-                                <input type="text" name="pathname" id="flagInput1" placeholder="Enter pathname">
+                                <input type="text" name="firewallCommand" id="flagInput1" placeholder="Enter the command">
                             </div>
 
-                            <label style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">2. </label>
-                            <!-- Password Authentication Options -->
+                            <label for="flagInput2" style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">2. By conducting research, which 2 ports are commonly used to transfer LDAP packets?</label>
                             <div class="input-group">
-                                <label><code style="font-size: 18px;">:</code></label>
-                                <label><input type="radio" name="passwordAuth" id="flagInput2" value="Yes"> Yes</label>
-                                <label><input type="radio" name="passwordAuth" id="flagInput3" value="No"> No</label>
+                                <input type="text" name="ldapPorts" id="flagInput2" placeholder="Enter LDAP ports">
+                            </div>
+
+                            <label for="flagInput3" style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">3. Which IP should be allowed through the firewall?</label>
+                            <div class="input-group">
+                                <input type="text" name="allowedIP" id="flagInput3" placeholder="Enter IP address">
                             </div>
 
                             <!-- Submit Button -->
@@ -281,6 +305,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
         });
 
+        document.addEventListener('DOMContentLoaded', function() {
+            const exercises = ["ldapattacka.php", "ldapdefenda.php", "ldapattackb.php"]; // Corrected order of exercises
+
+            const currentPage = window.location.pathname.split("/").pop();
+            const currentIndex = exercises.indexOf(currentPage);
+
+            document.querySelector('.back-button').addEventListener('click', function() {
+                if (currentIndex > 0) {
+                    window.location.href = exercises[currentIndex - 1];
+                } else {
+                    alert("You are on the first exercise."); // Optional alert
+                }
+            });
+
+            document.querySelector('.next-button').addEventListener('click', function() {
+                if (currentIndex < exercises.length - 1) {
+                    window.location.href = exercises[currentIndex + 1];
+                } else {
+                    alert("You are on the last exercise."); // Optional alert
+                }
+            });
+        });
+
+
         //Submission of flag
         const correctUsername = "yiyangtan0519"; // Replace this with linking to database in future
         const correctPassword = "abc123"; //Replace this with linking to database in future
@@ -300,7 +348,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="js/scripts.js"></script>
 </body>
 
 </html>

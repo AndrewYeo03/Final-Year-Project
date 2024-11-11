@@ -5,7 +5,8 @@ include 'connection.php';
 // List of exercise pages
 $exercises = [
     "ldapattacka.php",        // Exercise 1
-    "ldapattackb.php", // Exercise 2
+    "ldapdefenda.php", // Exercise 2
+    "ldapattackb.php", // Exercise 3
 ];
 
 // Check if the user has a session variable for current exercise
@@ -195,12 +196,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="nav-menu">
                         <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
                         <a href="ldapattacka.php" class="nav-link" data-number="1">1</a>
-                        <a href="ldapattackb.php" class="nav-link" data-number="2">2</a>
+                        <a href="ldapdefenda.php" class="nav-link" data-number="2">2</a>
+                        <a href="ldapattackb.php" class="nav-link" data-number="2">3</a>
                         <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
                     </div>
 
                     <!-- Main Content/ Description of Scenario -->
-                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise A : LDAP Injection on a LDAP Server<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
+                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Offensive Exercise A : LDAP Injection on a LDAP Server<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
                     <div class="main-content">
                         <div class="learning-objectives">
                             <h2>Learning Objectives</h2>
@@ -250,10 +252,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             <button type="submit" id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
                         </form><br>
-
                         <?php if (!empty($error_message)): ?>
                             <p style="color: red;"><?php echo $error_message; ?></p>
                         <?php endif; ?>
+
                     </div>
 
                     <script>
@@ -297,9 +299,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            const exercises = ["ldapattacka.php", "ldapattackb.php"];
-            const currentPage = window.location.pathname.split("/").pop();
+            const exercises = ["ldapattacka.php", "ldapdefenda.php", "ldapattackb.php"]; // Corrected order of exercises
 
+            const currentPage = window.location.pathname.split("/").pop();
             const currentIndex = exercises.indexOf(currentPage);
 
             document.querySelector('.back-button').addEventListener('click', function() {
@@ -318,7 +320,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             });
         });
+
+
+        document.getElementById('submitButton').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent form submission until confirmation
+
+            // Capture input values
+            const usernameInput = document.getElementById('flagInput1').value.trim();
+            const passwordInput = document.getElementById('flagInput2').value.trim();
+            const flagInput = document.getElementById('flagOnlyInput').value.trim();
+
+            let message = "Please confirm your submission:\n\n";
+
+            // Build the confirmation message based on mode
+            if (document.getElementById('toggleMode').checked) {
+                message += "Flag: " + (flagInput ? flagInput : "(Empty - May result in no marks)") + "\n";
+            } else {
+                message += "Username: " + (usernameInput ? usernameInput : "(Empty - May result in no marks)") + "\n";
+                message += "Password: " + (passwordInput ? passwordInput : "(Empty - May result in no marks)") + "\n";
+            }
+
+            // Display the confirmation popup
+            const userConfirmed = confirm(message);
+
+            // If the user confirms, submit the form
+            if (userConfirmed) {
+                event.target.closest('form').submit(); // Submit the form programmatically
+            }
+        });
     </script>
+
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
 </body>
