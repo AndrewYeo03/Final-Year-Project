@@ -3,7 +3,7 @@ $titleName = "Rate Scenario - TARUMT Cyber Range";
 include '../header_footer/header_student.php';
 include '../connection.php';
 
-//Retrieve student information
+// Retrieve student information
 $username = $_SESSION['username'];
 $stmt = $conn->prepare("SELECT * FROM students INNER JOIN users ON students.user_id = users.id WHERE users.username = ?");
 $stmt->bind_param("s", $username);
@@ -124,26 +124,29 @@ $stmt->close();
             <h3>Please select a scenario to evaluate:</h3>
             <ul>
                 <?php
-                // Retrieve exercises (scenarios) for the student
-                $stmt = $conn->prepare("SELECT * FROM exercise 
-                                        WHERE exercise_id IN (
-                                            SELECT exercise_id 
-                                            FROM instructor_classes 
-                                            WHERE class_name = ?
-                                        )");
-                $stmt->bind_param("s", $studentData['class_name']);
+                // Retrieve scenarios available for rating based on the student's class
+                $stmt = $conn->prepare("
+                    SELECT DISTINCT scenario.scenario_id, scenario.title
+                    FROM scenario
+                    INNER JOIN class_scenarios ON class_scenarios.scenario_id = scenario.scenario_id
+                    INNER JOIN student_classes ON student_classes.class_name = class_scenarios.class_name
+                    WHERE student_classes.student_id = ? AND NOT EXISTS (
+                        SELECT 1 FROM ratings WHERE ratings.student_id = ? AND ratings.scenario_id = scenario.scenario_id
+                    )
+                ");
+                $stmt->bind_param("ii", $studentData['id'], $studentData['id']);
                 $stmt->execute();
-                $exercises = $stmt->get_result();
-                
-                if ($exercises->num_rows > 0) {
-                    while ($exercise = $exercises->fetch_assoc()) {
+                $scenarios = $stmt->get_result();
+
+                if ($scenarios->num_rows > 0) {
+                    while ($scenario = $scenarios->fetch_assoc()) {
                         echo '<li class="scenario-item">';
-                        echo '<span>' . htmlspecialchars($exercise['title']) . ' (' . htmlspecialchars($exercise['difficulty_level']) . ')</span>';
-                        echo '<a href="evaluateScenario.php?id=' . htmlspecialchars($exercise['exercise_id']) . '" class="btn-evaluate">Evaluate</a>';
+                        echo '<span>' . htmlspecialchars($scenario['title']) . '</span>';
+                        echo '<a href="evaluateScenario.php?id=' . htmlspecialchars($scenario['scenario_id']) . '" class="btn-evaluate">Evaluate</a>';
                         echo '</li>';
                     }
                 } else {
-                    echo "<p>No scenarios available for your class.</p>";
+                    echo "<p>No scenarios available for rating at this time. You may have already rated them.</p>";
                 }
 
                 $stmt->close();

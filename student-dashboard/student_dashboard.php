@@ -10,7 +10,17 @@ $expiredScenarios = 2;
 
 //Retrieve student information
 $username = $_SESSION['username'];
-$stmt = $conn->prepare("SELECT * FROM students INNER JOIN users ON students.user_id = users.id WHERE users.username = ?");
+$stmt = $conn->prepare("
+    SELECT 
+        students.student_id, 
+        users.username, 
+        users.email, 
+        GROUP_CONCAT(student_classes.class_name SEPARATOR ', ') AS class_names
+    FROM students
+    INNER JOIN users ON students.user_id = users.id
+    LEFT JOIN student_classes ON students.id = student_classes.student_id
+    WHERE users.username = ?
+");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -86,64 +96,11 @@ $stmt->close();
                 </div>
                 <div class="col-md-4">
                     <h5>Class:</h5>
-                    <p><?php echo htmlspecialchars($studentData['class_name']); ?></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Suggested Modules -->
-    <div class="row">
-        <!-- Course Progress -->
-        <div class="col-lg-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-chart-line me-1"></i>
-                    Course Progress
-                </div>
-                <div class="card-body">
-                    <div class="progress mb-3">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
-                    </div>
-                    <p>Keep it up! You’re progressing well.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Activities -->
-        <div class="col-lg-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-history me-1"></i>
-                    Recent Activities
-                </div>
-                <div class="card-body">
-                    <ul>
-                        <li>Submitted "Network Security Scenario" on 2024-11-05</li>
-                        <li>Started "Linux Fundamentals" Scenario on 2024-11-04</li>
-                        <li>Expired "Web Exploitation" Scenario on 2024-10-30</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Notifications -->
-        <div class="col-lg-12">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-bell me-1"></i>
-                    Notifications
-                </div>
-                <div class="card-body">
-                    <ul>
-                        <li>New Scenario: "Advanced Pentesting" available now!</li>
-                        <li>System Maintenance scheduled for 2024-11-15.</li>
-                        <li>Update: "Network Fundamentals" Scenario has new tasks.</li>
-                    </ul>
+                    <p><?php echo htmlspecialchars($studentData['class_names'] ?: 'No class assigned'); ?></p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<?php include '../header_footer/footer.php' ?>
+<?php include '../header_footer/footer.php'; ?>

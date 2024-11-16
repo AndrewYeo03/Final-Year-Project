@@ -6,9 +6,10 @@ include '../connection.php';
 // Retrieve student information
 $username = $_SESSION['username'];
 $stmt = $conn->prepare("
-    SELECT students.student_id, users.username, students.class_name
+    SELECT students.student_id, users.username, student_classes.class_name
     FROM students
     INNER JOIN users ON students.user_id = users.id
+    INNER JOIN student_classes ON students.id = student_classes.student_id
     WHERE users.username = ?
 ");
 $stmt->bind_param("s", $username);
@@ -23,7 +24,8 @@ $stmt = $conn->prepare("
     SELECT students.student_id, users.username
     FROM students
     INNER JOIN users ON students.user_id = users.id
-    WHERE students.class_name = ?
+    INNER JOIN student_classes ON students.id = student_classes.student_id
+    WHERE student_classes.class_name = ?
     ORDER BY students.student_id
 ");
 $stmt->bind_param("s", $class_name);
@@ -39,7 +41,7 @@ $students = $stmt->get_result();
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
-            All <?php echo htmlspecialchars($class_name); ?> Student
+            All <?php echo htmlspecialchars($class_name); ?> Students
         </div>
         <div class="card-body">
             <table id="datatablesSimple">
