@@ -5,12 +5,25 @@ include '../connection.php';
 
 // Retrieve student information
 $username = $_SESSION['username'];
-$stmt = $conn->prepare("SELECT * FROM students INNER JOIN users ON students.user_id = users.id WHERE users.username = ?");
+$stmt = $conn->prepare("
+    SELECT students.id AS student_id
+    FROM students 
+    INNER JOIN users ON students.user_id = users.id 
+    WHERE users.username = ?
+");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
 $studentData = $result->fetch_assoc();
 $stmt->close();
+
+if (!$studentData || !isset($studentData['student_id'])) {
+    echo "<p>Unable to retrieve student information. Please contact the administrator.</p>";
+    include '../header_footer/footer.php';
+    exit;
+}
+
+$studentId = $studentData['student_id'];
 ?>
 
 <style>
@@ -96,7 +109,12 @@ $stmt->close();
         font-size: 14px;
     }
 
-    .btn-evaluate:hover {
+    .btn-evaluate:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+
+    .btn-evaluate:hover:not(:disabled) {
         background-color: #218838;
     }
 </style>
@@ -124,29 +142,29 @@ $stmt->close();
             <h3>Please select a scenario to evaluate:</h3>
             <ul>
                 <?php
-                // Retrieve scenarios available for rating based on the student's class
+                // Retrieve all scenarios available for the student's class
                 $stmt = $conn->prepare("
-                    SELECT DISTINCT scenario.scenario_id, scenario.title
+                    SELECT DISTINCT scenario.scenario_id, scenario.title, 
+                        (SELECT COUNT(*) FROM ratings WHERE ratings.student_id = ? AND ratings.scenario_id = scenario.scenario_id) AS rated
                     FROM scenario
                     INNER JOIN class_scenarios ON class_scenarios.scenario_id = scenario.scenario_id
                     INNER JOIN student_classes ON student_classes.class_name = class_scenarios.class_name
-                    WHERE student_classes.student_id = ? AND NOT EXISTS (
-                        SELECT 1 FROM ratings WHERE ratings.student_id = ? AND ratings.scenario_id = scenario.scenario_id
-                    )
+                    WHERE student_classes.student_id = ?
                 ");
-                $stmt->bind_param("ii", $studentData['id'], $studentData['id']);
+                $stmt->bind_param("ii", $studentId, $studentId);
                 $stmt->execute();
                 $scenarios = $stmt->get_result();
 
                 if ($scenarios->num_rows > 0) {
                     while ($scenario = $scenarios->fetch_assoc()) {
+                        $isRated = $scenario['rated'] > 0;
                         echo '<li class="scenario-item">';
                         echo '<span>' . htmlspecialchars($scenario['title']) . '</span>';
-                        echo '<a href="evaluateScenario.php?id=' . htmlspecialchars($scenario['scenario_id']) . '" class="btn-evaluate">Evaluate</a>';
+                        echo '<a href="evaluateScenario.php?id=' . htmlspecialchars($scenario['scenario_id']) . '" class="btn-evaluate" ' . ($isRated ? 'disabled' : '') . '>' . ($isRated ? 'Already Rated' : 'Evaluate') . '</a>';
                         echo '</li>';
                     }
                 } else {
-                    echo "<p>No scenarios available for rating at this time. You may have already rated them.</p>";
+                    echo "<p>No scenarios available at this time.</p>";
                 }
 
                 $stmt->close();
