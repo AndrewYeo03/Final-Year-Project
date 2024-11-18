@@ -6,10 +6,10 @@ include '../connection.php';
 // Retrieve student information
 $username = $_SESSION['username'];
 $stmt = $conn->prepare("
-    SELECT students.id AS student_id
-    FROM students 
-    INNER JOIN users ON students.user_id = users.id 
-    WHERE users.username = ?
+    SELECT s.id AS student_id
+    FROM students s
+    INNER JOIN users u ON s.user_id = u.id
+    WHERE u.username = ?
 ");
 $stmt->bind_param("s", $username);
 $stmt->execute();

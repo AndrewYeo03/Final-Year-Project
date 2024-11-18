@@ -8,7 +8,12 @@ $scenario_id = $_GET['id'];
 
 // Retrieve student information
 $username = $_SESSION['username'];
-$stmt = $conn->prepare("SELECT * FROM students INNER JOIN users ON students.user_id = users.id WHERE users.username = ?");
+$stmt = $conn->prepare("
+    SELECT s.id AS student_id
+    FROM students s
+    INNER JOIN users u ON s.user_id = u.id
+    WHERE u.username = ?
+");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();

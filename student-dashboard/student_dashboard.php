@@ -4,28 +4,49 @@ include '../header_footer/header_student.php';
 include '../connection.php';
 
 //Static data (simulate getting from database)
-$totalScenarios = 10;
-$submittedScenarios = 7;
-$expiredScenarios = 2;
+$submittedScenarios = 0;
+$expiredScenarios = 0;
 
 //Retrieve student information
 $username = $_SESSION['username'];
 $stmt = $conn->prepare("
     SELECT 
-        students.student_id, 
-        users.username, 
-        users.email, 
+        s.id,
+        s.student_id, 
+        u.username, 
+        u.email, 
         GROUP_CONCAT(student_classes.class_name SEPARATOR ', ') AS class_names
-    FROM students
-    INNER JOIN users ON students.user_id = users.id
-    LEFT JOIN student_classes ON students.id = student_classes.student_id
-    WHERE users.username = ?
+    FROM students s
+    INNER JOIN users u ON s.user_id = u.id
+    LEFT JOIN student_classes ON s.id = student_classes.student_id
+    WHERE u.username = ?
 ");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
 $studentData = $result->fetch_assoc();
 $stmt->close();
+
+//Get the total number of scenarios for students
+$stmtTotal = $conn->prepare("
+    SELECT COUNT(DISTINCT cs.scenario_id) AS total_scenarios
+    FROM class_scenarios cs
+    INNER JOIN student_classes sc ON cs.class_name = sc.class_name
+    WHERE sc.student_id = ?
+");
+$stmtTotal->bind_param("i", $studentData['id']);
+$stmtTotal->execute();
+$resultTotal = $stmtTotal->get_result();
+$totalScenarios = $resultTotal->fetch_assoc()['total_scenarios'];
+$stmtTotal->close();
+
+echo '<pre>';
+var_dump($studentData);
+echo '</pre>';
+
+echo '<pre>';
+var_dump($totalScenarios);
+echo '</pre>';
 ?>
 
 <div class="container-fluid px-4">
@@ -43,7 +64,7 @@ $stmt->close();
                     <h3><?php echo $totalScenarios; ?></h3>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View All Scenarios</a>
+                    <a class="small text-white stretched-link" href="allScenario.php">View All Scenarios</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>
