@@ -114,19 +114,50 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseAdmin" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Administrator
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseAdmin" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="#">All Instructors</a>
-                                <a class="nav-link" href="#">All Students</a>
-                                <a class="nav-link" href="#">All Groups</a>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
+    <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+    Administrator
+    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+</a>
+<div class="collapse" id="collapseAdmin" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+    <nav class="sb-sidenav-menu-nested nav">
+        <!-- Manage Instructors -->
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageInstructors" aria-expanded="false" aria-controls="manageInstructors">
+            Manage Instructors
+            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+        <div class="collapse" id="manageInstructors" aria-labelledby="headingTwo" data-bs-parent="#collapseAdmin">
+            <nav class="sb-sidenav-menu-nested nav">
+                <a class="nav-link" href="createInstructor.php">Add Instructor</a>
+                <a class="nav-link" href="instructorsList.php">Instructor List</a>
+            </nav>
+        </div>
+        
+        <!-- Manage Students -->
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageStudents" aria-expanded="false" aria-controls="manageStudents">
+            Manage Students
+            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+        <div class="collapse" id="manageStudents" aria-labelledby="headingThree" data-bs-parent="#collapseAdmin">
+            <nav class="sb-sidenav-menu-nested nav">
+                <a class="nav-link" href="createStudent.php">Add Student</a>
+                <a class="nav-link" href="studentsList.php">Student List</a>
+            </nav>
+        </div>
+
+        <!-- Manage Groups -->
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageGroups" aria-expanded="false" aria-controls="manageGroups">
+            Manage Groups
+            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+        <div class="collapse" id="manageGroups" aria-labelledby="headingFour" data-bs-parent="#collapseAdmin">
+            <nav class="sb-sidenav-menu-nested nav">
+                <a class="nav-link" href="createGroup.php">Create Group</a>
+                <a class="nav-link" href="groupsList.php">Group List</a>
+            </nav>
+        </div>
+    </div>
+</div>
+</div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
                     <?php echo htmlspecialchars($_SESSION['username']); ?>
