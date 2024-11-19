@@ -27,12 +27,15 @@ $result = $stmt->get_result();
 $studentData = $result->fetch_assoc();
 $stmt->close();
 
-//Get the total number of scenarios for students
 $stmtTotal = $conn->prepare("
-    SELECT COUNT(DISTINCT cs.scenario_id) AS total_scenarios
-    FROM class_scenarios cs
-    INNER JOIN student_classes sc ON cs.class_name = sc.class_name
-    WHERE sc.student_id = ?
+    SELECT SUM(quantity) AS total_scenarios
+    FROM (
+        SELECT cs.class_name, COUNT(cs.scenario_id) AS quantity
+        FROM class_scenarios cs
+        INNER JOIN student_classes sc ON cs.class_name = sc.class_name
+        WHERE sc.student_id = ?
+        GROUP BY cs.class_name
+    ) AS class_scenario_counts
 ");
 $stmtTotal->bind_param("i", $studentData['id']);
 $stmtTotal->execute();
