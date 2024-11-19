@@ -122,7 +122,7 @@ $studentId = $studentData['student_id'];
 
 <div class="evaluation-container">
     <div class="evaluation-header">
-        <h2>Scenario Evaluation 2024</h2>
+        <h2>Scenario Evaluation <?php echo date('Y'); ?></h2>
         <p>
             Dear Students,<br>
             Please provide your feedback for each scenario. Your responses are crucial for improving the learning experience.

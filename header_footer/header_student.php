@@ -29,7 +29,7 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title><?php echo htmlspecialchars($titleName); ?></title>
-    <link rel="icon" href="../pictures/school_logo.ico?v=1" type="image/x-icon" sizes="64x64"/>
+    <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon"/>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>

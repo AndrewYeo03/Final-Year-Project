@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['role_id'] = $user['role_id'];
         $_SESSION['username'] = $user['username'];
 
-        //Set the session start time and timeout period (1 hour = 3600 seconds)
+        // Set the session start time and timeout period (1 hour = 3600 seconds)
         $_SESSION['login_time'] = time();
         $_SESSION['timeout_duration'] = 60;
 
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: admin-dashboard/admin_dashboard.php");
         }
     } else {
-        echo "<div class='error'>Login failed, email or password is incorrect</div>";
+        echo "<script>alert('Login failed, email or password is incorrect');</script>";
     }
 }
 ?>
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - TAR UMT Cyber Range</title>
-    <link rel="icon" href="../pictures/school_logo.png" type="image/png" sizes="64x64"/>
+    <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon"/>
     <link rel="stylesheet" href="css/login.css">
 </head>
 <body>

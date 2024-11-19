@@ -42,14 +42,6 @@ $stmtTotal->execute();
 $resultTotal = $stmtTotal->get_result();
 $totalScenarios = $resultTotal->fetch_assoc()['total_scenarios'];
 $stmtTotal->close();
-
-echo '<pre>';
-var_dump($studentData);
-echo '</pre>';
-
-echo '<pre>';
-var_dump($totalScenarios);
-echo '</pre>';
 ?>
 
 <div class="container-fluid px-4">
