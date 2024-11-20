@@ -37,6 +37,7 @@ if ($result->num_rows > 0) {
     $exerciseTitle = $row['title'];
     $exerciseType = $row['exerciseType'];
     $difficultyLevel = $row['difficulty_level'];
+    $hints = $row['hints'];
     $duration = $row['duration'];
     $learningObj1 = $row['learningObj_1'];
     $learningObj2 = $row['learningObj_2'];
@@ -173,32 +174,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div id="hintBox" class="hint-box">
                             <button id="closeHintBox" class="close-button">&times;</button>
                             <div class="hint-content">
-                                <p><strong>Set Up the Backdoor with SSH Key Authentication:</strong></p>
-                                <p>After gaining access, copy your public key to the target machine to establish persistent access. Since SSH supports various authentication mechanisms, we'll focus on key-based authentication.<br>
-                                Generate your SSH key pair on the attacker machine:</p>
-                                <pre><code>ssh-keygen -t rsa</code></pre>
-                                <p><code>OR</code></p>
-                                <pre><code>ssh-keygen -t dsa</code></pre>
-
-                                <p><strong>View your public key:</strong></p>
-                                <pre><code>cat ~/.ssh/id_rsa.pub</code></pre>
-
-                                <p>Copy this public key for use on the target machine.</p>
-                                <p><strong>Create .ssh Directory on the Target and Paste Your Public Key:</strong></p>
-                                <p>On the target machine, create the necessary directories and paste your public key.<br>
-                                Command to create the directory:</p>
-                                <pre><code>mkdir -p ~/.ssh</code></pre>
-                                <p>Paste your public key in the victim’s machine in <code>~/.ssh/authorized_keys</code>:</p>
-                                <pre><code>echo "&lt;PasteYourPublicKeyHere&gt;" >> ~/.ssh/authorized_keys</code></pre>
-                                <p><code>OR</code></p>
-                                <pre><code>scp authorized_keys &lt;ip_address&gt;:/.ssh/authorized_keys</code></pre>
-
-                                <p><strong>SSH Into the Target Without a Password:</strong></p>
-                                <p>With your public key in place, you should be able to SSH into the target machine without needing a password from your attacker machine.<br>
-                                For example, you can SSH into the target machine by:</p>
-                                <pre><code>ssh -i ~/.ssh/id_rsa TargetHostName@TargetHostIP</code></pre>
-                                <p><code>OR</code></p>
-                                <pre><code>ssh TargetHostName@TargetHostIP</code></pre>
+                            <?php echo $hints; ?>
                             </div>
                         </div>
 

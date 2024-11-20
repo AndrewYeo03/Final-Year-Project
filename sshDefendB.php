@@ -37,6 +37,7 @@ if ($result->num_rows > 0) {
     $exerciseType = $row['exerciseType'];
     $difficultyLevel = $row['difficulty_level'];
     $duration = $row['duration'];
+    $hints = $row['hints'];
     $learningObj1 = $row['learningObj_1'];
     $learningObj2 = $row['learningObj_2'];
     $learningObj3 = $row['learningObj_3'];
@@ -261,12 +262,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div id="hintBox" class="hint-box">
                         <button id="closeHintBox" class="close-button">&times;</button>
                         <div class="hint-content">
-                            <p><strong>Edit the SSH configuration file using your preferred text editor.</strong></p>
-                            <pre>For example, issue command <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">nano &lt;pathname&gt;</code></pre>
-                            <p><strong>Review the configuration settings in the SSH configuration file.</strong></p>
-                            <pre>Set a value for <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">MaxAuthTries</code></pre>
-                            <p><strong>Reload the SSH service to apply the changes</strong></p>
-                            <pre>For example, issue command <code style="font-size: 0.875em; color: var(--bs-code-color); word-wrap: break-word;">sudo systemctl reload ssh</code></pre>
+                        <?php echo $hints; ?>
                         </div>
                     </div>
 

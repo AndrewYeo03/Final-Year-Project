@@ -37,6 +37,7 @@ if ($result->num_rows > 0) {
     $exerciseTitle = $row['title'];
     $exerciseType = $row['exerciseType'];
     $difficultyLevel = $row['difficulty_level'];
+    $hints = $row['hints'];
     $duration = $row['duration'];
     $learningObj1 = $row['learningObj_1'];
     $learningObj2 = $row['learningObj_2'];
@@ -172,41 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div id="hintBox" class="hint-box">
                             <button id="closeHintBox" class="close-button">&times;</button>
                             <div class="hint-content">
-                                <p><strong>Use Nmap to Identify Targets:</strong></p>
-                                <p>Start by scanning your network to identify which hosts have port 22 (SSH) open.<br>
-                                For example, use the following command to discover active hosts with SSH open:</p>
-                                <pre><code>nmap 192.168.43.0/24 -p 22 --open</code></pre>
-
-                                <p><strong>Prepare Username and Password Lists:</strong></p>
-                                <p>Create your lists of potential usernames and passwords to use for brute force attacks.<br>
-                                Example commands:</p>
-                                <pre><code>cat > users.txt</code></pre>
-                                <pre><code>cat > passwords.txt</code></pre>
-
-                                <p><strong>Set Up the Backdoor with SSH Key Authentication:</strong></p>
-                                <p>After gaining access, copy your public key to the target machine to establish persistent access. Since SSH supports various authentication mechanisms, we'll focus on key-based authentication.<br>
-                                Generate your SSH key pair on the attacker machine:</p>
-                                <pre><code>ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa</code></pre>
-
-                                <p>View your public key:</p>
-                                <pre><code>cat ~/.ssh/id_rsa.pub</code></pre>
-
-                                <p>Copy this public key for use on the target machine.</p>
-                                <p><strong>Create .ssh Directory on the Target and Paste Your Public Key:</strong></p>
-                                <p>On the target machine, create the necessary directories and paste your public key.<br>
-                                Command to create the directory:</p>
-                                <pre><code>mkdir -p ~/.ssh</code></pre>
-                                <p>Remember to change the directory and file permissions to ensure authentication succeeds:</p>
-                                <pre><code>chmod 700 ~/.ssh</code></pre>
-                                <p>Paste your public key in the victim’s machine in <code>~/.ssh/authorized_keys</code>:</p>
-                                <pre><code>echo "&lt;PasteYourPublicKeyHere&gt;" >> ~/.ssh/authorized_keys</code></pre>
-
-                                <p><strong>SSH Into the Target Without a Password:</strong></p>
-                                <p>With your public key in place, you should be able to SSH into the target machine without needing a password from your attacker machine.<br>
-                                For example, you can SSH into the target machine by:</p>
-                                <pre><code>ssh -i ~/.ssh/id_rsa TargetHostName@TargetHostIP</code></pre>
-                                <p>or</p>
-                                <pre><code>ssh TargetHostName@TargetHostIP</code></pre>
+                            <?php echo $hints; ?>
                             </div>
                         </div>
 

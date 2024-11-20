@@ -21,7 +21,7 @@ if (!isset($_SESSION['current_exercise'])) {
 // Current exercise index
 $current_exercise_index = $_SESSION['current_exercise'];
 
-$exercise_id = 'sshDB';
+$exercise_id = 'sshDC';
 // Query to fetch the exercise details
 $sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
 $result = $conn->query($sql);
@@ -36,6 +36,7 @@ if ($result->num_rows > 0) {
     $exerciseType = $row['exerciseType'];
     $difficultyLevel = $row['difficulty_level'];
     $duration = $row['duration'];
+    $hints = $row['hints'];
     $learningObj1 = $row['learningObj_1'];
     $learningObj2 = $row['learningObj_2'];
     $learningObj3 = $row['learningObj_3'];
@@ -291,34 +292,7 @@ iframe {
                     <div id="hintBox" class="hint-box">
                         <button id="closeHintBox" class="close-button">&times;</button>
                         <div class="hint-content">
-                            <p><strong>Install Fail2Ban:</strong></p>
-                            <p>Remember to update your packages and install fail2ban:</p>
-                            <pre><code>sudo apt update</code></pre>
-                            <pre><code>apt-get install fail2ban -y</code></pre>
-
-                            <p><strong>Create the Configuration File:</strong></p>
-                            <p>Instead of editing the default configuration <code>/etc/fail2ban/jail.conf</code>, create
-                                a local override file for customization. This way, updates won’t overwrite your changes:
-                            </p>
-                            <pre><code>sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local</code></pre>
-
-                            <p><strong>Enable Fail2ban to start on boot:</strong></p>
-                            <pre><code>sudo systemctl enable --now fail2ban </code></pre>
-
-                            <p>Check current status of the Fail2ban service:</p>
-                            <pre><code>sudo systemctl status -l fail2ban </code></pre>
-
-                            <p><strong>Configure and Edit SSH Jail Configuration:</strong></p>
-                            <p>Open the Fail2ban configuration file for SSH jail settings:</p>
-                            <pre><code>sudo nano /etc/fail2ban/jail.local</code></pre>
-
-                            <p><strong>Additional info:</strong></p>
-                            <p>Review the log file (monitoring Fail2ban's actions):</p>
-                            <pre><code>sudo tail -f /var/log/fail2ban.log</code></pre>
-                            <p>See if any IPs have been banned:</p>
-                            <pre><code>sudo fail2ban-client status sshd</code></pre>
-                            <p>Unblock a banned IP address:</p>
-                            <pre><code>sudo fail2ban-client unban &lt;ip_address&gt;</code></pre>
+                        <?php echo $hints; ?>
                         </div>
                     </div>
 

@@ -47,6 +47,7 @@ if ($result->num_rows > 0) {
     $exerciseTitle = $row['title'];
     $exerciseType = $row['exerciseType'];
     $difficultyLevel = $row['difficulty_level'];
+    $hints = $row['hints'];
     $duration = $row['duration'];
     $learningObj1 = $row['learningObj_1'];
     $learningObj2 = $row['learningObj_2'];
@@ -188,18 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div id="hintBox" class="hint-box">
                         <button id="closeHintBox" class="close-button">&times;</button>
                         <div class="hint-content">
-                            <p><strong>Use Nmap to Identify Targets:</strong></p>
-                            <p>Start by scanning your network to identify which hosts have port 22 (SSH) open.<br>
-                                For example, use the following command to discover active hosts with SSH open:</p>
-                            <pre><code>nmap &lt;network_address&gt; -p 22 --open</code></pre>
-                            <p><strong>Make Use of Possible Username and Password Lists:</strong></p>
-                            <p>Utilize the provided lists of potential usernames and passwords to use for brute force attacks.<br>
-                                Example commands:</p>
-                            <pre><code>cat > users.txt</code></pre>
-                            <pre><code>cat > passwords.txt</code></pre>
-                            <p><strong>If using Metasploit Framework:</strong></p>
-                            <p>Once in the Metasploit console, load the SSH login module:</p>
-                            <pre><code>use auxiliary/scanner/ssh/ssh_login</code></pre>
+                        <?php echo $hints; ?>
                         </div>
                     </div>
 
