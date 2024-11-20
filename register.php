@@ -6,9 +6,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
-    $class = strtoupper($_POST['class']);
     $student_id = strtoupper($_POST['student_id']);
-    $role_id = 1;
+    $role_id = 1; // 固定为学生角色
 
     // Password validation
     if (strlen($password) < 6) {
@@ -16,23 +15,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif ($password !== $confirm_password) {
         echo "<div class='error'>Passwords do not match</div>";
     } else {
-        $password_hashed = md5($password);
+        $password_hashed = md5($password); // 对密码进行哈希处理
 
-        // Check if the email already exists
+        // 检查邮箱是否已经存在
         $checkEmail = "SELECT * FROM users WHERE email = '$email'";
         $result = $conn->query($checkEmail);
 
         if ($result->num_rows > 0) {
             echo "This email has been registered";
         } else {
-            // Insert user information
+            // 插入用户信息
             $sql = "INSERT INTO users (username, email, password, role_id) VALUES ('$username', '$email', '$password_hashed', '$role_id')";
 
             if ($conn->query($sql) === TRUE) {
-                $user_id = $conn->insert_id;
+                $user_id = $conn->insert_id; // 获取新插入用户的 ID
 
-                // Insert student information
-                $sqlStudent = "INSERT INTO students (user_id, student_id, class) VALUES ('$user_id', '$student_id', '$class')";
+                // 插入学生信息
+                $sqlStudent = "INSERT INTO students (user_id, student_id) VALUES ('$user_id', '$student_id')";
 
                 if ($conn->query($sqlStudent) === TRUE) {
                     echo "<script>
@@ -96,9 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <label for="student_id">Student ID:</label><br>
             <input type="text" name="student_id" placeholder="12WMR12345" required><br><br>
-
-            <label for="class">Programme & Tutorial Group:</label><br>
-            <input type="text" name="class" placeholder="RIS3G7" required><br><br>
 
             <button type="submit">Register</button>
         </form>

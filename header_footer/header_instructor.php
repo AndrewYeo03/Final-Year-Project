@@ -34,7 +34,7 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Instructor Dashboard - TARUMT Cyber Range</title>
+    <title><?php echo htmlspecialchars($titleName); ?></title>
     <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon"/>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
@@ -95,9 +95,8 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
                                 </a>
                                 <div class="collapse" id="pagesCollapseInstructors" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="#">Add Student</a>
-                                        <a class="nav-link" href="#">Create Group</a>
-                                        <a class="nav-link" href="#">Owned Group</a>
+                                        <a class="nav-link" href="#">Create Class</a>
+                                        <a class="nav-link" href="ownedGroup.php">Owned Classes</a>
                                     </nav>
                                 </div>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
