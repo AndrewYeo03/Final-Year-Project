@@ -8,18 +8,18 @@ if (!isset($_SESSION['username'])) {
 include '../connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $groupName = mysqli_real_escape_string($conn, $_POST['group_name']);
-    $groupDescription = mysqli_real_escape_string($conn, $_POST['group_description']);
+    $className = mysqli_real_escape_string($conn, $_POST['class_name']);
+    $classDescription = mysqli_real_escape_string($conn, $_POST['description']);
     $createdBy = $_SESSION['user_id']; // Assuming `user_id` is stored in the session.
 
     // Generate a unique 6-character alphanumeric group code
-    $groupCode = strtoupper(substr(md5(uniqid(rand(), true)), 0, 6));
+    $classCode = strtoupper(substr(md5(uniqid(rand(), true)), 0, 6));
 
     // Check if the group code already exists
-    $query = "INSERT INTO groups (name, description, group_code, created_by) VALUES ('$groupName', '$groupDescription', '$groupCode', $createdBy)";
+    $query = "INSERT INTO class (class_name, description, class_code, created_by) VALUES ('$className', '$classDescription', '$classCode', $createdBy)";
     
     if (mysqli_query($conn, $query)) {
-        echo "<script>alert('Group created successfully! Your group code is $groupCode.'); window.location.href='groupsList.php';</script>";
+        echo "<script>alert('Group created successfully! Your group code is $classCode.'); window.location.href='groupsList.php';</script>";
     } else {
         echo "<script>alert('Error creating group: " . mysqli_error($conn) . "');</script>";
     }
@@ -179,11 +179,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <h1 class="card-title">Add Group</h1>
                         <form method="POST" action="">
                             <div class="form-floating mb-3">
-                                <input id="groupName" name="group_name" type="text" class="form-control" placeholder="Group Name" required>
+                                <input id="groupName" name="class_name" type="text" class="form-control" placeholder="Group Name" required>
                                 <label for="groupName">Group Name</label>
                             </div>
                             <div class="form-floating mb-3">
-                                <textarea id="groupDescription" name="group_description" class="form-control" placeholder="Description" required></textarea>
+                                <textarea id="groupDescription" name="description" class="form-control" placeholder="Description" required></textarea>
                                 <label for="groupDescription">Description</label>
                             </div>
                             <div class="form-floating mb-3">

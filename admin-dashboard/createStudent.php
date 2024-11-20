@@ -15,27 +15,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lastname = $_POST['lastname'];
     $email = $_POST['email'];
     $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Secure password hashing
+    $password = md5($_POST['password']); // Secure password hashing
 
-    // Assume role_id for 'Student' is known (e.g., role_id = 3 for students)
+    // Validate the first name and last name (only alphabetic characters and spaces)
+    if (!preg_match("/^[A-Za-z ]+$/", $firstname)) {
+        echo "Error: First name can only contain alphabets and spaces.";
+        exit;
+    }
+
+    if (!preg_match("/^[A-Za-z ]+$/", $lastname)) {
+        echo "Error: Last name can only contain alphabets and spaces.";
+        exit;
+    }
+
+    // Validate the email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "Error: Invalid email format.";
+        exit; // Stop further processing if the email is invalid
+    }
+
+    // Check if the email already exists in the users table
+    $sql = "SELECT id FROM users WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        // Email already exists
+        echo "Error: This email is already registered.";
+        exit;
+    }
+
+    // Assume role_id for 'Student' is known (e.g., role_id = 1 for students)
     $role_id = 1; // Adjust this based on your roles table
 
     // Insert user into the 'users' table with the role_id
-    $sql = "INSERT INTO users (username, password, email, role_id) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssi", $username, $password, $email, $role_id);
+    $sql2 = "INSERT INTO users (username, password, email, role_id) VALUES (?, ?, ?, ?)";
+    $stmt2 = $conn->prepare($sql2);
+    $stmt2->bind_param("sssi", $username, $password, $email, $role_id);
 
     // Execute the user insertion
-    if ($stmt->execute()) {
-        $user_id = $stmt->insert_id; // Get the ID of the inserted user
+    if ($stmt2->execute()) {
+        $user_id = $stmt2->insert_id; // Get the ID of the inserted user
 
         // Insert into the 'students' table
-        $sql2 = "INSERT INTO students (user_id, student_id, firstname, lastname, email, class_name, password, username) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt2 = $conn->prepare($sql2);
-        $stmt2->bind_param("isssssss", $user_id, $student_id, $firstname, $lastname, $email, $class_name, $password, $username);
+        $sql3 = "INSERT INTO students (user_id, student_id, firstname, lastname, email, class_name, password, username) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt3 = $conn->prepare($sql3);
+        $stmt3->bind_param("isssssss", $user_id, $student_id, $firstname, $lastname, $email, $class_name, $password, $username);
 
-
-        if ($stmt2->execute()) {
+        if ($stmt3->execute()) {
             header("Location: studentsList.php"); // Redirect after successful submission
             exit;
         } else {
@@ -46,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -207,9 +237,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <label for="RegisterPassword">Password</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input id="RegisterEmail" name="email" type="email" class="form-control" placeholder="Email" required="">
-                                        <label for="RegisterEmail">Email</label>
-                                    </div>
+    <input id="RegisterEmail" name="email" type="email" class="form-control" placeholder="Email" required="">
+    <label for="RegisterEmail">Email</label>
+    <small class="text-muted">Please enter a valid email address.</small>
+</div>
                                     <div class="form-floating mb-3">
                                         <input id="StudentID" name="student_id" type="text" class="form-control" placeholder="Student ID" required="">
                                         <label for="StudentID">Student ID</label>
@@ -227,7 +258,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <label for="RegisteredLast">Last Name</label>
                                     </div>
                                     <div class="form-floating mb-3">
-                                        <input type="submit" value="Submit" class="btn btn-primary" />
+                                        <input type="submit" value="Add Student" class="btn btn-primary" />
                                     </div>
                                 </form>
                             </div>

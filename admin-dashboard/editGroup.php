@@ -16,7 +16,7 @@ if (!isset($_GET['id'])) {
 $id = $_GET['id'];
 
 // Retrieve the current group information
-$sql = "SELECT * FROM groups WHERE id = ?";
+$sql = "SELECT * FROM class WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -27,17 +27,17 @@ if ($result->num_rows == 0) {
     exit;
 }
 
-$group = $result->fetch_assoc();
+$class = $result->fetch_assoc();
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $group_name = $_POST['group_name'];
-    $group_description = $_POST['group_description'];
+    $class_name = $_POST['class_name'];
+    $description = $_POST['description'];
 
     // Update the group name and description
-    $update_sql = "UPDATE groups SET name = ?, description = ? WHERE id = ?";
+    $update_sql = "UPDATE class SET class_name = ?, description = ? WHERE id = ?";
     $update_stmt = $conn->prepare($update_sql);
-    $update_stmt->bind_param("ssi", $name, $description, $id);
+    $update_stmt->bind_param("ssi", $class_name, $description, $id);
 
     if ($update_stmt->execute()) {
         $_SESSION['success_message'] = "Group updated successfully.";
@@ -62,6 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -196,24 +197,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
+                    
                     <h1 class="mt-4">Edit Group</h1>
                     <?php if (isset($error_message)): ?>
                         <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
                     <?php endif; ?>
                     <form method="POST">
                     <div class="form-floating mb-3">
-    <input type="text" id="groupCode" name="group_code" class="form-control" value="<?php echo htmlspecialchars($group['group_code']); ?>" readonly>
+    <input type="text" id="classCode" name="class_code" class="form-control" value="<?php echo htmlspecialchars($class['class_code']); ?>" readonly>
     <label for="groupCode">Group Code</label>
 </div>
 <p class="text-muted">Note: The group code cannot be edited or changed.</p>
                         
                         <div class="form-floating mb-3">
-                            <input type="text" id="groupName" name="name" class="form-control" value="<?php echo htmlspecialchars($group['name']); ?>" required>
-                            <label for="groupName">Group Name</label>
+                        <input type="text" id="className" name="class_name" class="form-control" value="<?php echo htmlspecialchars($class['class_name']); ?>" required>
+                            <label for="className">Group Name</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <textarea id="groupDescription" name="description" class="form-control" required><?php echo htmlspecialchars($group['description']); ?></textarea>
-                            <label for="groupDescription">Group Description</label>
+                            <textarea id="Description" name="description" class="form-control" required><?php echo htmlspecialchars($class['description']); ?></textarea>
+                            <label for="Description">Group Description</label>
                         </div>
                         <div class="form-floating mb-3">
                             <input type="submit" value="Update Group" class="btn btn-primary" />

@@ -13,7 +13,7 @@ $limit = 10;
 $offset = ($page - 1) * $limit;
 
 // Fetch instructors list from database
-$sql = "SELECT id, username, email, faculty, firstname, lastname FROM instructors"; // Adjust table and column names as necessary
+$sql = "SELECT id, username, email, instructor_id, faculty, firstname, lastname FROM instructors"; // Adjust table and column names as necessary
 $result = $conn->query($sql);
 
 // Fetch total number of instructors for pagination
@@ -182,6 +182,7 @@ $total_pages = ceil($total_instructors / $limit);
                                         <tr>
                                             <th>Username</th>
                                             <th>Email</th>
+                                            <th>Instructor ID</th>
                                             <th>Faculty</th>
                                             <th>First Name</th>
                                             <th>Last Name</th>
@@ -194,6 +195,7 @@ $total_pages = ceil($total_instructors / $limit);
                                             <tr>
     <td><?php echo htmlspecialchars($row['username']); ?></td>
     <td><?php echo htmlspecialchars($row['email']); ?></td>
+    <td><?php echo htmlspecialchars($row['instructor_id']); ?></td>
     <td><?php echo htmlspecialchars($row['faculty']); ?></td>
     <td><?php echo htmlspecialchars($row['firstname']); ?></td>
     <td><?php echo htmlspecialchars($row['lastname']); ?></td>

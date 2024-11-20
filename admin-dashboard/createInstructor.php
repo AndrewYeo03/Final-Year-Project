@@ -15,7 +15,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lastname = $_POST['lastname'];
     $email = $_POST['email'];
     $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Secure password hashing
+    $password = md5($_POST['password']); // Secure password hashing
+
+    // Validate the first name and last name (only alphabetic characters and spaces)
+    if (!preg_match("/^[A-Za-z ]+$/", $firstname)) {
+        $_SESSION['error'] = "First name can only contain alphabets and spaces.";
+        header("Location: createInstructor.php");
+        exit;
+    }
+
+    if (!preg_match("/^[A-Za-z ]+$/", $lastname)) {
+        $_SESSION['error'] = "Last name can only contain alphabets and spaces.";
+        header("Location: createInstructor.php");
+        exit;
+    }
+
+    // Validate the email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['error'] = "Invalid email format.";
+        header("Location: createInstructor.php");
+        exit;
+    }
 
     // Assume role_id for 'Instructor' is known (for example, role_id = 2 for instructors)
     $role_id = 2; // Adjust this based on your roles table
@@ -28,7 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $checkStmt->store_result();
 
     if ($checkStmt->num_rows > 0) {
-        echo "Error: The email or username is already in use. Please use a different one.";
+        $_SESSION['error'] = "The email or username is already in use. Please use a different one.";
+        header("Location: createInstructor.php");
+        exit;
     } else {
         // Insert user into the 'users' table with the role_id
         $sql = "INSERT INTO users (username, password, email, role_id) VALUES (?, ?, ?, ?)";
@@ -46,13 +68,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt2->bind_param("isssssss", $user_id, $email, $instructor_id, $username, $faculty, $firstname, $lastname, $password);
 
             if ($stmt2->execute()) {
+                $_SESSION['success'] = "Instructor added successfully!";
                 header("Location: instructorsList.php"); // Redirect after successful submission
                 exit;
             } else {
-                echo "Error in instructor table: " . $conn->error;
+                $_SESSION['error'] = "Error in instructor table: " . $conn->error;
+                header("Location: createInstructor.php");
+                exit;
             }
         } else {
-            echo "Error in users table: " . $conn->error;
+            $_SESSION['error'] = "Error in users table: " . $conn->error;
+            header("Location: createInstructor.php");
+            exit;
         }
     }
 }

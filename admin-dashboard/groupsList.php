@@ -13,7 +13,7 @@ $limit = 10;
 $offset = ($page - 1) * $limit;
 
 // Fetch groups with pagination
-$sql = "SELECT * FROM groups LIMIT $limit OFFSET $offset";
+$sql = "SELECT * FROM class LIMIT $limit OFFSET $offset";
 $result = $conn->query($sql);
 
 if (!$result) {
@@ -21,7 +21,7 @@ if (!$result) {
 }
 
 // Calculate total pages
-$total_sql = "SELECT COUNT(*) AS total FROM groups";
+$total_sql = "SELECT COUNT(*) AS total FROM class";
 $total_result = $conn->query($total_sql);
 $total_row = $total_result->fetch_assoc();
 $total_records = $total_row['total'];
@@ -182,9 +182,9 @@ $total_pages = ceil($total_records / $limit);
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Group Name</th>
-                                        <th>Group Description</th>
-                                        <th>Group Code</th>
+                                        <th>Class Name</th>
+                                        <th>Class Description</th>
+                                        <th>Class Code</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -192,9 +192,9 @@ $total_pages = ceil($total_records / $limit);
     <?php if ($result->num_rows > 0): ?>
         <?php while ($row = $result->fetch_assoc()): ?>
             <tr>
-                <td><?php echo htmlspecialchars($row['name']); ?></td>
+                <td><?php echo htmlspecialchars($row['class_name']); ?></td>
                 <td><?php echo htmlspecialchars($row['description']); ?></td>
-                <td><?php echo htmlspecialchars($row['group_code']); ?></td>
+                <td><?php echo htmlspecialchars($row['class_code']); ?></td>
                 <td>
                     <a href="editGroup.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
                     <a href="deleteGroup.php?id=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this group?')">Delete</a>
