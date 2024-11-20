@@ -25,7 +25,7 @@ if (!is_numeric($id)) {
 }
 
 // Delete the group from the database
-$sql = "DELETE FROM groups WHERE id = ?";
+$sql = "DELETE FROM class WHERE id = ?";
 $stmt = $conn->prepare($sql);
 
 if ($stmt) {
