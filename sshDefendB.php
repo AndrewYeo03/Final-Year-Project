@@ -22,6 +22,34 @@ if (!isset($_SESSION['current_exercise'])) {
 $current_exercise_index = $_SESSION['current_exercise'];
 
 
+$exercise_id = 'sshDB';
+// Query to fetch the exercise details
+$sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
+$result = $conn->query($sql);
+
+// Check if the exercise exists
+if ($result->num_rows > 0) {
+    // Fetch the exercise details
+    $row = $result->fetch_assoc();
+    
+    // Assign values to variables for easier use
+    $exerciseTitle = $row['title'];
+    $exerciseType = $row['exerciseType'];
+    $difficultyLevel = $row['difficulty_level'];
+    $duration = $row['duration'];
+    $learningObj1 = $row['learningObj_1'];
+    $learningObj2 = $row['learningObj_2'];
+    $learningObj3 = $row['learningObj_3'];
+    $scenarioQues = $row['scenarioQues'];
+    $question = $row['question'];
+} else {
+    echo "No exercise found for ID: $exercise_id";
+    exit();
+}
+
+
+
+
 // Initialize error message variable
 $error_message = '';
 
@@ -219,8 +247,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="container-fluid px-4">
                     <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Defensive Exercise </li>
-                        <li class="breadcrumb-item active">Difficulty Level: Beginner</li>
+                        <li class="breadcrumb-item active"><?php echo $exerciseType; ?></li>
+                        <li class="breadcrumb-item active">Difficulty Level: <?php echo $difficultyLevel; ?></li>
                     </ol>
                     <!-- Top nav bar -->
                     <div class="top-nav">
@@ -256,38 +284,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <!-- Main Content/ Description of Scenario -->
-                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise B: Limit Maximum Number of SSH
-                        Authentication Attempts<span
-                            style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 10
-                            Minutes</span></h2>
+                    <h2 class="mt-4 question-title" style="padding: 0px 10px;"><?php echo $exerciseTitle; ?><span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: <?php echo $duration; ?></span></h2>
                     <div class="main-content">
                         <div class="learning-objectives">
                             <h2>Learning Objectives</h2>
                             <ul>
-                                <li>Understand the importance of limiting failed SSH authentication attempts to protect
-                                    against brute force attacks.</li>
-                                <li>Gain hands-on experience with configuring SSH server settings to prevent excessive
-                                    login attempts.</li>
-                                <li>Learn how to test and verify the effectiveness of authentication attempt limits.
-                                </li>
+                                <li><?php echo $learningObj1; ?></li>
+                                <li><?php echo $learningObj2; ?></li>
+                                <li><?php echo $learningObj3; ?></li>
                             </ul>
                         </div>
 
                         <div class="scenario">
                             <h2>Example Scenario</h2>
-                            <p>As part of your role in securing an organization’s SSH server, you discover that there is
-                                no limit on the number of failed login attempts. This lack of restriction makes the
-                                server vulnerable to brute force attacks. To mitigate this risk, the organization wants
-                                the server to automatically terminate connections after a few failed login attempts.</p>
+                            <p><?php echo $scenarioQues; ?></p>
                         </div>
 
                         <div class="question">
                             <h2>Your task</h2>
-                            <p>Your task is to configure the SSH server to <code>limit failed login attempts</code> to a
-                                maximum of <code>3</code>. Remember to remove <code>#</code> if nessessary. Once
-                                configured, verify that the setting is effective by testing with multiple failed login
-                                attempts. This measure should reduce the risk of brute force attacks and unauthorized
-                                access.</p>
+                            <p><?php echo $question; ?></p>
                         </div>
                     </div>
 

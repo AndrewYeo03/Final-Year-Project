@@ -22,6 +22,32 @@ if (!isset($_SESSION['current_exercise'])) {
 $current_exercise_index = $_SESSION['current_exercise'];
 
 
+$exercise_id = 'sshOB1';
+// Query to fetch the exercise details
+$sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
+$result = $conn->query($sql);
+
+// Check if the exercise exists
+if ($result->num_rows > 0) {
+    // Fetch the exercise details
+    $row = $result->fetch_assoc();
+    
+    // Assign values to variables for easier use
+    $exerciseTitle = $row['title'];
+    $exerciseType = $row['exerciseType'];
+    $difficultyLevel = $row['difficulty_level'];
+    $duration = $row['duration'];
+    $learningObj1 = $row['learningObj_1'];
+    $learningObj2 = $row['learningObj_2'];
+    $learningObj3 = $row['learningObj_3'];
+    $learningObj4 = $row['learningObj_4'];
+    $question = $row['question'];
+} else {
+    echo "No exercise found for ID: $exercise_id";
+    exit();
+}
+
+
 // Initialize error message variable
 $error_message = '';
 
@@ -132,8 +158,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Offensive Exercise </li>
-                            <li class="breadcrumb-item active">Difficulty Level: Advanced</li>
+                        <li class="breadcrumb-item active"><?php echo $exerciseType; ?></li>
+                        <li class="breadcrumb-item active">Difficulty Level: <?php echo $difficultyLevel; ?></li>
                         </ol>
                         <!-- Top nav bar -->
                         <div class="top-nav">
@@ -180,21 +206,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
 
                         <!-- Main Content/ Description of Scenario -->
-                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise B (i): Automating SSH Brute Force Attack<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 30 Minutes</span></h2>
+                        <h2 class="mt-4 question-title" style="padding: 0px 10px;"><?php echo $exerciseTitle; ?><span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: <?php echo $duration; ?></span></h2>
                         <div class="main-content">
                             <div class="learning-objectives">
                                 <h2>Learning Objectives</h2>
                                 <ul>
-                                    <li>Understand the fundamentals of automating SSH brute force attacks.</li>
-                                    <li>Gain hands-on experience with Python scripting to perform brute force attacks.</li>
-                                    <li>Explore common libraries for automation such as asyncssh, paramiko, and termcolor.</li>
-                                    <li>Learn to implement automated scripts for identifying valid SSH login credentials.</li>
-                                </ul>
+                                <li><?php echo $learningObj1; ?></li>
+                                <li><?php echo $learningObj2; ?></li>
+                                <li><?php echo $learningObj3; ?></li>
+                                <li><?php echo $learningObj4; ?></li>
+                            </ul>
                             </div>
 
                             <div class="question">
                                 <h2>Question</h2>
-                                <p>In this exercise, you are required to <code>automate a brute force attack</code> on an SSH server using a <code>Python script</code>. Write your own script or modify an existing one to systematically attempt login credentials until access is granted. Utilize libraries like asyncssh and termcolor to enhance the functionality and readability of your script. Once access is achieved, submit your findings here.</p>
+                                <p><?php echo $question; ?></p>
                                 
                                 <p><strong>You can use the provided script here:</strong> <a href="BruteForceAutomationScript.txt" download class="download-link">BruteForceAutomationScript.txt</a></p>
                                 <div class="vncTitle">

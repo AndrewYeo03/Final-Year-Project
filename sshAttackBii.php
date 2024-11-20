@@ -22,6 +22,33 @@ if (!isset($_SESSION['current_exercise'])) {
 $current_exercise_index = $_SESSION['current_exercise'];
 
 
+
+$exercise_id = 'sshOB2';
+// Query to fetch the exercise details
+$sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
+$result = $conn->query($sql);
+
+// Check if the exercise exists
+if ($result->num_rows > 0) {
+    // Fetch the exercise details
+    $row = $result->fetch_assoc();
+    
+    // Assign values to variables for easier use
+    $exerciseTitle = $row['title'];
+    $exerciseType = $row['exerciseType'];
+    $difficultyLevel = $row['difficulty_level'];
+    $duration = $row['duration'];
+    $learningObj1 = $row['learningObj_1'];
+    $learningObj2 = $row['learningObj_2'];
+    $learningObj3 = $row['learningObj_3'];
+    $learningObj4 = $row['learningObj_4'];
+    $question = $row['question'];
+} else {
+    echo "No exercise found for ID: $exercise_id";
+    exit();
+}
+
+
 // Initialize error message variable
 $error_message = '';
 
@@ -131,8 +158,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="container-fluid px-4">
                         <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Offensive Exercise </li>
-                            <li class="breadcrumb-item active">Difficulty Level: Advanced</li>
+                        <li class="breadcrumb-item active"><?php echo $exerciseType; ?></li>
+                        <li class="breadcrumb-item active">Difficulty Level: <?php echo $difficultyLevel; ?></li>
                         </ol>
                         <!-- Top nav bar -->
                         <div class="top-nav">
@@ -197,21 +224,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
 
                         <!-- Main Content/ Description of Scenario -->
-                        <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise B (ii): Creating Backdoor Using Reverse SSH Tunnel<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
+                        <h2 class="mt-4 question-title" style="padding: 0px 10px;"><?php echo $exerciseTitle; ?><span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: <?php echo $duration; ?></span></h2>
                         <div class="main-content">
                             <div class="learning-objectives">
                                 <h2>Learning Objectives</h2>
                                 <ul>
-                                    <li>Understand the concept of reverse SSH tunneling and how it can be used to maintain persistence.</li>
-                                    <li>Gain experience in configuring SSH tunnels for remote access on compromised systems.</li>
-                                    <li>Learn techniques for establishing a backdoor in a secured environment.</li>
-                                    <li>Explore the ethical and defensive implications of persistent access techniques.</li>
+                                    <li><?php echo $learningObj1; ?></li>
+                                    <li><?php echo $learningObj2; ?></li>
+                                    <li><?php echo $learningObj3; ?></li>
+                                    <li><?php echo $learningObj4; ?></li>
                                 </ul>
                             </div>
 
                             <div class="question">
                                 <h2>Question</h2>
-                                <p>In this advanced exercise, after successfully brute-forcing the SSH login credentials, you are required to create a backdoor by <code>setting up a reverse SSH tunnel</code> from the compromised server to your attack machine. Due to firewall restrictions, external connections to internal machines are blocked, which would typically prevent direct access. However, we can bypass this limitation using an <code>SSH port forwarding tunnel</code>, commonly used by system administrators to access servers externally in a secure manner. By establishing a reverse SSH tunnel, you can initiate a secure connection from the compromised server back to your machine, enabling persistent access through an encrypted channel despite firewall restrictions.This tunnel will simulate persistence, enabling future access to the compromised system.</p>
+                                <p><?php echo $question; ?></p>
                                 <div class="vncTitle">
                             <h2>Let's Try Using This Virtual Machine Here!</h2>
 

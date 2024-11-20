@@ -33,6 +33,33 @@ if ($current_exercise_page !== basename($_SERVER['PHP_SELF'])) {
 }
 
 
+$exercise_id = 'sshOA1';
+// Query to fetch the exercise details
+$sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
+$result = $conn->query($sql);
+
+// Check if the exercise exists
+if ($result->num_rows > 0) {
+    // Fetch the exercise details
+    $row = $result->fetch_assoc();
+    
+    // Assign values to variables for easier use
+    $exerciseTitle = $row['title'];
+    $exerciseType = $row['exerciseType'];
+    $difficultyLevel = $row['difficulty_level'];
+    $duration = $row['duration'];
+    $learningObj1 = $row['learningObj_1'];
+    $learningObj2 = $row['learningObj_2'];
+    $learningObj3 = $row['learningObj_3'];
+    $learningObj4 = $row['learningObj_4'];
+    $question = $row['question'];
+} else {
+    echo "No exercise found for ID: $exercise_id";
+    exit();
+}
+
+
+
 // Initialize error message variable
 $error_message = '';
 
@@ -147,8 +174,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="container-fluid px-4">
                     <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Offensive Exercise </li>
-                        <li class="breadcrumb-item active">Difficulty Level: Beginner</li>
+                        <li class="breadcrumb-item active"><?php echo $exerciseType; ?></li>
+                        <li class="breadcrumb-item active">Difficulty Level: <?php echo $difficultyLevel; ?></li>
                     </ol>
                     <!-- Top nav bar -->
                     <div class="top-nav">
@@ -190,21 +217,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <!-- Main Content/ Description of Scenario -->
-                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise A (i): Brute forcing SSH Using Command-line Tools<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 20 Minutes</span></h2>
+                    <h2 class="mt-4 question-title" style="padding: 0px 10px;"><?php echo $exerciseTitle; ?><span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: <?php echo $duration; ?></span></h2>
                     <div class="main-content">
                         <div class="learning-objectives">
                             <h2>Learning Objectives</h2>
                             <ul>
-                                <li>Understand the basics of SSH brute force attacks.</li>
-                                <li>Gain experience with different SSH brute force tools like Metasploit, Hydra, Patator, and Medusa.</li>
-                                <li>Learn how to configure and execute manual SSH brute force attack with commands.</li>
-                                <li>Understand the implications of SSH vulnerabilities on system security.</li>
+                                <li><?php echo $learningObj1; ?></li>
+                                <li><?php echo $learningObj2; ?></li>
+                                <li><?php echo $learningObj3; ?></li>
+                                <li><?php echo $learningObj4; ?></li>
                             </ul>
                         </div>
 
                         <div class="question">
                             <h2>Question</h2>
-                            <p>In this exercise, you are required to <code>conduct a brute force attack</code> on an SSH server using manual input command. You can utilize tools such as <code>Hydra</code> and <code>Metasploit</code> to gain unauthorized access to the target machine. Your objective is to explore the process of brute forcing by identifying valid credentials and establishing access. After you brute force successful, submit your results here!</p>
+                            <p><?php echo $question; ?></p>
                         </div>
                         <div class="vncTitle">
                             <h2>Let's Try Using This Virtual Machine Here!</h2>
