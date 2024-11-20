@@ -21,6 +21,31 @@ if (!isset($_SESSION['current_exercise'])) {
 // Current exercise index
 $current_exercise_index = $_SESSION['current_exercise'];
 
+$exercise_id = 'sshDB';
+// Query to fetch the exercise details
+$sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
+$result = $conn->query($sql);
+
+// Check if the exercise exists
+if ($result->num_rows > 0) {
+    // Fetch the exercise details
+    $row = $result->fetch_assoc();
+    
+    // Assign values to variables for easier use
+    $exerciseTitle = $row['title'];
+    $exerciseType = $row['exerciseType'];
+    $difficultyLevel = $row['difficulty_level'];
+    $duration = $row['duration'];
+    $learningObj1 = $row['learningObj_1'];
+    $learningObj2 = $row['learningObj_2'];
+    $learningObj3 = $row['learningObj_3'];
+    $scenarioQues = $row['scenarioQues'];
+    $question = $row['question'];
+} else {
+    echo "No exercise found for ID: $exercise_id";
+    exit();
+}
+
 
 // Initialize error message variable
 $error_message = '';
@@ -252,8 +277,8 @@ iframe {
                 <div class="container-fluid px-4">
                     <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Defensive Exercise </li>
-                        <li class="breadcrumb-item active">Difficulty Level: Advanced</li>
+                        <li class="breadcrumb-item active"><?php echo $exerciseType; ?></li>
+                        <li class="breadcrumb-item active">Difficulty Level: <?php echo $difficultyLevel; ?></li>
                     </ol>
                     <!-- Top nav bar -->
                     <div class="top-nav">
@@ -311,38 +336,25 @@ iframe {
                     </div>
 
                     <!-- Main Content/ Description of Scenario -->
-                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise C: Implement Fail2ban Intrusion
-                        Prevention Tool<span style="float: right; font-weight: normal; font-size:large;">Suggested
-                            Duration: 20 Minutes</span></h2>
+                    <h2 class="mt-4 question-title" style="padding: 0px 10px;"><?php echo $exerciseTitle; ?><span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: <?php echo $duration; ?></span></h2>
                     <div class="main-content">
                         <div class="learning-objectives">
                             <h2>Learning Objectives</h2>
                             <ul>
-                                <li>Understand the use of Fail2ban as a defense mechanism against SSH brute force
-                                    attacks.</li>
-                                <li>Gain experience configuring Fail2ban to automatically detect and block suspicious
-                                    IPs.</li>
-                                <li>Learn to set up alerts and whitelist trusted IPs to enhance SSH security without
-                                    impacting trusted users.</li>
+                                <li><?php echo $learningObj1; ?></li>
+                                <li><?php echo $learningObj2; ?></li>
+                                <li><?php echo $learningObj3; ?></li>
                             </ul>
                         </div>
 
                         <div class="scenario">
                             <h2>Example Scenario</h2>
-                            <p>The company’s SSH server has experienced multiple unauthorized login attempts originating
-                                from various IP addresses. To secure the server, you have been assigned to implement
-                                Fail2ban, an intrusion prevention tool that can automatically detect and block IPs
-                                showing suspicious behavior, such as repeated failed login attempts within a short
-                                period.</p>
+                            <p><?php echo $scenarioQues; ?></p>
                         </div>
 
                         <div class="question">
                             <h2>Your task</h2>
-                            <p>Install and configure <code>Fail2ban</code> on the SSH server to monitor failed login
-                                attempts. Set it to ban any IP address with <code>3 failed login attempts</code> within
-                                a <code>1-minute period</code>. Set the <code>ban duration for 24 hours</code> to
-                                prevent persistent brute-force attacks. Further configurations can be added by yourself
-                                to enhance the security.</p>
+                            <p><?php echo $question; ?></p>
                                 <div class="vncTitle">
                             <h2>Let's Try Using This Virtual Machine Here!</h2>
 <!-- VNC Viewer iframe Section -->

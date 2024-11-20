@@ -22,6 +22,32 @@ if (!isset($_SESSION['current_exercise'])) {
 $current_exercise_index = $_SESSION['current_exercise'];
 
 
+$exercise_id = 'sshDA';
+// Query to fetch the exercise details
+$sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
+$result = $conn->query($sql);
+
+// Check if the exercise exists
+if ($result->num_rows > 0) {
+    // Fetch the exercise details
+    $row = $result->fetch_assoc();
+    
+    // Assign values to variables for easier use
+    $exerciseTitle = $row['title'];
+    $exerciseType = $row['exerciseType'];
+    $difficultyLevel = $row['difficulty_level'];
+    $duration = $row['duration'];
+    $learningObj1 = $row['learningObj_1'];
+    $learningObj2 = $row['learningObj_2'];
+    $learningObj3 = $row['learningObj_3'];
+    $scenarioQues = $row['scenarioQues'];
+    $question = $row['question'];
+} else {
+    echo "No exercise found for ID: $exercise_id";
+    exit();
+}
+
+
 // Initialize error message variable
 $error_message = '';
 
@@ -202,8 +228,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="container-fluid px-4">
                     <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Defensive Exercise </li>
-                        <li class="breadcrumb-item active">Difficulty Level: Beginner</li>
+                        <li class="breadcrumb-item active"><?php echo $exerciseType; ?></li>
+                        <li class="breadcrumb-item active">Difficulty Level: <?php echo $difficultyLevel; ?></li>
                     </ol>
                     <!-- Top nav bar -->
                     <div class="top-nav">
@@ -239,25 +265,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <!-- Main Content/ Description of Scenario -->
-                    <h2 class="mt-4 question-title" style="padding: 0px 10px;">Exercise A: Disable SSH Password Authentication<span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: 10 Minutes</span></h2>
+                    <h2 class="mt-4 question-title" style="padding: 0px 10px;"><?php echo $exerciseTitle; ?><span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: <?php echo $duration; ?></span></h2>
                     <div class="main-content">
                         <div class="learning-objectives">
                             <h2>Learning Objectives</h2>
                             <ul>
-                                <li>Understand the benefits of SSH key-based authentication over password-based methods.</li>
-                                <li>Learn how to modify SSH server configurations to enforce key-based access.</li>
-                                <li>Gain hands-on experience with securing an SSH server against brute force attacks.</li>
+                                <li><?php echo $learningObj1; ?></li>
+                                <li><?php echo $learningObj2; ?></li>
+                                <li><?php echo $learningObj3; ?></li>
                             </ul>
                         </div>
 
                         <div class="scenario">
                             <h2>Example Scenario</h2>
-                            <p>You are a security consultant hired by a company concerned about the security of their SSH server. During your security audit, you discover that the server allows password-based authentication, which is vulnerable to brute force attacks. The company has asked you to implement key-based authentication to strengthen server security.</p>
+                            <p><?php echo $scenarioQues; ?></p>
                         </div>
 
                         <div class="question">
                             <h2>Your task</h2>
-                            <p>Your task is to secure the SSH server by <code>disabling password-based authentication</code>. This requires you to modify the SSH configuration file to ensure that only users with a valid SSH key pair can log in. After making these changes, confirm that password-based login is disabled and that key-based login works as expected. Remember to remove <code>#</code> if nessessary.</p>
+                            <p><?php echo $question; ?></p>
                         </div>
                     </div>
 
