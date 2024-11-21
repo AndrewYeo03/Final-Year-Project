@@ -3,13 +3,19 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".manage-students-btn").forEach((btn) => {
         btn.addEventListener("click", function () {
             const className = this.dataset.class;
-            document.getElementById("className").value = className;
 
-            // AJAX request: Retrieve the student list
+            document.getElementById("className").value = className;
+            document.getElementById("currentClassName").textContent = className;
+
+            // 调试：检查按钮点击时传递的 className
+            console.log("Button clicked:", className);
+
+            //AJAX request: Retrieve student list
             loadStudents(className);
 
-            // Show modal box
-            new bootstrap.Modal(document.getElementById("manageStudentsModal")).show();
+            //Show modal box
+            const modal = new bootstrap.Modal(document.getElementById("manageStudentsModal"));
+            modal.show();
         });
     });
 
@@ -64,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 //Display confirmation box
                 const confirmDelete = confirm(`Are you sure you want to delete Student ID: ${studentId}, Name: ${studentName}?`);
                 if (!confirmDelete) {
-                    return; // 用户取消操作
+                    return; //User cancel action
                 }
 
                 //Once confirm proceed delete
@@ -99,12 +105,18 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then((response) => response.json())
             .then((data) => {
+
+                // 调试：检查加载的学生数据
+                console.log("Students loaded:", data.students);
+
+
                 const tableBody = document.getElementById("studentsTableBody");
                 tableBody.innerHTML = ""; //Clear table
 
-                data.students.forEach((student) => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
+                if (data.students && data.students.length > 0) {
+                    data.students.forEach((student) => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
                         <td>${student.student_id}</td>
                         <td>${student.student_name}</td>
                         <td>
@@ -115,11 +127,17 @@ document.addEventListener("DOMContentLoaded", function () {
                             </button>
                         </td>
                     `;
-                    tableBody.appendChild(row);
-                });
+                        tableBody.appendChild(row);
+                    });
 
-                //Rebind dynamically generated delete button events
-                bindDeleteStudentButtons();
+                    //Dynamically bind delete button event
+                    bindDeleteStudentButtons();
+                } else {
+                    //If there are no students, show empty state
+                    const emptyRow = document.createElement("tr");
+                    emptyRow.innerHTML = `<td colspan="3" class="text-center">No students in this class.</td>`;
+                    tableBody.appendChild(emptyRow);
+                }
             });
     }
 });

@@ -1,5 +1,5 @@
 <?php
-$titleName = "Owned Group - TARUMT Cyber Range";
+$titleName = "Owned Class - TARUMT Cyber Range";
 include  '../header_footer/header_instructor.php';
 include '../connection.php';
 
@@ -80,7 +80,7 @@ $stmt->close();
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="manageStudentsModalLabel">Manage Students</h5>
+                <h5 class="modal-title" id="manageStudentsModalLabel">Manage Students - <span id="currentClassName"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -111,5 +111,5 @@ $stmt->close();
     </div>
 </div>
 
-<script src="ownedGroup.js"></script>
+<script src="ownedClass.js"></script>
 <?php include '../header_footer/footer.php' ?>
