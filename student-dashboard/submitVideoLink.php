@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'connection.php';
+include '../connection.php';
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
