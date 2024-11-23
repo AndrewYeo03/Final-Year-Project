@@ -38,18 +38,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $description = strtoupper(trim($_POST['description']));
     $classCode = generateClassCode();
 
-    $stmt = $conn->prepare("
-        INSERT INTO class (class_name, description, class_code, created_by) 
-        VALUES (?, ?, ?, ?)
-    ");
-    $stmt->bind_param("sssi", $className, $description, $classCode, $instructorId);
+    //Open transaction
+    $conn->begin_transaction();
 
-    if ($stmt->execute()) {
+    try {
+        //Insert into class table
+        $stmt = $conn->prepare("
+            INSERT INTO class (class_name, description, class_code, created_by) 
+            VALUES (?, ?, ?, ?)
+        ");
+        $stmt->bind_param("sssi", $className, $description, $classCode, $instructorId);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Error inserting into class: " . $stmt->error);
+        }
+        $stmt->close();
+
+        //Insert into instructor_classes table
+        $stmt = $conn->prepare("
+            INSERT INTO instructor_classes (instructor_id, class_name) 
+            VALUES (?, ?)
+        ");
+        $stmt->bind_param("is", $instructorId, $className);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Error inserting into instructor_classes: " . $stmt->error);
+        }
+        $stmt->close();
+
+        //Committing a transaction
+        $conn->commit();
         $success_message = "Class created successfully! Class Code: <strong>$classCode</strong>";
-    } else {
-        $error_message = "Error: " . $stmt->error;
+    } catch (Exception $e) {
+        //Rollback Transaction
+        $conn->rollback();
+        $error_message = $e->getMessage();
     }
-    $stmt->close();
 }
 ?>
 
@@ -111,13 +135,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <form action="" method="POST" class="shadow p-4 bg-white rounded" id="createClassForm">
         <div class="mb-3">
             <label for="class_name" class="form-label">Class Name</label>
-            <input type="text" class="form-control" id="class_name" name="class_name" required placeholder="E.g. RIS3S2G7" oninput="updatePreview()">
+            <input type="text" class="form-control" id="class_name" name="class_name" required placeholder="E.G. RIS3S2G7" oninput="updatePreview()">
             <div class="invalid-feedback">Please provide a class name.</div>
         </div>
 
         <div class="mb-3">
             <label for="description" class="form-label">Class Description</label>
-            <textarea class="form-control" id="description" name="description" rows="4" required placeholder="E.g. Bachelor of Information Technology(Honurs) in Information Security - Year 3 Semester 2 Group 7" oninput="updatePreview()"></textarea>
+            <textarea class="form-control" id="description" name="description" rows="4" required placeholder="E.G. BACHELOR OF INFORMATION TECHNOLOGY(HONOURS) IN INFORMATION SECURITY - YEAR 3 SEMESTER 2 GROUP 7" oninput="updatePreview()"></textarea>
             <div class="invalid-feedback">Please provide a class description.</div>
         </div>
 
@@ -149,11 +173,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Update Class Preview
     function updatePreview() {
-        const className = document.getElementById('class_name').value;
-        const description = document.getElementById('description').value;
+        const className = document.getElementById('class_name').value.trim().toUpperCase();
+        const description = document.getElementById('description').value.trim().toUpperCase();
 
-        document.getElementById('previewClassName').innerText = className || 'Class Name Preview';
-        document.getElementById('previewDescription').innerText = description || 'Class Description Preview';
+        document.getElementById('previewClassName').innerText = className || 'CLASS NAME PREVIEW';
+        document.getElementById('previewDescription').innerText = description || 'CLASS DESCRIPTION PREVIEW';
     }
 </script>
 

@@ -224,149 +224,126 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 
-<body class="sb-nav-fixed">
-    <main>
-        <div class="container-fluid px-4">
-            <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
-            <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item active"><?php echo $exerciseType; ?></li>
-                <li class="breadcrumb-item active">Difficulty Level: <?php echo $difficultyLevel; ?></li>
-            </ol>
-            <!-- Top nav bar -->
-            <div class="top-nav">
-                <button id="openHintBox" class="open-button">Show Hints</button>
-            </div>
-            <!-- Overlay -->
-            <div id="overlay" class="overlay"></div>
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active"><?php echo $exerciseType; ?></li>
+        <li class="breadcrumb-item active">Difficulty Level: <?php echo $difficultyLevel; ?></li>
+    </ol>
+    <!-- Top nav bar -->
+    <div class="top-nav">
+        <button id="openHintBox" class="open-button">Show Hints</button>
+    </div>
+    <!-- Overlay -->
+    <div id="overlay" class="overlay"></div>
 
-            <!-- Hint Box -->
-            <div id="hintBox" class="hint-box">
-                <button id="closeHintBox" class="close-button">&times;</button>
-                <div class="hint-content">
-                    <?php echo $hints; ?>
-                </div>
-            </div>
+    <!-- Hint Box -->
+    <div id="hintBox" class="hint-box">
+        <button id="closeHintBox" class="close-button">&times;</button>
+        <div class="hint-content">
+            <?php echo $hints; ?>
+        </div>
+    </div>
 
-            <!-- Nav Menu -->
-            <div class="nav-menu">
-                <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
-                <a href="sshAttackAi.php" class="nav-link" data-number="1">1</a>
-                <a href="sshAttackAii.php" class="nav-link" data-number="2">2</a>
-                <a href="sshAttackBi.php" class="nav-link" data-number="2">3</a>
-                <a href="sshAttackBii.php" class="nav-link" data-number="2">4</a>
-                <a href="sshDefendA.php" class="nav-link" data-number="2">5</a>
-                <a href="sshDefendB.php" class="nav-link" data-number="2">6</a>
-                <a href="sshDefendC.php" class="nav-link" data-number="2">7</a>
-                <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
-            </div>
+    <!-- Nav Menu -->
+    <div class="nav-menu">
+        <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
+        <a href="sshAttackAi.php" class="nav-link" data-number="1">1</a>
+        <a href="sshAttackAii.php" class="nav-link" data-number="2">2</a>
+        <a href="sshAttackBi.php" class="nav-link" data-number="2">3</a>
+        <a href="sshAttackBii.php" class="nav-link" data-number="2">4</a>
+        <a href="sshDefendA.php" class="nav-link" data-number="2">5</a>
+        <a href="sshDefendB.php" class="nav-link" data-number="2">6</a>
+        <a href="sshDefendC.php" class="nav-link" data-number="2">7</a>
+        <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
+    </div>
 
-            <!-- Main Content/ Description of Scenario -->
-            <h2 class="mt-4 question-title" style="padding: 0px 10px;"><?php echo $exerciseTitle; ?><span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: <?php echo $duration; ?></span></h2>
-            <div class="main-content">
-                <div class="learning-objectives">
-                    <h2>Learning Objectives</h2>
-                    <ul>
-                        <li><?php echo $learningObj1; ?></li>
-                        <li><?php echo $learningObj2; ?></li>
-                        <li><?php echo $learningObj3; ?></li>
-                    </ul>
-                </div>
+    <!-- Main Content/ Description of Scenario -->
+    <h2 class="mt-4 question-title" style="padding: 0px 10px;"><?php echo $exerciseTitle; ?><span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: <?php echo $duration; ?></span></h2>
+    <div class="main-content">
+        <div class="learning-objectives">
+            <h2>Learning Objectives</h2>
+            <ul>
+                <li><?php echo $learningObj1; ?></li>
+                <li><?php echo $learningObj2; ?></li>
+                <li><?php echo $learningObj3; ?></li>
+            </ul>
+        </div>
 
-                <div class="scenario">
-                    <h2>Example Scenario</h2>
-                    <p><?php echo $scenarioQues; ?></p>
-                </div>
+        <div class="scenario">
+            <h2>Example Scenario</h2>
+            <p><?php echo $scenarioQues; ?></p>
+        </div>
 
-                <div class="question">
-                    <h2>Your task</h2>
-                    <p><?php echo $question; ?></p>
-                    <div class="vncTitle">
-                        <h2>Let's Try Using This Virtual Machine Here!</h2>
-                        <!-- VNC Viewer iframe Section -->
-                        <div class="iframe-container-wrapper">
-                            <div class="iframe-container">
-                                <!-- Left Iframe -->
-                                <div class="iframe-left">
-                                    <h3 class="iframe-title-attacker">[Attacker's Host]</h3>
-                                    <iframe src="http://192.168.43.130:6080/vnc.html?host=192.168.43.130&port=6080" frameborder="0" allow="fullscreen"></iframe>
-                                </div>
-
-                                <!-- Right Iframe -->
-                                <div class="iframe-right">
-                                    <h3 class="iframe-title-defender">[Defender's Host]</h3>
-                                    <iframe src="http://192.168.43.133:6080/vnc.html?host=192.168.43.133&port=6080" frameborder="0" allow="fullscreen"></iframe>
-                                </div>
-                            </div>
+        <div class="question">
+            <h2>Your task</h2>
+            <p><?php echo $question; ?></p>
+            <div class="vncTitle">
+                <h2>Let's Try Using This Virtual Machine Here!</h2>
+                <!-- VNC Viewer iframe Section -->
+                <div class="iframe-container-wrapper">
+                    <div class="iframe-container">
+                        <!-- Left Iframe -->
+                        <div class="iframe-left">
+                            <h3 class="iframe-title-attacker">[Attacker's Host]</h3>
+                            <iframe src="http://192.168.43.130:6080/vnc.html?host=192.168.43.130&port=6080" frameborder="0" allow="fullscreen"></iframe>
                         </div>
 
-
+                        <!-- Right Iframe -->
+                        <div class="iframe-right">
+                            <h3 class="iframe-title-defender">[Defender's Host]</h3>
+                            <iframe src="http://192.168.43.133:6080/vnc.html?host=192.168.43.133&port=6080" frameborder="0" allow="fullscreen"></iframe>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Submission Flag Area-->
-            <div class="flag-container">
-                <h2 class="flag-title">Try it out!</h2>
-                <form method="POST" action="sshDefendC.php">
-                    <label
-                        style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">How
-                        these configuration settings needs to be set?</label>
-                    <div class="command-box">
-                        <pre><code style="color: var(--bs-code-color); word-wrap: break-word;">[sshd]<br>enabled = true<br>port = ssh<br>filter = sshd<br>logpath = /var/log/auth.log<br>maxretry = ???<br>bantime = ???<br>findtime = ???</code></pre>
-                    </div>
-                    <div class="input-group">
-                        <label>Changes to: </label>
-                        <label><code>maxretry = <input type="num" name="maxretry" id="ans1"></code></label>
-                        <label><code>bantime = <input type="num" name="bantime" id="ans2"></code></label>
-                        <label><code>findtime = <input type="num" name="findtime" id="ans3"></code></label>
-                    </div>
 
 
-                    <!-- Submit Button -->
-                    <button id="submitButton">Submit</button>
-                </form><br>
-
-            </div>
-            <?php if (!empty($message)): ?>
-                <script>
-                    // Pass the PHP message and success flag to JavaScript
-                    showAlert("<?php echo $message; ?>", <?php echo $is_success ? 'true' : 'false'; ?>);
-                </script>
-            <?php endif; ?>
-
-
-
-        </div>
-    </main>
-    <footer class="py-4 bg-light mt-auto">
-        <div class="container-fluid px-4">
-            <div class="d-flex align-items-center justify-content-between small">
-                <div class="text-muted">Copyright &copy; TARUMT Cyber Range 2023</div>
-                <div>
-                    <a href="#">Privacy Policy</a>
-                    &middot;
-                    <a href="#">Terms &amp; Conditions</a>
-                </div>
             </div>
         </div>
-    </footer>
+    </div>
 
-    <script>
-        document.getElementById('openHintBox').addEventListener('click', function() {
-            document.getElementById('hintBox').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('layoutSidenav_nav').style.zIndex = '900'; // Temporarily lower z-index of sidebar
-        });
+    <!-- Submission Flag Area-->
+    <div class="flag-container">
+        <h2 class="flag-title">Try it out!</h2>
+        <form method="POST" action="sshDefendC.php">
+            <label
+                style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">How
+                these configuration settings needs to be set?</label>
+            <div class="command-box">
+                <pre><code style="color: var(--bs-code-color); word-wrap: break-word;">[sshd]<br>enabled = true<br>port = ssh<br>filter = sshd<br>logpath = /var/log/auth.log<br>maxretry = ???<br>bantime = ???<br>findtime = ???</code></pre>
+            </div>
+            <div class="input-group">
+                <label>Changes to: </label>
+                <label><code>maxretry = <input type="num" name="maxretry" id="ans1"></code></label>
+                <label><code>bantime = <input type="num" name="bantime" id="ans2"></code></label>
+                <label><code>findtime = <input type="num" name="findtime" id="ans3"></code></label>
+            </div>
 
-        document.getElementById('closeHintBox').addEventListener('click', function() {
-            document.getElementById('hintBox').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
-        });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-        crossorigin="anonymous"></script>
-    <script src="../js/scripts.js"></script>
-</body>
+            <!-- Submit Button -->
+            <button id="submitButton">Submit</button>
+        </form><br>
 
-</html>
+    </div>
+    <?php if (!empty($message)): ?>
+        <script>
+            // Pass the PHP message and success flag to JavaScript
+            showAlert("<?php echo $message; ?>", <?php echo $is_success ? 'true' : 'false'; ?>);
+        </script>
+    <?php endif; ?>
+</div>
+
+<script>
+    document.getElementById('openHintBox').addEventListener('click', function() {
+        document.getElementById('hintBox').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('layoutSidenav_nav').style.zIndex = '900'; // Temporarily lower z-index of sidebar
+    });
+
+    document.getElementById('closeHintBox').addEventListener('click', function() {
+        document.getElementById('hintBox').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
+    });
+</script>
+
+<?php include '../header_footer/footer.php' ?>
