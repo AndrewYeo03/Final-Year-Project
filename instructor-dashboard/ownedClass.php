@@ -1,10 +1,18 @@
 <?php
 $titleName = "Owned Class - TARUMT Cyber Range";
-include  '../header_footer/header_instructor.php';
+include '../header_footer/header_instructor.php';
 include '../connection.php';
 
-// Retrieve instructor information
+//Check if the user is logged in
+if (!isset($_SESSION['username'])) {
+    header("Location: ../login.php");
+    exit();
+}
+
+//Get the username of the currently logged in lecturer
 $username = $_SESSION['username'];
+
+//Get the lecturer's information from the database
 $stmt = $conn->prepare("
     SELECT i.id AS id
     FROM instructors i
@@ -17,30 +25,39 @@ $result = $stmt->get_result();
 $instructorData = $result->fetch_assoc();
 $stmt->close();
 
-// Get instructor ID
+//Check if the instructor data exists
+if (!$instructorData) {
+    echo "Error: Instructor data not found.";
+    exit();
+}
+
+//Get Instructor ID
 $instructorId = $instructorData['id'];
 
-//Retrieve the Classes belonging to the current Instructor
-$allClasses = [];
+//Get all courses owned by the current instructor
 $stmt = $conn->prepare("
     SELECT ic.class_name 
     FROM instructor_classes ic
     JOIN class c ON ic.class_name = c.class_name
-    WHERE ic.instructor_id = ?
-    ");
+    WHERE ic.instructor_id = ? AND c.is_archived = 0
+");
 $stmt->bind_param("i", $instructorId);
 $stmt->execute();
 $result = $stmt->get_result();
 $allClasses = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
-
-
 ?>
+<style>
+    .table-equal-columns {
+        table-layout: fixed;
+        width: 100%;
+    }
+</style>
 
 <div class="container-fluid px-4">
     <h1 class="mt-4">Manage Classes & Students</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Classes</li>
+        <li class="breadcrumb-item active">Existing Classes</li>
     </ol>
 
     <div class="card mb-4">
@@ -49,7 +66,7 @@ $stmt->close();
             All Classes
         </div>
         <div class="card-body">
-            <table id="datatablesSimple">
+            <table id="datatablesSimple" class="table table-bordered table-equal-columns">
                 <thead>
                     <tr>
                         <th>Class Name</th>
@@ -57,25 +74,36 @@ $stmt->close();
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($allClasses as $class): ?>
+                    <?php if (!empty($allClasses)): ?>
+                        <?php foreach ($allClasses as $class): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($class['class_name']); ?></td>
+                                <td>
+                                    <button
+                                        class="btn btn-primary manage-students-btn"
+                                        data-class="<?= htmlspecialchars($class['class_name']); ?>">
+                                        Manage Students
+                                    </button>
+                                    <button
+                                        class="btn btn-warning archive-class-btn"
+                                        data-class="<?= htmlspecialchars($class['class_name']); ?>">
+                                        Archive Class
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
                         <tr>
-                            <td><?= htmlspecialchars($class['class_name']); ?></td>
-                            <td>
-                                <button
-                                    class="btn btn-primary manage-students-btn"
-                                    data-class="<?= htmlspecialchars($class['class_name']); ?>">
-                                    Manage Students
-                                </button>
-                            </td>
+                            <td colspan="2" class="text-center">No classes found.</td>
                         </tr>
-                    <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- Modal Box / Pop-Up Box -->
+<!-- Modal Box -->
 <div class="modal fade" id="manageStudentsModal" tabindex="-1" aria-labelledby="manageStudentsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -84,8 +112,8 @@ $stmt->close();
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- All students table -->
-                <table class="table">
+                <!-- Student List -->
+                <table class="table table-equal-columns">
                     <thead>
                         <tr>
                             <th>Student ID</th>
@@ -94,7 +122,7 @@ $stmt->close();
                         </tr>
                     </thead>
                     <tbody id="studentsTableBody">
-                        <!-- Dynamically loading content -->
+                        <!-- Dynamically loaded content -->
                     </tbody>
                 </table>
                 <!-- Add Student Form -->
@@ -112,4 +140,4 @@ $stmt->close();
 </div>
 
 <script src="ownedClass.js"></script>
-<?php include '../header_footer/footer.php' ?>
+<?php include '../header_footer/footer.php'; ?>

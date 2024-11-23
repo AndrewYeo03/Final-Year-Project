@@ -96,7 +96,8 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
                                 <div class="collapse" id="pagesCollapseInstructors" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
                                         <a class="nav-link" href="createClass.php">Create Class</a>
-                                        <a class="nav-link" href="ownedClass.php">Owned Classes</a>
+                                        <a class="nav-link" href="ownedClass.php">Existing Classes</a>
+                                        <a class="nav-link" href="archivedClass.php">Archived Classes</a>
                                     </nav>
                                 </div>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
