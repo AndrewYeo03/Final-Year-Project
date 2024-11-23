@@ -139,5 +139,5 @@ $stmt->close();
     </div>
 </div>
 
-<script src="ownedClass.js"></script>
+<script src="existingClass.js"></script>
 <?php include '../header_footer/footer.php'; ?>

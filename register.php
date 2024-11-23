@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     $student_id = strtoupper($_POST['student_id']);
-    $role_id = 1; // 固定为学生角色
+    $role_id = 1; //Fixed as student role
 
     // Password validation
     if (strlen($password) < 6) {
@@ -17,20 +17,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $password_hashed = md5($password); // 对密码进行哈希处理
 
-        // 检查邮箱是否已经存在
+        //Check if the mailbox already exists
         $checkEmail = "SELECT * FROM users WHERE email = '$email'";
         $result = $conn->query($checkEmail);
 
         if ($result->num_rows > 0) {
             echo "This email has been registered";
         } else {
-            // 插入用户信息
+            //Insert user table
             $sql = "INSERT INTO users (username, email, password, role_id) VALUES ('$username', '$email', '$password_hashed', '$role_id')";
 
             if ($conn->query($sql) === TRUE) {
-                $user_id = $conn->insert_id; // 获取新插入用户的 ID
+                $user_id = $conn->insert_id; //Get the ID of the newly inserted user
 
-                // 插入学生信息
+                //Insert student table
                 $sqlStudent = "INSERT INTO students (user_id, student_id) VALUES ('$user_id', '$student_id')";
 
                 if ($conn->query($sqlStudent) === TRUE) {
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div class="register-container">
     <div class="register-box">
-        <h2>Student Registration</h2>
+        <h2>Start Your Journey!</h2>
         <form method="POST" action="register.php">
             <label for="username">Full Name:</label><br>
             <input type="text" name="username" placeholder="Tan Ah Beng" required><br><br>

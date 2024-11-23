@@ -4,7 +4,6 @@
     box-sizing: border-box;
 }
 
-
 body {
     font-family: 'Poppins', sans-serif;
     background: url('/pictures/background.jpeg') no-repeat center center fixed;
@@ -15,7 +14,6 @@ body {
     justify-content: center;
     align-items: center;
 }
-
 
 body::before {
     content: '';
@@ -28,7 +26,6 @@ body::before {
     z-index: 0;
 }
 
-
 .login-container {
     display: flex;
     justify-content: center;
@@ -37,19 +34,17 @@ body::before {
     z-index: 1;
 }
 
-
 .login-box {
     background-color: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px); 
     padding: 40px 30px;
     border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    width: 350px;
+    width: 400px;
     text-align: center;
     z-index: 1; 
     color: #333; 
 }
-
 
 .login-box h2 {
     margin-bottom: 25px;
@@ -59,14 +54,12 @@ body::before {
     color: #333;
 }
 
-
 .login-box label {
     font-size: 14px;
     color: #666; 
     display: block;
     text-align: left;
 }
-
 
 .login-box input[type="email"], .login-box input[type="password"] {
     width: 100%;
@@ -79,13 +72,11 @@ body::before {
     transition: all 0.3s ease-in-out;
 }
 
-
 .login-box input[type="email"]:focus, .login-box input[type="password"]:focus {
     border-color: #495057;
     background-color: rgba(255, 255, 255, 0.2);
     outline: none;
 }
-
 
 .login-box button {
     width: 100%;
@@ -101,13 +92,11 @@ body::before {
     transition: all 0.3s ease-in-out;
 }
 
-
 .login-box button:hover {
     background-color: #495057;
     transform: translateY(-3px);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
-
 
 .error {
     color: #ff4c4c;
@@ -116,12 +105,10 @@ body::before {
     font-weight: bold;
 }
 
-
 .register-link {
     margin-top: 20px;
     font-size: 14px;
 }
-
 
 .register-link a {
     color: #007bff; 
@@ -130,12 +117,10 @@ body::before {
     transition: color 0.3s ease-in-out;
 }
 
-
 .register-link a:hover {
     color: #0056b3;
     text-decoration: underline;
 }
-
 
 body, html {
     transition: all 0.5s ease-in-out;

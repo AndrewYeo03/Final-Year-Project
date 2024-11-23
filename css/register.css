@@ -40,7 +40,7 @@ body::before {
     padding: 18px 18px;
     border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    width: 350px;
+    width: 400px;
     text-align: center;
     z-index: 1;
     color: #333;

@@ -77,7 +77,7 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Core</div>
-                        <a class="nav-link" href="index.php">
+                        <a class="nav-link" href="../instructor-dashboard/instructor_dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
@@ -96,7 +96,7 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
                                 <div class="collapse" id="pagesCollapseInstructors" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
                                         <a class="nav-link" href="createClass.php">Create Class</a>
-                                        <a class="nav-link" href="ownedClass.php">Existing Classes</a>
+                                        <a class="nav-link" href="existingClass.php">Existing Classes</a>
                                         <a class="nav-link" href="archivedClass.php">Archived Classes</a>
                                     </nav>
                                 </div>

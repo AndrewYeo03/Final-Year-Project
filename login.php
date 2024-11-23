@@ -36,28 +36,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - TAR UMT Cyber Range</title>
-    <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon"/>
+    <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon" />
     <link rel="stylesheet" href="css/login.css">
 </head>
+
 <body>
 
-<div class="login-container">
-    <div class="login-box">
-        <h2>Login</h2>
-        <form method="POST" action="login.php">
-            <label for="email">Email Address:</label><br>
-            <input type="email" name="email" required><br><br>
-            <label for="password">Password:</label><br>
-            <input type="password" name="password" required><br><br>
-            <button type="submit">Login</button>
-        </form>
-        <p class="register-link">Don't have an account? <a href="register.php">Register here</a></p>
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Welcome Back!</h2>
+            <form method="POST" action="login.php">
+                <label for="email">Email Address:</label><br>
+                <input type="email" name="email" required><br><br>
+                <label for="password">Password:</label><br>
+                <input type="password" name="password" required><br><br>
+                <button type="submit">Login</button>
+            </form>
+            <p class="register-link">
+                Don't have an account? <a href="register.php">Register here</a><br>
+                Forgot your password? <a href="forgot_password.php">Click here</a>
+            </p>
+        </div>
     </div>
-</div>
 
 </body>
+
 </html>
