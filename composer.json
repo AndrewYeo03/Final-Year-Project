@@ -1,0 +1,16 @@
+{
+    "name": "tarumt/cyber-range",
+    "description": "TAR UMT Cyber Range Project",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "^6.8"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrew Yeo",
+            "email": "yeojk-wm21@student.tarc.edu.my"
+        }
+    ],
+    "minimum-stability": "stable"
+}

@@ -1,21 +1,25 @@
 <?php
 include('connection.php');
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
 
-    //Check if the user exists
+    // Check if the user exists
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        //User exists, generate 6-digit OTP
+        // User exists, generate 6-digit OTP
         $otp = str_pad(rand(0, 999999), 6, "0", STR_PAD_LEFT);
         $expiry = date("Y-m-d H:i:s", strtotime("+15 minutes"));
 
-        //Insert or update OTP
+        // Insert or update OTP
         $stmt = $conn->prepare("
             INSERT INTO password_resets (email, otp, expiry) 
             VALUES (?, ?, ?)
@@ -24,15 +28,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("sssss", $email, $otp, $expiry, $otp, $expiry);
         $stmt->execute();
 
-        //Send OTP to user’s email
-        $subject = "Your Password Reset OTP";
-        $message = "Your OTP for password reset is: $otp. This code will expire in 15 minutes.";
-        $headers = "From: noreply@tarumt_cyber_range.com";
+        // Send OTP using PHPMailer
+        $mail = new PHPMailer(true);
+        try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com'; // SMTP server
+            $mail->SMTPAuth = true;
+            $mail->Username = 'your-email@gmail.com'; // Your email
+            $mail->Password = 'your-email-password'; // Your email password (or app-specific password)
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
 
-        if (mail($email, $subject, $message, $headers)) {
+            // Recipients
+            $mail->setFrom('your-email@gmail.com', 'TARUMT Cyber Range');
+            $mail->addAddress($email); // Add recipient
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = 'Your OTP for Password Reset';
+            $mail->Body = "Your OTP is: <strong>$otp</strong>. It is valid for 15 minutes.";
+
+            $mail->send();
             echo "<script>alert('OTP sent to your email. Please check your inbox.'); window.location.href='verify_otp.php';</script>";
-        } else {
-            echo "<script>alert('Failed to send OTP. Please try again later.');</script>";
+        } catch (Exception $e) {
+            echo "<script>alert('Failed to send OTP. Error: {$mail->ErrorInfo}');</script>";
         }
     } else {
         echo "<script>alert('No account found with this email address.');</script>";
