@@ -16,9 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['role_id'] = $user['role_id'];
         $_SESSION['username'] = $user['username'];
 
-        // Set the session start time and timeout period (1 hour = 3600 seconds)
+        // Set the session start time and timeout period (1 hour = 3600 seconds / 15 minutes = 300)
         $_SESSION['login_time'] = time();
-        $_SESSION['timeout_duration'] = 3600;
+        $_SESSION['timeout_duration'] = 300;
 
         // Redirect by role
         if ($user['role_id'] == 1) {

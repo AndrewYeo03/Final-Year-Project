@@ -2,73 +2,124 @@
 session_start();
 include '../connection.php';
 
+if (!isset($_SESSION['username'])) {
+    header("Location: ../login.php");
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
+// List of exercises
+$exercises = [
+    "sshAttackAi.php",
+    "sshAttackAii.php",
+    "sshAttackBi.php",
+    "sshAttackBii.php",
+    "sshDefendA.php",
+    "sshDefendB.php",
+    "sshDefendC.php"
+];
+
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $videoLink = $_POST['videoLink'];
-
-    $user_id = $_SESSION['user_id'];
-
-    
-    $sql = "SELECT student_id FROM students WHERE user_id = ?";
-    $stmt = $conn->prepare($sql);
+    $stmt = $conn->prepare("SELECT id FROM students WHERE user_id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
- 
+
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        $student_id = $row['student_id'];
-        
-        $sql = "INSERT INTO video (student_id, video_link) VALUES (?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("is", $student_id, $videoLink);
-        
-        if ($stmt->execute()) {
-            echo "<script>alert('Video link submitted successfully!');</script>";
+        $student_id = $row['id'];
+
+        // Get current exercise ID
+        if (!isset($_SESSION['current_exercise_id'])) {
+            echo "<script>alert('No active exercise found. Please start an exercise.');</script>";
+            exit();
+        }
+
+        $exercise_id = $_SESSION['current_exercise_id'];
+
+        // Check if already submitted
+        $stmt = $conn->prepare("SELECT * FROM submitted_videos WHERE student_id = ? AND exercise_id = ?");
+        $stmt->bind_param("is", $student_id, $exercise_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            // User has already submitted, move to the next exercise
+            $_SESSION['current_exercise']++;
+            if ($_SESSION['current_exercise'] < count($exercises)) {
+                $nextExercise = $exercises[$_SESSION['current_exercise']];
+                echo "<script>alert('You have already submitted your work for this exercise.'); window.location.href = '$nextExercise';</script>";
+            } else {
+                echo "<script>alert('All exercises completed!'); window.location.href = 'completion_page.php';</script>";
+            }
+            exit;
+        }
+
+        // Submission logic
+        $videoLink = trim($_POST['videoLink'] ?? "");
+        $file = $_FILES['uploadedFile'] ?? null;
+
+        if (empty($videoLink)) {
+            echo "<script>alert('Video link is required.');</script>";
+        } elseif (!$file || $file['error'] !== UPLOAD_ERR_OK) {
+            echo "<script>alert('File upload is required.');</script>";
         } else {
-            echo "<script>alert('Error submitting video link: " . $conn->error . "');</script>";
+            $allowedTypes = ['text/plain'];
+            $maxFileSize = 10 * 1024 * 1024; // 10MB
+            $fileType = mime_content_type($file['tmp_name']);
+            $fileSize = $file['size'];
+
+            if (!in_array($fileType, $allowedTypes)) {
+                echo "<script>alert('Only .txt files are allowed.');</script>";
+            } elseif ($fileSize > $maxFileSize) {
+                echo "<script>alert('File size must not exceed 10MB.');</script>";
+            } else {
+                // Insert video link
+                $stmt = $conn->prepare("INSERT INTO submitted_videos (student_id, exercise_id, video_link) VALUES (?, ?, ?)");
+                $stmt->bind_param("iss", $student_id, $exercise_id, $videoLink);
+
+                if ($stmt->execute()) {
+                    $fileContent = file_get_contents($file['tmp_name']);
+                    $stmt = $conn->prepare("INSERT INTO submitted_files (student_id, exercise_id, file_name, file_content) VALUES (?, ?, ?, ?)");
+                    $fileName = basename($file['name']);
+                    $stmt->bind_param("isss", $student_id, $exercise_id, $fileName, $fileContent);
+
+                    if ($stmt->execute()) {
+                        echo "<script>alert('Submission successful!');</script>";
+                        $_SESSION['current_exercise']++;
+                        if ($_SESSION['current_exercise'] < count($exercises)) {
+                            $nextExercise = $exercises[$_SESSION['current_exercise']];
+                            echo "<script>window.location.href = '$nextExercise';</script>";
+                        } else {
+                            echo "<script>alert('All exercises completed!'); window.location.href = 'completion_page.php';</script>";
+                        }
+                    } else {
+                        echo "<script>alert('Error saving file content: " . $conn->error . "');</script>";
+                    }
+                } else {
+                    echo "<script>alert('Error submitting video link: " . $conn->error . "');</script>";
+                }
+            }
         }
     } else {
         echo "<script>alert('Student not found!');</script>";
     }
-
-    // Increment the current exercise index if not completed
-    if (!isset($_SESSION['current_exercise'])) {
-        $_SESSION['current_exercise'] = 0;
-    } else {
-        $_SESSION['current_exercise']++;
-    }
-
-    // List of exercises
-    $exercises = [
-        "sshAttackAi.php",  // Exercise 1
-        "sshAttackAii.php", // Exercise 2
-        "sshAttackBi.php",  // Exercise 3
-        "sshAttackBii.php", // Exercise 4
-        "sshDefendA.php",   // Exercise 5
-        "sshDefendB.php",   // Exercise 6
-        "sshDefendC.php"    // Exercise 7
-    ];
-
-    // Redirect to next exercise if it exists
-    if ($_SESSION['current_exercise'] < count($exercises)) {
-        header("Location: " . $exercises[$_SESSION['current_exercise']]);
-        exit();
-    } else {
-        echo "<h1>All exercises completed!</h1>";
-    }
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Congratulations!</title>
+    <title>Submit Homework - TAR UMT Cyber Range</title>
+    <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon" />
     <link href="css/styles.css" rel="stylesheet" />
     <style>
-        /* Centered container styling */
         .center-box {
             display: flex;
             align-items: center;
@@ -100,7 +151,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-bottom: 20px;
         }
 
-        .box-content input[type="text"] {
+        .box-content input[type="text"],
+        .box-content input[type="file"] {
             width: 100%;
             padding: 10px;
             margin-top: 10px;
@@ -128,10 +180,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="center-box">
         <div class="box-content">
-            <h2>Congratulations!</h2>
-            <p>Your flags are correct. Please submit your homework <code>(Video Link)</code>.</p>
-            <form action="" method="POST">
+            <h2>Submit Your Work</h2>
+            <p>Please submit your homework with a <code>video link</code> and a <code>text file</code>.</p>
+            <form action="" method="POST" enctype="multipart/form-data">
                 <input type="text" name="videoLink" placeholder="Enter video link here..." required>
+                <input type="file" name="uploadedFile" accept=".txt" required>
                 <button type="submit">Submit</button>
             </form>
         </div>

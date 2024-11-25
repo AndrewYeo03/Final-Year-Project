@@ -24,6 +24,7 @@ $current_exercise_index = $_SESSION['current_exercise'];
 
 
 $exercise_id = 'sshDA';
+$_SESSION['current_exercise_id'] = $exercise_id;
 // Query to fetch the exercise details
 $sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
 $result = $conn->query($sql);

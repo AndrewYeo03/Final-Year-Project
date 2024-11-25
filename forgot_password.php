@@ -4,6 +4,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require 'vendor/autoload.php';
+// Set timezone to Malaysia
+date_default_timezone_set('Asia/Kuala_Lumpur');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
@@ -35,13 +37,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com'; // SMTP server
             $mail->SMTPAuth = true;
-            $mail->Username = 'your-email@gmail.com'; // Your email
-            $mail->Password = 'your-email-password'; // Your email password (or app-specific password)
+            $mail->Username = 'tarumtcyberrange@gmail.com'; // Your email
+            $mail->Password = 'vppiisklkqaqozeb'; // Your email password (or app-specific password)
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
             // Recipients
-            $mail->setFrom('your-email@gmail.com', 'TARUMT Cyber Range');
+            $mail->setFrom('tarumtcyberrange@gmail.com', 'TAR UMT Cyber Range');
             $mail->addAddress($email); // Add recipient
 
             // Content

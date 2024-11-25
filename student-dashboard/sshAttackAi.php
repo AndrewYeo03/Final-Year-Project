@@ -35,6 +35,7 @@ if ($current_exercise_page !== basename($_SERVER['PHP_SELF'])) {
 
 
 $exercise_id = 'sshOA1';
+$_SESSION['current_exercise_id'] = $exercise_id;
 // Query to fetch the exercise details
 $sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
 $result = $conn->query($sql);
