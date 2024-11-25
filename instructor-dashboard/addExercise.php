@@ -72,9 +72,9 @@ if (isset($_GET['scenario_id'])) {
             font-weight: bold;
         }
 
-        input[type="text"],
-        input[type="number"],
-        select {
+        .mainContent input[type="text"],
+        .mainContent input[type="number"],
+        .mainContent select {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -82,7 +82,7 @@ if (isset($_GET['scenario_id'])) {
             border-radius: 4px;
         }
 
-        .btn {
+        .mainContent .btn {
             padding: 10px 15px;
             border: none;
             border-radius: 4px;

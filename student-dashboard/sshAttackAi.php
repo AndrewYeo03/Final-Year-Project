@@ -14,7 +14,7 @@ $exercises = [
     "sshDefendB.php",   // Exercise 6
     "sshDefendC.php"    // Exercise 7
 ];
-
+    
 // Check if the user has a session variable for current exercise
 if (!isset($_SESSION['current_exercise'])) {
     $_SESSION['current_exercise'] = 0; // Start from the first exercise

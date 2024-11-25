@@ -106,9 +106,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             color: #555;
         }
 
-        input,
-        textarea,
-        select {
+        .mainContent input,
+        .mainContent textarea,
+        .mainContent select {
             padding: 12px;
             margin-bottom: 15px;
             border-radius: 4px;

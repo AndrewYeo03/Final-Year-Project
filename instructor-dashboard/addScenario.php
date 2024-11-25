@@ -41,6 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title><?php echo $titleName; ?></title>
     <link href="../css/styles.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script>
         // JavaScript function to check if Due Date is not earlier than Assigned Date
@@ -90,9 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             color: #555;
         }
 
-        input,
-        textarea,
-        select {
+        .mainContent input,
+        .mainContent textarea,
+        .mainContent select {
             padding: 12px;
             margin-bottom: 15px;
             border-radius: 4px;
@@ -161,14 +163,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <textarea id="description" name="description" rows="5" required></textarea>
 
             <label for="instructor_id">Instructor:</label>
-            <select id="instructor_id" name="instructor_id" required>
-                <option value="">Select Instructor</option>
-                <?php while ($instructor = $instructorResult->fetch_assoc()): ?>
-                    <option value="<?php echo $instructor['id']; ?>">
-                        <?php echo $instructor['username']; ?> (<?php echo $instructor['instructor_id']; ?>)
-                    </option>
-                <?php endwhile; ?>
-            </select>
+<select id="instructor_id" name="instructor_id" class="searchable-dropdown" required>
+    <option value="">Select Instructor</option>
+    <?php while ($instructor = $instructorResult->fetch_assoc()): ?>
+        <option value="<?php echo $instructor['id']; ?>">
+            <?php echo $instructor['username']; ?> (<?php echo $instructor['instructor_id']; ?>)
+        </option>
+    <?php endwhile; ?>
+</select>
 
             <label for="assigned_date">Assigned Date:</label>
             <input type="date" id="assigned_date" name="assigned_date" required>
@@ -182,6 +184,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <a href="scenarioManagement.php" class="btn-back">Back to Scenario List</a>
     </div>
 </body>
+<script>
+    // Initialize Select2 on the dropdown
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdown = document.querySelector('.searchable-dropdown');
+        $(dropdown).select2({
+            placeholder: 'Select Instructor',
+            width: '100%'
+        });
+    });
+</script>
 <?php include '../header_footer/footer.php' ?>
 
 </html>

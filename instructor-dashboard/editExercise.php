@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             box-sizing: border-box;
         }
 
-        .btn {
+        .form-group .btn {
             padding: 10px 20px;
             border: none;
             border-radius: 4px;

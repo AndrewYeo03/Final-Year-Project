@@ -43,6 +43,53 @@ if (isset($_GET['scenario_id'])) {
             padding: 30px 30px;
         }
 
+        .scenario-details-card {
+            max-width: 800px;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .card-header {
+            background-color: #f4f4f4;
+            border-bottom: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #007bff;
+        }
+
+        .card-body {
+            padding: 15px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .card-body p {
+            margin: 10px 0;
+        }
+
+        .card-body strong {
+            color: #333;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -116,59 +163,67 @@ if (isset($_GET['scenario_id'])) {
 
 <body>
     <div class="mainContent">
-        <h1><?php echo $titleName; ?></h1>
-        <?php if ($scenario): ?>
-            <p><strong>Title:</strong> <?php echo $scenario['title']; ?></p>
-            <p><strong>Description:</strong> <?php echo $scenario['description']; ?></p>
-            <p><strong>Assigned Date:</strong> <?php echo $scenario['assigned_date']; ?></p>
-            <p><strong>Due Date:</strong> <?php echo $scenario['due_date']; ?></p>
+        <div class="scenario-details-card">
+            <h1 class="title"><?php echo $titleName; ?></h1>
+            <?php if ($scenario): ?>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Scenario Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Title:</strong> <?php echo $scenario['title']; ?></p>
+                        <p><strong>Description:</strong> <?php echo $scenario['description']; ?></p>
+                        <p><strong>Assigned Date:</strong> <?php echo date("d M Y", strtotime($scenario['assigned_date'])); ?></p>
+                        <p><strong>Due Date:</strong> <?php echo date("d M Y", strtotime($scenario['due_date'])); ?></p>
+                    </div>
+                </div>
+            <?php else: ?>
+                <p>Scenario not found.</p>
+            <?php endif; ?>
+        </div>
 
-            <h2>Exercises List</h2>
-            <a href="addExercise.php?scenario_id=<?php echo $scenario_id; ?>" class="btn btn-add">Add New Exercise</a>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Exercise ID</th>
-                        <th>Title</th>
-                        <th>Learning Objective 1</th>
-                        <th>Learning Objective 2</th>
-                        <th>Learning Objective 3</th>
-                        <th>Learning Objective 4</th>
-                        <th>Duration</th>
-                        <th>Difficulty Level</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if ($exerciseResult->num_rows > 0): ?>
-                        <?php while ($exercise = $exerciseResult->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo $exercise['exercise_id']; ?></td>
-                                <td><?php echo $exercise['title']; ?></td>
-                                <td><?php echo $exercise['learningObj_1']; ?></td>
-                                <td><?php echo $exercise['learningObj_2']; ?></td>
-                                <td><?php echo $exercise['learningObj_3']; ?></td>
-                                <td><?php echo $exercise['learningObj_4']; ?></td>
-                                <td><?php echo $exercise['duration']; ?></td>
-                                <td><?php echo $exercise['difficulty_level']; ?></td>
-                                <td>
-                                    <a href="editExercise.php?exercise_id=<?php echo $exercise['exercise_id']; ?>" class="btn btn-edit">Edit</a>
-                                    <button class="btn btn-delete" onclick="deleteExercise('<?php echo $exercise['exercise_id']; ?>')">Delete</button>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    <?php else: ?>
+        <h2>Exercises List</h2>
+        <a href="addExercise.php?scenario_id=<?php echo $scenario_id; ?>" class="btn btn-add">Add New Exercise</a>
+        <table>
+            <thead>
+                <tr>
+                    <th>Exercise ID</th>
+                    <th>Title</th>
+                    <th>Learning Objective 1</th>
+                    <th>Learning Objective 2</th>
+                    <th>Learning Objective 3</th>
+                    <th>Learning Objective 4</th>
+                    <th>Duration</th>
+                    <th>Difficulty Level</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($exerciseResult->num_rows > 0): ?>
+                    <?php while ($exercise = $exerciseResult->fetch_assoc()): ?>
                         <tr>
-                            <td colspan="9">No exercises found for this scenario.</td>
+                            <td><?php echo $exercise['exercise_id']; ?></td>
+                            <td><?php echo $exercise['title']; ?></td>
+                            <td><?php echo $exercise['learningObj_1']; ?></td>
+                            <td><?php echo $exercise['learningObj_2']; ?></td>
+                            <td><?php echo $exercise['learningObj_3']; ?></td>
+                            <td><?php echo $exercise['learningObj_4']; ?></td>
+                            <td><?php echo $exercise['duration']; ?></td>
+                            <td><?php echo $exercise['difficulty_level']; ?></td>
+                            <td>
+                                <a href="editExercise.php?exercise_id=<?php echo $exercise['exercise_id']; ?>" class="btn btn-edit">Edit</a>
+                                <button class="btn btn-delete" onclick="deleteExercise('<?php echo $exercise['exercise_id']; ?>')">Delete</button>
+                            </td>
                         </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-            <a href="scenarioManagement.php" class="btn btn-back">Back to Scenarios</a>
-        <?php else: ?>
-            <p>Scenario not found.</p>
-            <a href="scenarioManagement.php" class="btn btn-back">Back to Scenarios</a>
-        <?php endif; ?>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="9">No exercises found for this scenario.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+        <a href="scenarioManagement.php" class="btn btn-back">Back to Scenarios</a>
     </div>
 </body>
 <?php include '../header_footer/footer.php' ?>
