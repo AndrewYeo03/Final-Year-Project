@@ -134,6 +134,21 @@ if (isset($_GET['scenario_id'])) {
             background-color: #dc3545;
             color: white;
         }
+
+        .page-title {
+            font-size: 3rem;
+            /* Increased font size */
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 10px 15px;
+        }
+
+        .page-title span {
+            display: inline-block;
+            color: #000000;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 5px;
+        }
     </style>
     <script>
         function deleteExercise(exercise_id) {
@@ -182,7 +197,9 @@ if (isset($_GET['scenario_id'])) {
             <?php endif; ?>
         </div>
 
-        <h2>Exercises List</h2>
+        <div class="page-title">
+            <span><?php echo $titleName; ?></span>
+        </div>
         <a href="addExercise.php?scenario_id=<?php echo $scenario_id; ?>" class="btn btn-add">Add New Exercise</a>
         <table>
             <thead>
