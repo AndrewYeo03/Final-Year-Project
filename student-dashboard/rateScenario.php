@@ -46,18 +46,18 @@ $studentId = $studentData['student_id'];
     .charts {
         display: flex;
         justify-content: space-between;
-        align-items: center; 
+        align-items: center;
         gap: 20px;
-        flex-wrap: nowrap; 
+        flex-wrap: nowrap;
     }
 
     .chart {
-        flex: 1; 
+        flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: center; 
-        align-items: center; 
-        max-width: 45%; 
+        justify-content: center;
+        align-items: center;
+        max-width: 45%;
     }
 
     canvas {
@@ -199,12 +199,12 @@ $studentId = $studentData['student_id'];
                 <?php
                 // Retrieve all scenarios available for the student's class
                 $stmt = $conn->prepare("
-                    SELECT DISTINCT scenario.scenario_id, scenario.title, 
-                        (SELECT COUNT(*) FROM ratings WHERE ratings.student_id = ? AND ratings.scenario_id = scenario.scenario_id) AS rated
-                    FROM scenario
-                    INNER JOIN class_scenarios ON class_scenarios.scenario_id = scenario.scenario_id
-                    INNER JOIN student_classes ON student_classes.class_name = class_scenarios.class_name
-                    WHERE student_classes.student_id = ?
+                SELECT DISTINCT scenario.scenario_id, scenario.title, 
+                    (SELECT COUNT(*) FROM scenario_ratings WHERE scenario_ratings.student_id = ? AND scenario_ratings.scenario_id = scenario.scenario_id) AS rated
+                FROM scenario
+                INNER JOIN class_scenarios ON class_scenarios.scenario_id = scenario.scenario_id
+                INNER JOIN student_classes ON student_classes.class_name = class_scenarios.class_name
+                WHERE student_classes.student_id = ?
                 ");
                 $stmt->bind_param("ii", $studentId, $studentId);
                 $stmt->execute();
