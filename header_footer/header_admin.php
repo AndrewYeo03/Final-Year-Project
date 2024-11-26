@@ -34,7 +34,7 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon"/>
+    <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon" />
     <title>Admin Dashboard - TARUMT Cyber Range</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
@@ -90,74 +90,65 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
                         <div class="collapse" id="collapseInstructors" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseInstructors" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                    Manage Student & Group
+                                    Manage Student & Class
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
                                 <div class="collapse" id="pagesCollapseInstructors" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="#">Add Student</a>
-                                        <a class="nav-link" href="#">Create Group</a>
-                                        <a class="nav-link" href="#">Owned Group</a>
+                                        <a class="nav-link" href="../instructor-dashboard/createClass.php">Create Class</a>
+                                        <a class="nav-link" href="../instructor-dashboard/existingClass.php">Existing Classes</a>
+                                        <a class="nav-link" href="../instructor-dashboard/archivedClass.php">Archived Classes</a>
                                     </nav>
                                 </div>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                    Manage Scenario
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="#">Create Scenario</a>
-                                        <a class="nav-link" href="#">Manage Scenario</a>
-                                        <a class="nav-link" href="studentResponse.php">Student Response</a>
-                                    </nav>
-                                </div>
+                                <a class="nav-link" href="../instructor-dashboard/scenarioManagement.php">Manage Scenario</a>
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseAdmin" aria-expanded="false" aria-controls="collapsePages">
-    <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-    Administrator
-    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-</a>
-<div class="collapse" id="collapseAdmin" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-    <nav class="sb-sidenav-menu-nested nav">
-        <!-- Manage Instructors -->
-        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageInstructors" aria-expanded="false" aria-controls="manageInstructors">
-            Manage Instructors
-            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-        </a>
-        <div class="collapse" id="manageInstructors" aria-labelledby="headingTwo" data-bs-parent="#collapseAdmin">
-            <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" href="createInstructor.php">Add Instructor</a>
-                <a class="nav-link" href="instructorsList.php">Instructor List</a>
-            </nav>
-        </div>
-        
-        <!-- Manage Students -->
-        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageStudents" aria-expanded="false" aria-controls="manageStudents">
-            Manage Students
-            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-        </a>
-        <div class="collapse" id="manageStudents" aria-labelledby="headingThree" data-bs-parent="#collapseAdmin">
-            <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" href="createStudent.php">Add Student</a>
-                <a class="nav-link" href="studentsList.php">Student List</a>
-            </nav>
-        </div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                            Administrator
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseAdmin" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <!-- Manage Instructors -->
+                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageInstructors" aria-expanded="false" aria-controls="manageInstructors">
+                                    Manage Instructors
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="manageInstructors" aria-labelledby="headingTwo" data-bs-parent="#collapseAdmin">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="createInstructor.php">Add Instructor</a>
+                                        <a class="nav-link" href="instructorsList.php">Instructor List</a>
+                                        <a class="nav-link" href="archivedInstructor.php">Archived Instructors</a>
+                                    </nav>
+                                </div>
 
-        <!-- Manage Groups -->
-        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageGroups" aria-expanded="false" aria-controls="manageGroups">
-            Manage Groups
-            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-        </a>
-        <div class="collapse" id="manageGroups" aria-labelledby="headingFour" data-bs-parent="#collapseAdmin">
-            <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" href="createGroup.php">Create Group</a>
-                <a class="nav-link" href="groupsList.php">Group List</a>
-            </nav>
-        </div>
-    </div>
-</div>
-</div>
+                                <!-- Manage Students -->
+                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageStudents" aria-expanded="false" aria-controls="manageStudents">
+                                    Manage Students
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="manageStudents" aria-labelledby="headingThree" data-bs-parent="#collapseAdmin">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="studentsList.php">Student List</a>
+                                        <a class="nav-link" href="archivedStudent.php">Archived Students</a>
+                                    </nav>
+                                </div>
+
+                                <!-- Manage Groups -->
+                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageGroups" aria-expanded="false" aria-controls="manageGroups">
+                                    Manage Groups
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="manageGroups" aria-labelledby="headingFour" data-bs-parent="#collapseAdmin">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="classList.php">Class List</a>
+                                        <a class="nav-link" href="archivedClass.php">Archived Classes</a>
+                                    </nav>
+                                </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
                     <?php echo htmlspecialchars($_SESSION['username']); ?>

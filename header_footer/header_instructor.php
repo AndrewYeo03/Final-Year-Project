@@ -100,7 +100,7 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
                                         <a class="nav-link" href="archivedClass.php">Archived Classes</a>
                                     </nav>
                                 </div>
-                                <a class="nav-link" href="../instructor-dashboard/scenarioManagement.php">Manage Scenario</a>
+                                <a class="nav-link" href="scenarioManagement.php">Manage Scenario</a>
                             </nav>
                         </div>
                     </div>

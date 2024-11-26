@@ -2,8 +2,8 @@
 include('connection.php');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-
 require 'vendor/autoload.php';
+
 // Set timezone to Malaysia
 date_default_timezone_set('Asia/Kuala_Lumpur');
 
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mail->Port = 587;
 
             // Recipients
-            $mail->setFrom('tarumtcyberrange@gmail.com', 'TAR UMT Cyber Range');
+            $mail->setFrom('no-reply@tarumt-cyber-range.com', 'TAR UMT Cyber Range');
             $mail->addAddress($email); // Add recipient
 
             // Content

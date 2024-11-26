@@ -1,300 +1,201 @@
 <?php
-session_start();
-if (!isset($_SESSION['username'])) {
-    header("Location: ../login.php");
-    exit;
-}
-
+$titleName = "Create Instructor - TAR UMT Cyber Range";
+include '../header_footer/header_admin.php';
 include '../connection.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+require '../vendor/autoload.php';
 
-// Check if form is submitted
+// Processing logic after submitting the form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $faculty = $_POST['faculty'];
-    $instructor_id = $_POST['instructor_id'];
-    $firstname = $_POST['firstname'];
-    $lastname = $_POST['lastname'];
+    $username = strtoupper($_POST['username']);
     $email = $_POST['email'];
-    $username = $_POST['username'];
-    $password = md5($_POST['password']); // Secure password hashing
+    $password = $_POST['password'];
+    $confirmPassword = $_POST['confirmPassword'];
+    $instructor_id = strtoupper($_POST['instructor_id']);
+    $faculty = "Faculty of Computing and Information Technology (FOCS)";
 
-    // Validate the first name and last name (only alphabetic characters and spaces)
-    if (!preg_match("/^[A-Za-z ]+$/", $firstname)) {
-        $_SESSION['error'] = "First name can only contain alphabets and spaces.";
-        header("Location: createInstructor.php");
-        exit;
-    }
-
-    if (!preg_match("/^[A-Za-z ]+$/", $lastname)) {
-        $_SESSION['error'] = "Last name can only contain alphabets and spaces.";
-        header("Location: createInstructor.php");
-        exit;
-    }
-
-    // Validate the email format
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $_SESSION['error'] = "Invalid email format.";
-        header("Location: createInstructor.php");
-        exit;
-    }
-
-    // Assume role_id for 'Instructor' is known (for example, role_id = 2 for instructors)
-    $role_id = 2; // Adjust this based on your roles table
-
-    // Check if email or username already exists
-    $checkSql = "SELECT id FROM users WHERE email = ? OR username = ?";
-    $checkStmt = $conn->prepare($checkSql);
-    $checkStmt->bind_param("ss", $email, $username);
-    $checkStmt->execute();
-    $checkStmt->store_result();
-
-    if ($checkStmt->num_rows > 0) {
-        $_SESSION['error'] = "The email or username is already in use. Please use a different one.";
-        header("Location: createInstructor.php");
-        exit;
+    // Check if a field is empty
+    if (empty($username) || empty($email) || empty($password) || empty($confirmPassword) || empty($instructor_id)) {
+        $error = "All fields are required!";
+    } elseif ($password !== $confirmPassword) {
+        $error = "The password and confirm password do not match!";
     } else {
-        // Insert user into the 'users' table with the role_id
-        $sql = "INSERT INTO users (username, password, email, role_id) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssi", $username, $password, $email, $role_id);
+        // Check if email already exists
+        $emailCheckQuery = "SELECT id FROM users WHERE email = ?";
+        $stmt = $conn->prepare($emailCheckQuery);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
 
-        // Execute the user insertion
-        if ($stmt->execute()) {
-            $user_id = $stmt->insert_id; // Get the ID of the inserted user
-
-            // After inserting into the users table and getting the user_id
-            $sql2 = "INSERT INTO instructors (user_id, email, instructor_id, username, faculty, firstname, lastname, password) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt2 = $conn->prepare($sql2);
-            $stmt2->bind_param("isssssss", $user_id, $email, $instructor_id, $username, $faculty, $firstname, $lastname, $password);
-
-            if ($stmt2->execute()) {
-                $_SESSION['success'] = "Instructor added successfully!";
-                header("Location: instructorsList.php"); // Redirect after successful submission
-                exit;
-            } else {
-                $_SESSION['error'] = "Error in instructor table: " . $conn->error;
-                header("Location: createInstructor.php");
-                exit;
-            }
+        if ($stmt->num_rows > 0) {
+            $error = "This email address has been registered!";
         } else {
-            $_SESSION['error'] = "Error in users table: " . $conn->error;
-            header("Location: createInstructor.php");
-            exit;
+            // Start transaction
+            $conn->begin_transaction();
+            try {
+                // Insert into users table
+                $hashed_password = md5($password);
+                $insertUserQuery = "INSERT INTO users (username, email, password, role_id) VALUES (?, ?, ?, (SELECT id FROM roles WHERE role_name = 'instructor'))";
+                $stmt = $conn->prepare($insertUserQuery);
+                $stmt->bind_param("sss", $username, $email, $hashed_password);
+                if (!$stmt->execute()) {
+                    throw new Exception("Unable to insert User information: " . $stmt->error);
+                }
+                $user_id = $stmt->insert_id;
+                $stmt->close();
+
+                // Insert into instructors table
+                $insertInstructorQuery = "INSERT INTO instructors (user_id, instructor_id, faculty) VALUES (?, ?, ?)";
+                $stmt = $conn->prepare($insertInstructorQuery);
+                $stmt->bind_param("iss", $user_id, $instructor_id, $faculty);
+                if (!$stmt->execute()) {
+                    throw new Exception("Unable to insert Instructor information: " . $stmt->error);
+                }
+                $stmt->close();
+
+                // Commit transaction
+                $conn->commit();
+
+                // Send email notification to users using PHPMailer
+                $mail = new PHPMailer(true);
+                try {
+                    // Server settings
+                    $mail->isSMTP();
+                    $mail->Host = 'smtp.gmail.com'; // Gmail SMTP server
+                    $mail->SMTPAuth = true;
+                    $mail->Username = 'tarumtcyberrange@gmail.com'; // Your Gmail address
+                    $mail->Password = 'vppiisklkqaqozeb'; // Your Gmail app password
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port = 587;
+
+                    // Recipients
+                    $mail->setFrom('no-reply@tarumt-cyber-range.com', 'TAR UMT Cyber Range');
+                    $mail->addAddress($email); // Add recipient
+
+                    // Content
+                    $mail->isHTML(true);
+                    $mail->Subject = "Welcome to TAR UMT Cyber Range";
+                    $mail->Body = "
+                        Dear $username,<br><br>
+                        Your account has been successfully created.<br><br>
+                        <strong>Username:</strong> $email<br>
+                        <strong>Password:</strong> $password<br><br>
+                        You may change your password after your first login.<br><br>
+                        Best regards,<br>
+                        <strong>TARUMT Cyber Range Team</strong>
+                    ";
+
+                    $mail->send();
+                    $success = "Instructor created successfully! Email has been sent to $email.";
+                } catch (Exception $e) {
+                    throw new Exception("Email could not be sent. Mailer Error: {$mail->ErrorInfo}");
+                }
+            } catch (Exception $e) {
+                // Rollback transaction
+                $conn->rollback();
+                $error = $e->getMessage();
+            }
         }
     }
 }
 ?>
 
+<script>
+    //Check password complexity
+    function validatePassword(password) {
+        const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Add Instructor - TARUMT Cyber Range</title>
-        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-        <link href="../css/styles.css" rel="stylesheet" />
-        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        
-    </head>
-    <body class="sb-nav-fixed">
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="index.php">TARUMT Cyber Range</a>
-            <!-- Sidebar Toggle-->
-            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-            <!-- Navbar Search-->
-            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-                <div class="input-group">
-                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
-                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                </div>
-            </form>
-            <!-- Navbar-->
-            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#!">Settings</a></li>
-                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-        <div id="layoutSidenav">
-            <div id="layoutSidenav_nav">
-                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                    <div class="sb-sidenav-menu">
-                        <div class="nav">
-                            <div class="sb-sidenav-menu-heading">Core</div>
-                            <a class="nav-link" href="index.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Dashboard
-                            </a>
-                            <div class="sb-sidenav-menu-heading">Interface</div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseStudents" aria-expanded="false" aria-controls="collapseLayouts">
-                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                            Student
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseStudents" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="#">Member Of Groups</a>
-                                <a class="nav-link" href="allScenario.php">Scenarios</a>
-                            </nav>
-                        </div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseInstructors" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Instructor
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseInstructors" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseInstructors" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                    Manage Student & Group
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseInstructors" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="#">Add Student</a>
-                                        <a class="nav-link" href="#">Create Group</a>
-                                        <a class="nav-link" href="#">Owned Group</a>
-                                    </nav>
-                                </div>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                    Manage Scenario
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="#">Create Scenario</a>
-                                        <a class="nav-link" href="#">Manage Scenario</a>
-                                        <a class="nav-link" href="studentResponse.php">Student Response</a>
-                                    </nav>
-                                </div>
-                            </nav>
-                        </div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseAdmin" aria-expanded="false" aria-controls="collapsePages">
-    <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-    Administrator
-    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-</a>
-<div class="collapse" id="collapseAdmin" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-    <nav class="sb-sidenav-menu-nested nav">
-        <!-- Manage Instructors -->
-        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageInstructors" aria-expanded="false" aria-controls="manageInstructors">
-            Manage Instructors
-            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-        </a>
-        <div class="collapse" id="manageInstructors" aria-labelledby="headingTwo" data-bs-parent="#collapseAdmin">
-            <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" href="createInstructor.php">Add Instructor</a>
-                <a class="nav-link" href="instructorsList.php">Instructor List</a>
-            </nav>
-        </div>
-        
-        <!-- Manage Students -->
-        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageStudents" aria-expanded="false" aria-controls="manageStudents">
-            Manage Students
-            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-        </a>
-        <div class="collapse" id="manageStudents" aria-labelledby="headingThree" data-bs-parent="#collapseAdmin">
-            <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" href="createStudent.php">Add Student</a>
-                <a class="nav-link" href="studentsList.php">Student List</a>
-            </nav>
+        //Checks compliance with basic complexity requirements
+        if (!complexityRegex.test(password)) {
+            return false;
+        }
+
+        //Checks if it contains characters in order or reverse order
+        for (let i = 0; i < password.length - 2; i++) {
+            const char1 = password.charCodeAt(i);
+            const char2 = password.charCodeAt(i + 1);
+            const char3 = password.charCodeAt(i + 2);
+
+            //Check sequence (such as 123 or abc)
+            if (char2 === char1 + 1 && char3 === char2 + 1) {
+                return false;
+            }
+
+            //Check for reverse order (such as 321 or cba)
+            if (char2 === char1 - 1 && char3 === char2 - 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    //Form Validation
+    function validateForm(event) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password !== confirmPassword) {
+            alert('Password and Confirm Password do not match!');
+            event.preventDefault();
+            return false;
+        }
+
+        if (!validatePassword(password)) {
+            alert('The password must be at least 6 characters long, contain uppercase, lowercase, numbers, and symbols, and cannot contain three consecutive characters in order or reverse order (e.g., "123" or "cba")!');
+            event.preventDefault();
+            return false;
+        }
+    }
+</script>
+
+<div class="container-fluid px-4">
+    <h2 class="mt-4">Create Instructor</h2>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Instructor</li>
+    </ol>
+
+    <!-- Display error or success information -->
+    <?php if (!empty($error)): ?>
+        <div class="alert alert-danger"><?php echo $error; ?></div>
+    <?php elseif (!empty($success)): ?>
+        <div class="alert alert-success"><?php echo $success; ?></div>
+    <?php endif; ?>
+
+    <form method="POST" action="" onsubmit="validateForm(event)">
+        <div class="mb-3">
+            <label for="username" class="form-label">Instructor Name:</label>
+            <input type="text" class="form-control" id="username" name="username" required>
         </div>
 
-        <!-- Manage Groups -->
-        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#manageGroups" aria-expanded="false" aria-controls="manageGroups">
-            Manage Groups
-            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-        </a>
-        <div class="collapse" id="manageGroups" aria-labelledby="headingFour" data-bs-parent="#collapseAdmin">
-            <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" href="createGroup.php">Create Group</a>
-                <a class="nav-link" href="groupsList.php">Group List</a>
-            </nav>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" class="form-control" id="email" name="email" required>
         </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirm Password:</label>
+            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="instructor_id" class="form-label">Instructor ID:</label>
+            <input type="text" class="form-control" id="instructor_id" name="instructor_id" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="faculty" class="form-label">Faculty:</label>
+            <input type="text" class="form-control" id="faculty" name="faculty" value="Faculty of Computing and Information Technology (FOCS)" readonly>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Instructor</button>
+    </form>
 </div>
 
-                </div>
-                </div>
-
-                    <div class="sb-sidenav-footer">
-                        <div class="small">Logged in as:</div>
-                        <?php echo htmlspecialchars($_SESSION['username']); ?>
-                    </div>
-                </nav>
-            </div>
-            <div id="layoutSidenav_content">
-                <main>
-                    <div class="container-fluid px-4">
-                            <div class="card">
-                                <div class="card-body">
-                        
-    <div class="card-title"><h1>Add Instructor Page</h1></div>
-    <form method="POST" action="createInstructor.php">
-    <div class="form-floating mb-3">
-        <input id="RegisterUsername" name="username" type="text" class="form-control" placeholder="Username" required="">
-        <label for="RegisterUsername">Username</label>
-    </div>
-    <div class="form-floating mb-3">
-        <input id="RegisterPassword" name="password" type="password" class="form-control" placeholder="Password" required="">
-        <label for="RegisterPassword">Password</label>
-    </div>
-    <div class="form-floating mb-3">
-        <input id="RegisterEmail" name="email" type="email" class="form-control" placeholder="Email" required="">
-        <label for="RegisterEmail">Email</label>
-    </div>
-    <div class="form-floating mb-3">
-        <input id="RegisterFaculty" name="faculty" type="text" class="form-control" placeholder="Faculty" required="">
-        <label for="RegisterFaculty">Faculty</label>
-    </div>
-    <div class="form-floating mb-3">
-        <input id="RegisterFaculty" name="instructor_id" type="text" class="form-control" placeholder="Instructor ID" required="">
-        <label for="RegisterFaculty">Instructor ID</label>
-    </div>
-    <div class="form-floating mb-3">
-        <input id="RegisterFirst" name="firstname" type="text" class="form-control" placeholder="First Name" required="">
-        <label for="RegisterFirst">First Name</label>
-    </div>
-    <div class="form-floating mb-3">
-        <input id="RegisteredLast" name="lastname" type="text" class="form-control" placeholder="Last Name" required="">
-        <label for="RegisteredLast">Last Name</label>
-    </div>
-    <div class="form-floating mb-3">
-        <input type="submit" value="Submit" class="btn btn-primary"/>
-    </div>
-</form>
-
-                                </div>
-                            </div>
-                        </div>
-                    
-                </main>
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid px-4">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; TARUMT Cyber Range 2023</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-            </div>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-        <script src="js/datatables-simple-demo.js"></script>
-        <script src="js/scripts.js"></script>
-    </body>
-</html>
+<?php include '../header_footer/footer.php'; ?>
