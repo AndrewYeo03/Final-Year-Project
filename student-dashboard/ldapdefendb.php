@@ -1,9 +1,10 @@
 <?php
-$titleName = "Exploitation of SSH (Secure Shell) Protocol - TARUMT Cyber Range";
+$titleName = "Exploitation of Lightweight Directory Access Protocol (LDAP) - TARUMT Cyber Range";
 include '../connection.php';
 include '../header_footer/header_student.php';
 
-$exercise_id = 'sshDA';
+
+$exercise_id = 'ldapDB';
 $_SESSION['current_exercise_id'] = $exercise_id;
 // Query to fetch the exercise details
 $sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
@@ -30,40 +31,38 @@ if ($result->num_rows > 0) {
     exit();
 }
 
-
-// Initialize message variables
-$message = '';
-$is_success = false;
+// Initialize error message variable
+$error_message = '';
 
 // Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get user inputs
-    $user_input1 = $_POST['pathname'];
-    $passwordAuth = $_POST['passwordAuth'];
+    // Check if the flag only field is submitted
+    if (!empty($_POST['directoryName']) && !empty($_POST['resultShown'])) {
+        $user_input1 = trim($_POST['directoryName']);
+        $user_input2 = trim($_POST['resultShown']);
 
-    // Prepare SQL query to fetch flags from the database
-    $sql = "SELECT flag_value FROM flag WHERE flag_id IN ('fDA')";
-    $result = $conn->query($sql);
+        // Prepare SQL query to fetch username and password flags
+        $sql = "SELECT flag_id, flag_value FROM flag WHERE flag_id IN ('fldapDB1', 'fldapDB2') ORDER BY flag_id";
+        $result = $conn->query($sql);
 
-    // Initialize an associative array to store flag values
-    $flags = [];
-
-    // Fetch the flag values from the database
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            // Store flag values in the array
-            $flags[] = $row['flag_value'];
+        $flags = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $flags[$row['flag_id']] = trim($row['flag_value']);
+            }
         }
-    }
 
-    // Compare user inputs with the flags from the database
-    if ($user_input1 === $flags[0] && $passwordAuth === "No") {
-        // Flags match
-        $message = "Flags are correct. Redirecting...";
-        $is_success = true;
+        // Validate username and password flags
+        if (isset($flags['fldapDB1']) && isset($flags['fldapDB2'])) {
+            if ($user_input1 === $flags['fldapDB1'] && $user_input2 === $flags['fldapDB2']) {
+                $message = "Flags are correct. Redirecting...";
+                $is_success = true;
+            } else {
+                $error_message = "Answer is incorrect. Please try again.";
+            }
+        }
     } else {
-        // Flags do not match, set an error message
-        $message = "Flags are incorrect. Please try again.";
+        $error_message = "Please fill out the answers.";
     }
 }
 ?>
@@ -155,7 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 <div class="container-fluid px-4">
-    <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
+    <h1 class="mt-4">Exploitation of Lightweight Directory Access Protocol (LDAP)</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item active"><?php echo $exerciseType; ?></li>
         <li class="breadcrumb-item active">Difficulty Level: <?php echo $difficultyLevel; ?></li>
@@ -174,7 +173,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php echo $hints; ?>
         </div>
     </div>
-
     <?php
     function generateNavMenu($exercise_id)
     {
@@ -264,48 +262,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- Submission Flag Area-->
     <div class="flag-container">
         <h2 class="flag-title">Try it out!</h2>
-        <form method="POST" action="sshDefendA.php">
-            <label for="flagInput1" style="font-size: 18px;">1. What is the SSH configuration file name to be edited?</label>
-            <!-- SSH Configuration File Name -->
+        <form method="POST" action="ldapdefendb.php">
+            <label for="flagInput1" style="font-size: 18px;">1. Where does the default SSL Directory located at?</label>
             <div class="input-group">
-                <label><code style="font-size: 18px;">nano </code></label>
-                <input type="text" name="pathname" id="flagInput1" placeholder="Enter pathname">
+                <input type="text" name="directoryName" id="directoryName" placeholder="Enter the directory name">
             </div>
 
-            <label style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">2. How this configuration settings needs to be set?</label>
-            <!-- Password Authentication Options -->
+            <label for="flagInput2" style="font-size: 18px; font-weight: bold; margin-bottom: 20px; margin-top: 20px; color: #333;">2. Type in <code>ldapwhoami -H ldap:// -x -ZZ</code> to force a SSL/TLS upgrade, what did you see as the result?</label>
             <div class="input-group">
-                <label><code style="font-size: 18px;">PasswordAuthentication:</code></label>
-                <label><input type="radio" name="passwordAuth" id="flagInput2" value="Yes"> Yes</label>
-                <label><input type="radio" name="passwordAuth" id="flagInput3" value="No"> No</label>
+                <input type="text" name="resultShown" id="resultShown" placeholder="Enter the result">
             </div>
 
             <!-- Submit Button -->
             <button id="submitButton">Submit</button>
-        </form>
-    </div>
-    <?php if (!empty($message)): ?>
+        </form><br>
+        <?php if (!empty($error_message)): ?>
+            <p style="color: red;"><?php echo $error_message; ?></p>
+        <?php endif; ?>
+
         <script>
-            // Pass the PHP message and success flag to JavaScript
-            showAlert("<?php echo $message; ?>", <?php echo $is_success ? 'true' : 'false'; ?>);
+            document.getElementById('openHintBox').addEventListener('click', function() {
+                document.getElementById('hintBox').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById('layoutSidenav_nav').style.zIndex = '900'; // Temporarily lower z-index of sidebar
+            });
+
+            document.getElementById('closeHintBox').addEventListener('click', function() {
+                document.getElementById('hintBox').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+                document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
+            });
+
+            document.getElementById('submitButton').addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent form submission until confirmation
+
+                // Capture input values
+                const directoryName = document.getElementById('directoryName').value.trim();
+                const resultShown = document.getElementById('resultShown').value.trim();
+
+                let message = "Please confirm your submission:\n\n";
+
+                // Build the confirmation message
+                message += "Directory Name: " + (directoryName ? directoryName : "(Empty - May result in no marks)") + "\n";
+                message += "Result: " + (resultShown ? resultShown : "(Empty - May result in no marks)") + "\n";
+
+                // Display the confirmation popup
+                const userConfirmed = confirm(message);
+
+                // If the user confirms, submit the form
+                if (userConfirmed) {
+                    event.target.closest('form').submit(); // Submit the form programmatically
+                }
+            });
         </script>
-    <?php endif; ?>
-
-</div>
-
-
-<script>
-    document.getElementById('openHintBox').addEventListener('click', function() {
-        document.getElementById('hintBox').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('layoutSidenav_nav').style.zIndex = '900'; // Temporarily lower z-index of sidebar
-    });
-
-    document.getElementById('closeHintBox').addEventListener('click', function() {
-        document.getElementById('hintBox').style.display = 'none';
-        document.getElementById('overlay').style.display = 'none';
-        document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
-    });
-</script>
-
-<?php include '../header_footer/footer.php' ?>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <?php include '../header_footer/footer.php' ?>

@@ -3,26 +3,6 @@ $titleName = "Exploitation of SSH (Secure Shell) Protocol - TARUMT Cyber Range";
 include '../connection.php';
 include '../header_footer/header_student.php';
 
-// List of exercise pages
-$exercises = [
-    "sshAttackAi.php",        // Exercise 1
-    "sshAttackAii.php", // Exercise 2
-    "sshAttackBi.php",  // Exercise 3
-    "sshAttackBii.php", // Exercise 4
-    "sshDefendA.php",   // Exercise 5
-    "sshDefendB.php",   // Exercise 6
-    "sshDefendC.php"    // Exercise 7
-];
-
-// Initialize the current exercise if not set
-if (!isset($_SESSION['current_exercise'])) {
-    $_SESSION['current_exercise'] = 0; // Start from the first exercise
-}
-
-// Current exercise index
-$current_exercise_index = $_SESSION['current_exercise'];
-
-
 $exercise_id = 'sshDB';
 $_SESSION['current_exercise_id'] = $exercise_id;
 // Query to fetch the exercise details
@@ -208,18 +188,67 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 
-    <!-- Nav Menu -->
-    <div class="nav-menu">
-        <a href="#" class="back-button"><i class="fas fa-arrow-left"></i></a>
-        <a href="sshAttackAi.php" class="nav-link" data-number="1">1</a>
-        <a href="sshAttackAii.php" class="nav-link" data-number="2">2</a>
-        <a href="sshAttackBi.php" class="nav-link" data-number="2">3</a>
-        <a href="sshAttackBii.php" class="nav-link" data-number="2">4</a>
-        <a href="sshDefendA.php" class="nav-link" data-number="2">5</a>
-        <a href="sshDefendB.php" class="nav-link" data-number="2">6</a>
-        <a href="sshDefendC.php" class="nav-link" data-number="2">7</a>
-        <a href="#" class="next-button"><i class="fas fa-arrow-right"></i></a>
-    </div>
+    <?php
+    function generateNavMenu($exercise_id)
+    {
+        global $conn; // Use the $conn from connection.php
+
+        // Step 1: Get the scenario_id for the current exercise_id
+        $sql = "SELECT scenario_id FROM exercise WHERE exercise_id = '$exercise_id' LIMIT 1";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $scenario_id = $row['scenario_id'];
+
+            // Step 2: Get all exercises with the same scenario_id, ordered by exerciseOrder
+            $sql = "SELECT exercise_id, link, exerciseOrder FROM exercise WHERE scenario_id = '$scenario_id' ORDER BY exerciseOrder ASC";
+            $result = $conn->query($sql);
+
+            $navLinks = [];
+            while ($row = $result->fetch_assoc()) {
+                $navLinks[] = $row;
+            }
+
+            // Step 3: Generate the HTML for the navigation menu
+            echo "<nav class='nav1'><ul>";
+
+            // Loop through the exercises and create menu items
+            foreach ($navLinks as $link) {
+                $isActive = ($link['exercise_id'] == $exercise_id) ? ' active' : '';
+                echo "<li><a href='" . $link['link'] . "' class='btn1$isActive'>" . $link['exerciseOrder'] . "</a></li>";
+            }
+
+            echo "</ul></nav>";
+
+            // Step 4: Determine the current exercise order for the next and back buttons
+            $currentIndex = null;
+            foreach ($navLinks as $index => $link) {
+                if ($link['exercise_id'] == $exercise_id) {
+                    $currentIndex = $index;
+                    break;
+                }
+            }
+
+            // Next and Back buttons
+            if ($currentIndex !== null) {
+                if ($currentIndex > 0) {
+                    $prevLink = $navLinks[$currentIndex - 1];
+                    echo "<a href='" . $prevLink['link'] . "' class='btn back-btn'>Back</a>";
+                }
+
+                if ($currentIndex < count($navLinks) - 1) {
+                    $nextLink = $navLinks[$currentIndex + 1];
+                    echo "<a href='" . $nextLink['link'] . "' class='btn next-btn'>Next</a>";
+                }
+            }
+        } else {
+            echo "Exercise not found.";
+        }
+    }
+
+    generateNavMenu($exercise_id);
+    ?>
 
     <!-- Main Content/ Description of Scenario -->
     <h2 class="mt-4 question-title" style="padding: 0px 10px;"><?php echo $exerciseTitle; ?><span style="float: right; font-weight: normal; font-size:large;">Suggested Duration: <?php echo $duration; ?></span></h2>

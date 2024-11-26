@@ -442,3 +442,94 @@ iframe {
     font-style: italic;
     text-align: center;  /* Center the title above each iframe */
 }
+
+/* Navigation container styles */
+.nav1 {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    /* Stack menu and buttons */
+    align-items: flex-start;
+    /* Align content to the left */
+    gap: 10px;
+}
+
+/* Unordered list styling */
+.nav1 ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 10px;
+}
+
+/* General button/link styling */
+.nav1 .btn1 {
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: #e2e6ea;
+    color: #333;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: bold;
+    display: inline-block;
+    /* Makes it button-like */
+    border: 1px solid #ccc;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* Hover effect for navigation buttons */
+.nav1 .btn1:hover {
+    background-color: #d6d8db;
+    color: #000;
+}
+
+/* Active/current page button styling */
+.nav1 .btn1.active {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+    border: 2px solid #0056b3;
+}
+
+/* Back and Next button styling */
+.nav1 .back-btn1,
+.nav1 .next-btn1 {
+    padding: 10px 20px;
+    background-color: #007bff;
+    /* Button color */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    /* Remove default border */
+    cursor: pointer;
+    display: inline-block;
+    /* Ensures button-like display */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Adds button shadow */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover effect for Back and Next buttons */
+.nav1 .back-btn1:hover,
+.nav1 .next-btn1:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    /* Adds slight "lift" effect on hover */
+}
+
+/* Ensure back and next buttons don't inherit unwanted styles */
+.nav1 .back-btn1,
+.nav1 .next-btn1 {
+    font-size: 16px;
+    /* Ensure readable button size */
+    line-height: normal;
+    text-align: center;
+}

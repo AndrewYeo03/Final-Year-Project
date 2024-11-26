@@ -1,9 +1,9 @@
 <?php
-$titleName = "Exploitation of SSH (Secure Shell) Protocol - TARUMT Cyber Range";
+$titleName = "Exploitation of Lightweight Directory Access Protocol (LDAP) - TARUMT Cyber Range";
 include '../connection.php';
 include '../header_footer/header_student.php';
 
-$exercise_id = 'sshOB1';
+$exercise_id = 'ldapOB';
 $_SESSION['current_exercise_id'] = $exercise_id;
 // Query to fetch the exercise details
 $sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
@@ -30,43 +30,40 @@ if ($result->num_rows > 0) {
     exit();
 }
 
-
-// Initialize message variables
-$message = '';
-$is_success = false;
+// Initialize error message variable
+$error_message = '';
 
 // Check if the form has been submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get user inputs
-    $user_input1 = $_POST['flagInput1'];
-    $user_input2 = $_POST['flagInput2'];
+    // Check if the flag only field is submitted
+    if (!empty($_POST['flagOnlyInput'])) {
+        // Process flag-only submission
+        $flagOnlyInput = trim($_POST['flagOnlyInput']);
 
-    // Prepare SQL query to fetch flags from the database
-    $sql = "SELECT flag_value FROM flag WHERE flag_id IN ('fOA1', 'fOA2')";
-    $result = $conn->query($sql);
+        // SQL query to fetch the specific flag for the 'flag only' option
+        $sql = "SELECT flag_value FROM flag WHERE flag_id = 'fldapOC'";
+        $result = $conn->query($sql);
 
-    // Initialize an array to store flag values
-    $flags = [];
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $flagValue = trim($row['flag_value']);
 
-    // Fetch the flag values from the database
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            // Store flag values in the array
-            $flags[] = $row['flag_value'];
+            if ($flagOnlyInput === $flagValue) {
+                // Flag matches, navigate to submitVideoLink.php
+                $message = "Flags are correct. Redirecting...";
+                $is_success = true;
+            } else {
+                $error_message = "Flag is incorrect. Please try again.";
+            }
+        } else {
+            $error_message = "Flag not found in the database.";
         }
-    }
-
-    // Compare user inputs with the flags from the database
-    if ($user_input1 === $flags[0] && $user_input2 === $flags[1]) {
-        // Flags match
-        $message = "Flags are correct. Redirecting...";
-        $is_success = true;
     } else {
-        // Flags do not match
-        $message = "Flags are incorrect. Please try again.";
+        $error_message = "Please fill out either the username and password or the flag.";
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -89,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 <div class="container-fluid px-4">
-    <h1 class="mt-4">Exploitation of SSH (Secure Shell) Protocol</h1>
+    <h1 class="mt-4">Exploitation of Lightweight Directory Access Protocol (LDAP) Protocol</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item active"><?php echo $exerciseType; ?></li>
         <li class="breadcrumb-item active">Difficulty Level: <?php echo $difficultyLevel; ?></li>
@@ -108,6 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php echo $hints; ?>
         </div>
     </div>
+
     <?php
     function generateNavMenu($exercise_id)
     {
@@ -178,75 +176,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <ul>
                 <li><?php echo $learningObj1; ?></li>
                 <li><?php echo $learningObj2; ?></li>
-                <li><?php echo $learningObj3; ?></li>
-                <li><?php echo $learningObj4; ?></li>
             </ul>
         </div>
 
         <div class="question">
             <h2>Question</h2>
             <p><?php echo $question; ?></p>
-
-            <p><strong>You can use the provided script here:</strong> <a href="sshBruteForceScript/async-ssh-bruteforcer.py" download class="download-link">BruteForceAutomationScript.txt</a></p>
-            <div class="vncTitle">
-                <h2>Let's Try Using This Virtual Machine Here!</h2>
-
-                <!-- Button Controls -->
-                <div class="vnc-controls">
-                    <a href="sshAttackAi.php?action=start" class="vnc-btn vnc-start">Start VNC Server</a>
-                    <a href="sshAttackAi.php?action=stop" class="vnc-btn vnc-stop">Stop VNC Server</a>
-                </div>
-
-                <!-- VNC Viewer iframe -->
-                <h3 style="color: #ff0000;
-    margin-bottom: 2px;
-    margin-left: 15%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
-    font-size: 26px;
-    font-weight: bold;font-style: italic;">[Attacker's Machine]</h3><iframe src="http://192.168.43.130:6080/vnc.html?host=192.168.43.130&port=6080"
-                    width="800" height="600"
-                    frameborder="0" allow="fullscreen">
-                </iframe>
-            </div>
         </div>
     </div>
 
 
-    <!-- Submission Flag Area-->
     <div class="flag-container">
         <h2 class="flag-title">Submission of Flag</h2>
-        <form method="POST" action="sshAttackBi.php">
-            <label for="flagInput1">Enter Username:</label>
-            <input type="text" name="flagInput1" id="flagInput1" placeholder="Enter username" style="width: 100%; padding: 8px;">
-
-            <label for="flagInput2">Enter Password:</label>
-            <input type="text" name="flagInput2" id="flagInput2" placeholder="Enter password" style="width: 100%; padding: 8px;">
+        <form method="POST" action="ldapattackb.php">
+            <div id="flagField">
+                <label for="flagOnlyInput">Enter the command to change the IP address:</label>
+                <input type="text" name="flagOnlyInput" id="flagOnlyInput" placeholder="Enter command" style="width: 100%; padding: 8px;">
+            </div>
             <button type="submit" id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
-        </form>
-    </div>
+        </form><br>
 
-    <?php if (!empty($message)): ?>
+        <?php if (!empty($error_message)): ?>
+            <p style="color: red;"><?php echo $error_message; ?></p>
+        <?php endif; ?>
+
         <script>
-            // Pass the PHP message and success flag to JavaScript
-            showAlert("<?php echo $message; ?>", <?php echo $is_success ? 'true' : 'false'; ?>);
+            document.getElementById('openHintBox').addEventListener('click', function() {
+                document.getElementById('hintBox').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById('layoutSidenav_nav').style.zIndex = '900'; // Temporarily lower z-index of sidebar
+            });
+
+            document.getElementById('closeHintBox').addEventListener('click', function() {
+                document.getElementById('hintBox').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+                document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
+            });
+
+
+            document.getElementById('submitButton').addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent form submission until confirmation
+
+                // Capture input values
+                const flagInput = document.getElementById('flagOnlyInput').value.trim();
+
+                let message = "Please confirm your submission:\n\n";
+
+                // Build the confirmation message based on mode
+
+                message += "Flag: " + (flagInput ? flagInput : "(Empty - May result in no marks)") + "\n";
+
+                // Display the confirmation popup
+                const userConfirmed = confirm(message);
+
+                // If the user confirms, submit the form
+                if (userConfirmed) {
+                    event.target.closest('form').submit(); // Submit the form programmatically
+                }
+            });
         </script>
-    <?php endif; ?>
-
-</div>
-
-<script>
-    document.getElementById('openHintBox').addEventListener('click', function() {
-        document.getElementById('hintBox').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('layoutSidenav_nav').style.zIndex = '900'; // Temporarily lower z-index of sidebar
-    });
-
-    document.getElementById('closeHintBox').addEventListener('click', function() {
-        document.getElementById('hintBox').style.display = 'none';
-        document.getElementById('overlay').style.display = 'none';
-        document.getElementById('layoutSidenav_nav').style.zIndex = '1000'; // Restore z-index of sidebar
-    });
-</script>
-
-<?php include '../header_footer/footer.php' ?>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <?php include '../header_footer/footer.php' ?>
