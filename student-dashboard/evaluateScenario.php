@@ -5,7 +5,7 @@ include '../connection.php';
 
 $scenarioId = $_GET['id'];
 
-// 获取场景信息
+//Retrieve scenario information
 $stmt = $conn->prepare("SELECT * FROM scenario WHERE scenario_id = ?");
 $stmt->bind_param("i", $scenarioId);
 $stmt->execute();
@@ -13,7 +13,7 @@ $scenarioResult = $stmt->get_result();
 $scenario = $scenarioResult->fetch_assoc();
 $stmt->close();
 
-// 获取场景下的所有练习
+//Retrieve all exercises related with scenario
 $stmt = $conn->prepare("
     SELECT e.exercise_id, e.title 
     FROM exercise e
@@ -24,7 +24,7 @@ $stmt->execute();
 $exercises = $stmt->get_result();
 $stmt->close();
 
-// 获取学生信息
+//Retrieve student information
 $username = $_SESSION['username'];
 $stmt = $conn->prepare("SELECT s.id AS student_id FROM students s INNER JOIN users u ON s.user_id = u.id WHERE u.username = ?");
 $stmt->bind_param("s", $username);
@@ -41,11 +41,11 @@ if (!$studentData || !isset($studentData['student_id'])) {
 
 $studentId = $studentData['student_id'];
 
-// 检查该学生是否已经为场景评分
+//Check if the student has already rated the scenario
 $stmt = $conn->prepare("
     SELECT * FROM scenario_ratings WHERE student_id = ? AND scenario_id = ?
 ");
-$stmt->bind_param("ii", $studentId, $scenarioId);
+$stmt->bind_param("si", $studentId, $scenarioId);
 $stmt->execute();
 $scenarioRated = $stmt->get_result()->num_rows > 0;
 $stmt->close();
@@ -145,6 +145,17 @@ $stmt->close();
         text-decoration: none;
     }
 
+    .radio-container {
+        display: flex;
+        justify-content: space-evenly;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .radio-container label {
+        display: inline-block;
+    }
+
     /* 练习列表样式 */
     .exercise-list {
         list-style-type: none;
@@ -209,172 +220,27 @@ $stmt->close();
     <button id="rateScenarioBtn" class="btn-evaluate" <?php echo $scenarioRated ? 'disabled' : ''; ?>>Rate Scenario</button>
 
     <!-- Scenario Rating Modal -->
+    <!-- 场景评分模态框 -->
     <div id="rateScenarioModal" class="modal">
         <div class="modal-content">
             <span style="display: flex; flex-flow: row nowrap; justify-content:right;" class="close">&times;</span>
-            <h3>Rate the Scenario</h3>
+            <h3>Rate Scenario</h3>
             <form method="POST">
-                <h4>Part A: Evaluate the scenario content and objectives (1-10):</h4>
+                <h4>Part A: Evaluate Scene Content and Objective (1-10):</h4>
 
-                <!-- 小题目1 -->
-                <label for="partA_q1">How clear were the objectives of the scenario?</label><br>
-                <input type="radio" id="partA_q1_1" name="partA_q1" value="1"> 1
-                <input type="radio" id="partA_q1_2" name="partA_q1" value="2"> 2
-                <input type="radio" id="partA_q1_3" name="partA_q1" value="3"> 3
-                <input type="radio" id="partA_q1_4" name="partA_q1" value="4"> 4
-                <input type="radio" id="partA_q1_5" name="partA_q1" value="5"> 5
-                <input type="radio" id="partA_q1_6" name="partA_q1" value="6"> 6
-                <input type="radio" id="partA_q1_7" name="partA_q1" value="7"> 7
-                <input type="radio" id="partA_q1_8" name="partA_q1" value="8"> 8
-                <input type="radio" id="partA_q1_9" name="partA_q1" value="9"> 9
-                <input type="radio" id="partA_q1_10" name="partA_q1" value="10"> 10
-                <br><br>
+                <!-- 使用JavaScript动态生成评分问题 -->
+                <div id="partA_questions"></div>
 
-                <!-- 小题目2 -->
-                <label for="partA_q2">Was the scenario content engaging?</label><br>
-                <input type="radio" id="partA_q2_1" name="partA_q2" value="1"> 1
-                <input type="radio" id="partA_q2_2" name="partA_q2" value="2"> 2
-                <input type="radio" id="partA_q2_3" name="partA_q2" value="3"> 3
-                <input type="radio" id="partA_q2_4" name="partA_q2" value="4"> 4
-                <input type="radio" id="partA_q2_5" name="partA_q2" value="5"> 5
-                <input type="radio" id="partA_q2_6" name="partA_q2" value="6"> 6
-                <input type="radio" id="partA_q2_7" name="partA_q2" value="7"> 7
-                <input type="radio" id="partA_q2_8" name="partA_q2" value="8"> 8
-                <input type="radio" id="partA_q2_9" name="partA_q2" value="9"> 9
-                <input type="radio" id="partA_q2_10" name="partA_q2" value="10"> 10
-                <br><br>
+                </br></br>
+                <h4>Part B: Provide Feedback on Instructor Guidance (1-10):</h4>
+                <div id="partB_questions"></div>
 
-                <!-- 小题目3 -->
-                <label for="partA_q3">How relevant were the scenario objectives to your learning?</label><br>
-                <input type="radio" id="partA_q3_1" name="partA_q3" value="1"> 1
-                <input type="radio" id="partA_q3_2" name="partA_q3" value="2"> 2
-                <input type="radio" id="partA_q3_3" name="partA_q3" value="3"> 3
-                <input type="radio" id="partA_q3_4" name="partA_q3" value="4"> 4
-                <input type="radio" id="partA_q3_5" name="partA_q3" value="5"> 5
-                <input type="radio" id="partA_q3_6" name="partA_q3" value="6"> 6
-                <input type="radio" id="partA_q3_7" name="partA_q3" value="7"> 7
-                <input type="radio" id="partA_q3_8" name="partA_q3" value="8"> 8
-                <input type="radio" id="partA_q3_9" name="partA_q3" value="9"> 9
-                <input type="radio" id="partA_q3_10" name="partA_q3" value="10"> 10
-                <br><br>
+                </br></br>
+                <h4>Part C: Rate the overall experience and facilities (1-10):</h4>
+                <div id="partC_questions"></div>
 
-                <h4>Part B: Provide feedback on the instructor's guidance (1-10):</h4>
-
-                <!-- 小题目1 -->
-                <label for="partB_q1">How clear was the instructor's explanation of the scenario?</label><br>
-                <input type="radio" id="partB_q1_1" name="partB_q1" value="1"> 1
-                <input type="radio" id="partB_q1_2" name="partB_q1" value="2"> 2
-                <input type="radio" id="partB_q1_3" name="partB_q1" value="3"> 3
-                <input type="radio" id="partB_q1_4" name="partB_q1" value="4"> 4
-                <input type="radio" id="partB_q1_5" name="partB_q1" value="5"> 5
-                <input type="radio" id="partB_q1_6" name="partB_q1" value="6"> 6
-                <input type="radio" id="partB_q1_7" name="partB_q1" value="7"> 7
-                <input type="radio" id="partB_q1_8" name="partB_q1" value="8"> 8
-                <input type="radio" id="partB_q1_9" name="partB_q1" value="9"> 9
-                <input type="radio" id="partB_q1_10" name="partB_q1" value="10"> 10
-                <br><br>
-
-                <!-- 小题目2 -->
-                <label for="partB_q2">How well did the instructor facilitate the scenario?</label><br>
-                <input type="radio" id="partB_q2_1" name="partB_q2" value="1"> 1
-                <input type="radio" id="partB_q2_2" name="partB_q2" value="2"> 2
-                <input type="radio" id="partB_q2_3" name="partB_q2" value="3"> 3
-                <input type="radio" id="partB_q2_4" name="partB_q2" value="4"> 4
-                <input type="radio" id="partB_q2_5" name="partB_q2" value="5"> 5
-                <input type="radio" id="partB_q2_6" name="partB_q2" value="6"> 6
-                <input type="radio" id="partB_q2_7" name="partB_q2" value="7"> 7
-                <input type="radio" id="partB_q2_8" name="partB_q2" value="8"> 8
-                <input type="radio" id="partB_q2_9" name="partB_q2" value="9"> 9
-                <input type="radio" id="partB_q2_10" name="partB_q2" value="10"> 10
-                <br><br>
-
-                <!-- 小题目3 -->
-                <label for="partB_q3">Was the feedback from the instructor helpful?</label><br>
-                <input type="radio" id="partB_q3_1" name="partB_q3" value="1"> 1
-                <input type="radio" id="partB_q3_2" name="partB_q3" value="2"> 2
-                <input type="radio" id="partB_q3_3" name="partB_q3" value="3"> 3
-                <input type="radio" id="partB_q3_4" name="partB_q3" value="4"> 4
-                <input type="radio" id="partB_q3_5" name="partB_q3" value="5"> 5
-                <input type="radio" id="partB_q3_6" name="partB_q3" value="6"> 6
-                <input type="radio" id="partB_q3_7" name="partB_q3" value="7"> 7
-                <input type="radio" id="partB_q3_8" name="partB_q3" value="8"> 8
-                <input type="radio" id="partB_q3_9" name="partB_q3" value="9"> 9
-                <input type="radio" id="partB_q3_10" name="partB_q3" value="10"> 10
-                <br><br>
-
-                <h4>Part C: Evaluate the overall learning experience (1-10):</h4>
-
-                <!-- 小题目1 -->
-                <label for="partC_q1">How well did the scenario contribute to your overall learning?</label><br>
-                <input type="radio" id="partC_q1_1" name="partC_q1" value="1"> 1
-                <input type="radio" id="partC_q1_2" name="partC_q1" value="2"> 2
-                <input type="radio" id="partC_q1_3" name="partC_q1" value="3"> 3
-                <input type="radio" id="partC_q1_4" name="partC_q1" value="4"> 4
-                <input type="radio" id="partC_q1_5" name="partC_q1" value="5"> 5
-                <input type="radio" id="partC_q1_6" name="partC_q1" value="6"> 6
-                <input type="radio" id="partC_q1_7" name="partC_q1" value="7"> 7
-                <input type="radio" id="partC_q1_8" name="partC_q1" value="8"> 8
-                <input type="radio" id="partC_q1_9" name="partC_q1" value="9"> 9
-                <input type="radio" id="partC_q1_10" name="partC_q1" value="10"> 10
-                <br><br>
-
-                <!-- 小题目2 -->
-                <label for="partC_q2">How effective was the combination of theory and practical application?</label><br>
-                <input type="radio" id="partC_q2_1" name="partC_q2" value="1"> 1
-                <input type="radio" id="partC_q2_2" name="partC_q2" value="2"> 2
-                <input type="radio" id="partC_q2_3" name="partC_q2" value="3"> 3
-                <input type="radio" id="partC_q2_4" name="partC_q2" value="4"> 4
-                <input type="radio" id="partC_q2_5" name="partC_q2" value="5"> 5
-                <input type="radio" id="partC_q2_6" name="partC_q2" value="6"> 6
-                <input type="radio" id="partC_q2_7" name="partC_q2" value="7"> 7
-                <input type="radio" id="partC_q2_8" name="partC_q2" value="8"> 8
-                <input type="radio" id="partC_q2_9" name="partC_q2" value="9"> 9
-                <input type="radio" id="partC_q2_10" name="partC_q2" value="10"> 10
-                <br><br>
-
-                <!-- 小题目3 -->
-                <label for="partC_q3">How well did the learning materials support your understanding of the scenario?</label><br>
-                <input type="radio" id="partC_q3_1" name="partC_q3" value="1"> 1
-                <input type="radio" id="partC_q3_2" name="partC_q3" value="2"> 2
-                <input type="radio" id="partC_q3_3" name="partC_q3" value="3"> 3
-                <input type="radio" id="partC_q3_4" name="partC_q3" value="4"> 4
-                <input type="radio" id="partC_q3_5" name="partC_q3" value="5"> 5
-                <input type="radio" id="partC_q3_6" name="partC_q3" value="6"> 6
-                <input type="radio" id="partC_q3_7" name="partC_q3" value="7"> 7
-                <input type="radio" id="partC_q3_8" name="partC_q3" value="8"> 8
-                <input type="radio" id="partC_q3_9" name="partC_q3" value="9"> 9
-                <input type="radio" id="partC_q3_10" name="partC_q3" value="10"> 10
-                <br><br>
-
-                <!-- 小题目4 -->
-                <label for="partC_q4">How satisfied were you with the overall structure and pacing of the scenario?</label><br>
-                <input type="radio" id="partC_q4_1" name="partC_q4" value="1"> 1
-                <input type="radio" id="partC_q4_2" name="partC_q4" value="2"> 2
-                <input type="radio" id="partC_q4_3" name="partC_q4" value="3"> 3
-                <input type="radio" id="partC_q4_4" name="partC_q4" value="4"> 4
-                <input type="radio" id="partC_q4_5" name="partC_q4" value="5"> 5
-                <input type="radio" id="partC_q4_6" name="partC_q4" value="6"> 6
-                <input type="radio" id="partC_q4_7" name="partC_q4" value="7"> 7
-                <input type="radio" id="partC_q4_8" name="partC_q4" value="8"> 8
-                <input type="radio" id="partC_q4_9" name="partC_q4" value="9"> 9
-                <input type="radio" id="partC_q4_10" name="partC_q4" value="10"> 10
-                <br><br>
-
-                <!-- 小题目5 -->
-                <label for="partC_q5">How would you rate your overall learning experience from this scenario?</label><br>
-                <input type="radio" id="partC_q5_1" name="partC_q5" value="1"> 1
-                <input type="radio" id="partC_q5_2" name="partC_q5" value="2"> 2
-                <input type="radio" id="partC_q5_3" name="partC_q5" value="3"> 3
-                <input type="radio" id="partC_q5_4" name="partC_q5" value="4"> 4
-                <input type="radio" id="partC_q5_5" name="partC_q5" value="5"> 5
-                <input type="radio" id="partC_q5_6" name="partC_q5" value="6"> 6
-                <input type="radio" id="partC_q5_7" name="partC_q5" value="7"> 7
-                <input type="radio" id="partC_q5_8" name="partC_q5" value="8"> 8
-                <input type="radio" id="partC_q5_9" name="partC_q5" value="9"> 9
-                <input type="radio" id="partC_q5_10" name="partC_q5" value="10"> 10
-                <br><br>
-
-                <label style="font-weight:bold;" for="feedbackText">Feedback: </label><br/>
+                </br>
+                <label style="font-weight:bold;" for="feedbackText">Feedback: </label><br />
                 <textarea name="feedbackText" rows="5" class="feedback" id="feedbackText" style="width:100%; resize:none; padding:10px;"></textarea>
 
                 <input name="submitScenarioRating" type="submit" value="Submit Rating" style="float:right;">
@@ -400,6 +266,9 @@ $stmt->close();
         </div>
     <?php } ?>
 </div>
+
+
+
 
 <?php
 // 处理场景评分提交
@@ -438,7 +307,7 @@ if (isset($_POST['submitScenarioRating'])) {
     $stmt->close();
 
     // 提示信息
-    echo "<script>alert('您已成功评分！'); window.location.href='evaluateScenario.php?id=$scenarioId';</script>";
+    echo "<script>alert('You have successfully rated!'); window.location.href='evaluateScenario.php?id=$scenarioId';</script>";
 }
 ?>
 
@@ -464,6 +333,87 @@ if (isset($_POST['submitScenarioRating'])) {
             modal.style.display = "none";
         }
     }
+
+    // 设置评分问题的数据
+    const partA_questions = [{
+            question: 'How clear are the scene objectives?',
+            name: 'partA_q1'
+        },
+        {
+            question: 'How engaging is the scene content?',
+            name: 'partA_q2'
+        },
+        {
+            question: 'How relevant is the scene objective to your learning?',
+            name: 'partA_q3'
+        }
+    ];
+
+    const partB_questions = [{
+            question: 'How clear was the instructor\'s explanation of the scene?',
+            name: 'partB_q1'
+        },
+        {
+            question: 'How well did the instructor facilitate the scene?',
+            name: 'partB_q2'
+        },
+        {
+            question: 'Was the instructor\'s feedback helpful?',
+            name: 'partB_q3'
+        }
+    ];
+
+    const partC_questions = [{
+            question: 'How comfortable were you with the overall facilities during the scenario?',
+            name: 'partC_q1'
+        },
+        {
+            question: 'How would you rate the scenario\'s atmosphere?',
+            name: 'partC_q2'
+        },
+        {
+            question: 'How effective were the tools provided in the scenario?',
+            name: 'partC_q3'
+        },
+        {
+            question: 'Was the timeline for the scenario adequate?',
+            name: 'partC_q4'
+        },
+        {
+            question: 'How satisfied were you with the scenario\'s difficulty level?',
+            name: 'partC_q5'
+        }
+    ];
+
+    // Function to generate questions dynamically for each part
+    function generateQuestions(part, questions) {
+        const container = document.getElementById(part + '_questions');
+        questions.forEach(q => {
+            const div = document.createElement('div');
+            div.classList.add('form-group');
+            div.innerHTML = `
+            <label for="${q.name}">${q.question}</label><br>
+            <div class="radio-container">
+                <label><input type="radio" name="${q.name}" value="1" required> 1</label>
+                <label><input type="radio" name="${q.name}" value="2" required> 2</label>
+                <label><input type="radio" name="${q.name}" value="3" required> 3</label>
+                <label><input type="radio" name="${q.name}" value="4" required> 4</label>
+                <label><input type="radio" name="${q.name}" value="5" required> 5</label>
+                <label><input type="radio" name="${q.name}" value="6" required> 6</label>
+                <label><input type="radio" name="${q.name}" value="7" required> 7</label>
+                <label><input type="radio" name="${q.name}" value="8" required> 8</label>
+                <label><input type="radio" name="${q.name}" value="9" required> 9</label>
+                <label><input type="radio" name="${q.name}" value="10" required> 10</label>
+            </div>
+        `;
+            container.appendChild(div);
+        });
+    }
+
+    // Call the function to generate the questions for all parts
+    generateQuestions('partA', partA_questions);
+    generateQuestions('partB', partB_questions);
+    generateQuestions('partC', partC_questions);
 </script>
 
 <?php include '../header_footer/footer.php'; ?>
