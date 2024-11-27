@@ -45,7 +45,7 @@ $studentId = $studentData['student_id'];
 $stmt = $conn->prepare("
     SELECT * FROM scenario_ratings WHERE student_id = ? AND scenario_id = ?
 ");
-$stmt->bind_param("si", $studentId, $scenarioId);
+$stmt->bind_param("ii", $studentId, $scenarioId);
 $stmt->execute();
 $scenarioRated = $stmt->get_result()->num_rows > 0;
 $stmt->close();
@@ -88,6 +88,13 @@ $stmt->close();
     .btn-back:active {
         transform: translateY(1px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-evaluate:disabled {
+        background-color: #d3d3d3;
+        color: #a9a9a9;
+        cursor: not-allowed;
+        border: 1px solid #a9a9a9;
     }
 
     /* 按钮样式 */
@@ -226,7 +233,7 @@ $stmt->close();
             <span style="display: flex; flex-flow: row nowrap; justify-content:right;" class="close">&times;</span>
             <h3>Rate Scenario</h3>
             <form method="POST">
-                <h4>Part A: Evaluate Scene Content and Objective (1-10):</h4>
+                <h4>Part A: Evaluate Scenario Content and Objective (1-10):</h4>
 
                 <!-- 使用JavaScript动态生成评分问题 -->
                 <div id="partA_questions"></div>
@@ -240,7 +247,7 @@ $stmt->close();
                 <div id="partC_questions"></div>
 
                 </br>
-                <label style="font-weight:bold;" for="feedbackText">Feedback: </label><br />
+                <label style="font-weight:bold;" for="feedbackText">Feedback (Optional): </label><br />
                 <textarea name="feedbackText" rows="5" class="feedback" id="feedbackText" style="width:100%; resize:none; padding:10px;"></textarea>
 
                 <input name="submitScenarioRating" type="submit" value="Submit Rating" style="float:right;">
@@ -248,14 +255,27 @@ $stmt->close();
         </div>
     </div>
 
-    <!-- Exercise List -->
     <h3 class="mt-4">Exercises for this Scenario</h3>
     <?php if ($exercises->num_rows > 0) { ?>
         <ul class="exercise-list">
             <?php while ($exercise = $exercises->fetch_assoc()) { ?>
+                <?php
+                // 检查用户是否已经评分该练习
+                $stmt = $conn->prepare("
+                SELECT * FROM exercise_ratings WHERE student_id = ? AND exercise_id = ?
+            ");
+                $stmt->bind_param("is", $studentId, $exercise['exercise_id']);
+                $stmt->execute();
+                $exerciseRated = $stmt->get_result()->num_rows > 0;
+                $stmt->close();
+                ?>
                 <li class="exercise-item">
                     <span><?php echo htmlspecialchars($exercise['title']); ?></span>
-                    <a href="evaluateExercises.php?id=<?php echo $exercise['exercise_id']; ?>" class="btn-evaluate">Rate Exercise</a>
+                    <?php if ($exerciseRated) { ?>
+                        <button class="btn-evaluate" disabled>Rated</button>
+                    <?php } else { ?>
+                        <a href="evaluateExercises.php?id=<?php echo $exercise['exercise_id']; ?>" class="btn-evaluate">Rate Exercise</a>
+                    <?php } ?>
                 </li>
             <?php } ?>
         </ul>
@@ -414,6 +434,35 @@ if (isset($_POST['submitScenarioRating'])) {
     generateQuestions('partA', partA_questions);
     generateQuestions('partB', partB_questions);
     generateQuestions('partC', partC_questions);
+
+    // 表单提交时验证内容是否完整
+    document.querySelector('form').addEventListener('submit', function(event) {
+        let isValid = true;
+
+        // 验证每个问题的radio按钮是否有选择
+        document.querySelectorAll('.radio-container').forEach(container => {
+            const radios = container.querySelectorAll('input[type="radio"]');
+            const name = radios[0].name; // 获取当前问题的name属性
+            const isSelected = Array.from(radios).some(radio => radio.checked);
+
+            if (!isSelected) {
+                isValid = false;
+                alert(`Please answer the question: "${name}"`);
+            }
+        });
+
+        // 验证 textarea 是否填写
+        const feedbackText = document.getElementById('feedbackText');
+        if (!feedbackText.value.trim()) {
+            isValid = false;
+            alert('Please provide feedback.');
+        }
+
+        // 如果验证失败，阻止表单提交
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
 </script>
 
 <?php include '../header_footer/footer.php'; ?>
