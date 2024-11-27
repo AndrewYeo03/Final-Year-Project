@@ -3,10 +3,6 @@ $titleName = "Student Dashboard - TARUMT Cyber Range";
 include '../header_footer/header_student.php';
 include '../connection.php';
 
-//Static data (simulate getting from database)
-$submittedScenarios = 0;
-$expiredScenarios = 0;
-
 //Retrieve student information
 $username = $_SESSION['username'];
 $stmt = $conn->prepare("
@@ -27,6 +23,7 @@ $result = $stmt->get_result();
 $studentData = $result->fetch_assoc();
 $stmt->close();
 
+//Calculate Total Scenarios
 $stmtTotal = $conn->prepare("
     SELECT SUM(quantity) AS total_scenarios
     FROM (
@@ -42,6 +39,38 @@ $stmtTotal->execute();
 $resultTotal = $stmtTotal->get_result();
 $totalScenarios = $resultTotal->fetch_assoc()['total_scenarios'];
 $stmtTotal->close();
+
+// Calculate Submitted Scenarios
+$stmtSubmitted = $conn->prepare("
+    SELECT COUNT(DISTINCT cs.scenario_id) AS submitted_scenarios
+    FROM class_scenarios cs
+    INNER JOIN student_classes sc ON cs.class_name = sc.class_name
+    LEFT JOIN exercise e ON e.scenario_id = cs.scenario_id
+    LEFT JOIN submitted_files sf ON sf.exercise_id = e.exercise_id AND sf.student_id = ?
+    LEFT JOIN submitted_videos sv ON sv.exercise_id = e.exercise_id AND sv.student_id = ?
+    WHERE sc.student_id = ?
+    AND sf.exercise_id IS NOT NULL
+    AND sv.exercise_id IS NOT NULL
+");
+$stmtSubmitted->bind_param("iii", $studentData['id'], $studentData['id'], $studentData['id']);
+$stmtSubmitted->execute();
+$resultSubmitted = $stmtSubmitted->get_result();
+$submittedScenarios = $resultSubmitted->fetch_assoc()['submitted_scenarios'];
+$stmtSubmitted->close();
+
+// Calculate Expired Scenarios
+$stmtExpired = $conn->prepare("
+    SELECT COUNT(*) AS expired_scenarios
+    FROM class_scenarios cs
+    INNER JOIN student_classes sc ON cs.class_name = sc.class_name
+    INNER JOIN scenario s ON cs.scenario_id = s.scenario_id 
+    WHERE sc.student_id = ? AND s.due_date < CURDATE()
+");
+$stmtExpired->bind_param("i", $studentData['id']);
+$stmtExpired->execute();
+$resultExpired = $stmtExpired->get_result();
+$expiredScenarios = $resultExpired->fetch_assoc()['expired_scenarios'];
+$stmtExpired->close();
 ?>
 
 <div class="container-fluid px-4">
