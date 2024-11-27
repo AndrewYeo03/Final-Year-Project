@@ -1,7 +1,7 @@
 <?php
 session_start();
 // Check if the user role is Instructor
-if ($_SESSION['role_id'] != 2) {
+if ($_SESSION['role_id'] != 2 || $_SESSION['role_id'] != 3) {
     header("Location: ../unauthorized.php");
     exit();
 }

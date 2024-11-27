@@ -1,5 +1,5 @@
 <?php
-$titleName = "Archived Instructor List - TAR UMT Cyber Range";
+$titleName = "Archived Class List - TAR UMT Cyber Range";
 include '../header_footer/header_admin.php';
 include '../connection.php';
 
@@ -9,48 +9,46 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-//Get a list of archived instructors
+//Get a list of archived students
 $stmt = $conn->prepare("
-    SELECT i.id, u.username 
-    FROM instructors i
-    JOIN users u ON i.user_id = u.id
-    WHERE i.is_archived = 1
+    SELECT c.class_name 
+    FROM class c
+    WHERE c.is_archived = 1
 ");
 $stmt->execute();
 $result = $stmt->get_result();
-$archivedInstructors = $result->fetch_all(MYSQLI_ASSOC);
+$archivedClass = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 ?>
 
 <div class="container-fluid px-4">
-    <h1 class="mt-4">Archived Instructors</h1>
+    <h1 class="mt-4">All Archived Classes</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Archived Instructors</li>
+        <li class="breadcrumb-item active">Archived Classes</li>
     </ol>
 
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-user-times me-1"></i>
-            Archived Instructors
+            Archived classes
         </div>
         <div class="card-body">
             <table id="datatablesSimple" class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Instructor Username</th>
+                        <th>Class Name</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!empty($archivedInstructors)): ?>
-                        <?php foreach ($archivedInstructors as $instructor): ?>
+                    <?php if (!empty($archivedClass)): ?>
+                        <?php foreach ($archivedClass as $class): ?>
                             <tr>
-                                <td><?= htmlspecialchars($instructor['username']); ?></td>
+                                <td><?= htmlspecialchars($class['class_name']); ?></td>
                                 <td>
                                     <button 
-                                        class="btn btn-success unarchive-instructor-btn" 
-                                        data-instructor-id="<?= htmlspecialchars($instructor['id']); ?>"
-                                        data-instructor="<?= htmlspecialchars($instructor['username']); ?>">
+                                        class="btn btn-success unarchive-student-btn" 
+                                        data-class-name="<?= htmlspecialchars($class['class_name']); ?>">
                                         Unarchive
                                     </button>
                                 </td>
@@ -58,7 +56,7 @@ $stmt->close();
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="2" class="text-center">No archived instructors found.</td>
+                            <td colspan="3" class="text-center">No archived classes found.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -70,22 +68,21 @@ $stmt->close();
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("datatablesSimple").addEventListener("click", function (e) {
-        if (e.target.classList.contains("unarchive-instructor-btn")) {
-            const instructorId = e.target.dataset.instructorId;
-            const instructorName = e.target.dataset.instructor;
+        if (e.target.classList.contains("unarchive-student-btn")) {
+            const className = e.target.dataset.className;
 
-            const confirmUnarchive = confirm(`Are you sure you want to unarchive the instructor "${instructorName}"?`);
+            const confirmUnarchive = confirm(`Are you sure you want to unarchive the student "${className}"?`);
             if (!confirmUnarchive) return;
 
-            fetch("unarchive_instructor.php", {
+            fetch("unarchive_class.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `instructorId=${encodeURIComponent(instructorId)}`,
+                body: `className=${encodeURIComponent(className)}`,
             })
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.error) throw new Error(data.error);
-                    alert(`Instructor "${instructorName}" has been successfully unarchived.`);
+                    alert(`Class: "${className}" has been successfully unarchived.`);
                     location.reload();
                 })
                 .catch((error) => alert(error.message));

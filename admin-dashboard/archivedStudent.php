@@ -3,13 +3,13 @@ $titleName = "Archived Student List - TAR UMT Cyber Range";
 include '../header_footer/header_admin.php';
 include '../connection.php';
 
-// 检查用户登录状态
+//Check user login status
 if (!isset($_SESSION['username'])) {
     header("Location: ../login.php");
     exit();
 }
 
-// 获取存档学生的列表
+//Get a list of archived students
 $stmt = $conn->prepare("
     SELECT s.student_id, u.username 
     FROM students s

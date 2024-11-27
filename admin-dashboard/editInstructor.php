@@ -6,11 +6,12 @@ include '../connection.php';
 $instructor_id = $_GET['id'];
 
 // Retrieve instructor's infos
-$sql = "SELECT instructors.id, users.username, users.email, instructors.instructor_id, instructors.faculty 
-        FROM instructors
-        JOIN users ON instructors.user_id = users.id
-        WHERE instructors.id = ?";
-$stmt = $conn->prepare($sql);
+$stmt = $conn->prepare("
+    SELECT i.id, u.username, u.email, i.instructor_id, i.faculty 
+    FROM instructors i
+    JOIN users u ON i.user_id = u.id
+    WHERE i.id = ?
+");
 $stmt->bind_param("i", $instructor_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -25,18 +26,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $faculty = $_POST['faculty'];
 
     // Update users table
-    $update_sql = "UPDATE users 
-                   SET username = ?, email = ? 
-                   WHERE id = (SELECT user_id FROM instructors WHERE id = ?)";
-    $update_stmt = $conn->prepare($update_sql);
+    $update_stmt = $conn->prepare("
+        UPDATE users 
+        SET username = ?, email = ? 
+        WHERE id = (SELECT user_id FROM instructors WHERE id = ?)
+    ");
     $update_stmt->bind_param("ssi", $username, $email, $instructor_id);
     $update_stmt->execute();
 
     // Update instructors table (In future, once cyber range open to more faculty, can enable back the input textfield and use this back-end code to update)
-    $update_faculty_sql = "UPDATE instructors 
-                           SET faculty = ? 
-                           WHERE id = ?";
-    $update_faculty_stmt = $conn->prepare($update_faculty_sql);
+    $update_faculty_stmt = $conn->prepare("
+        UPDATE instructors 
+        SET faculty = ? 
+        WHERE id = ?
+    ");
     $update_faculty_stmt->bind_param("si", $faculty, $instructor_id);
     $update_faculty_stmt->execute();
 
@@ -73,7 +76,7 @@ if ($update_success) {
     echo "
     <script type='text/javascript'>
         alert('Instructor information updated successfully!');
-        window.location.href = 'instructorsList.php'; // Redirect to instructors list
+        window.location.href = 'instructorsList.php';
     </script>";
 }
 ?>
