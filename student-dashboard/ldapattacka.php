@@ -49,9 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $flagValue = trim($row['flag_value']);
 
             if ($flagOnlyInput === $flagValue) {
-                // Flag matches, navigate to submitVideoLink.php
-                header("Location: submitVideoLink.php");
-                exit();
+                $message = "Flags are correct. Redirecting...";
+                $is_success = true;
             } else {
                 $error_message = "Flag is incorrect. Please try again.";
             }
@@ -247,8 +246,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <button type="submit" id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
         </form><br>
-        <?php if (!empty($error_message)): ?>
-            <p style="color: red;"><?php echo $error_message; ?></p>
+        <?php if (!empty($message)): ?>
+            <script>
+                // Pass the PHP message and success flag to JavaScript
+                showAlert("<?php echo $message; ?>", <?php echo $is_success ? 'true' : 'false'; ?>);
+            </script>
         <?php endif; ?>
 
     </div>

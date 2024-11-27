@@ -196,8 +196,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit" id="submitButton" style="margin-top: 10px; padding: 8px 16px;">Submit</button>
         </form><br>
 
-        <?php if (!empty($error_message)): ?>
-            <p style="color: red;"><?php echo $error_message; ?></p>
+        <?php if (!empty($message)): ?>
+            <script>
+                // Pass the PHP message and success flag to JavaScript
+                showAlert("<?php echo $message; ?>", <?php echo $is_success ? 'true' : 'false'; ?>);
+            </script>
         <?php endif; ?>
 
         <script>
