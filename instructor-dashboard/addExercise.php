@@ -16,8 +16,13 @@ if (isset($_GET['scenario_id'])) {
         $learningObj_2 = $_POST['learningObj_2'];
         $learningObj_3 = $_POST['learningObj_3'];
         $learningObj_4 = $_POST['learningObj_4'];
-        $duration = $_POST['duration'] . " minutes";  // Append "minutes"
+        $question = $_POST['question'];
+        $scenarioQues = $_POST['scenarioQues'] ?: NULL; // Optional field
+        $duration = $_POST['duration'] . " minutes"; 
+        $exerciseType = $_POST['exerciseType'];
         $difficulty_level = $_POST['difficulty_level'];
+        $hints = $_POST['hints'];
+        $link = $_POST['link'];
 
         // Check if exercise_id already exists
         $checkQuery = "SELECT * FROM exercise WHERE exercise_id = ?";
@@ -29,11 +34,11 @@ if (isset($_GET['scenario_id'])) {
         if ($stmt->num_rows > 0) {
             echo "<script>alert('Exercise ID already exists. Please choose a different ID.');</script>";
         } else {
-            // Insert into database
-            $insertQuery = "INSERT INTO exercise (exercise_id, scenario_id, title, learningObj_1, learningObj_2, learningObj_3, learningObj_4, duration, difficulty_level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($insertQuery);
-            $stmt->bind_param("sssssisss", $exercise_id, $scenario_id, $title, $learningObj_1, $learningObj_2, $learningObj_3, $learningObj_4, $duration, $difficulty_level);  // Bind exercise_id as string
-
+             // Insert into database
+             $insertQuery = "INSERT INTO exercise (exercise_id, scenario_id, title, learningObj_1, learningObj_2, learningObj_3, learningObj_4, scenarioQues, question, duration, exerciseType, difficulty_level, hints, link) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+$stmt = $conn->prepare($insertQuery);
+$stmt->bind_param("sissssssssssss", $exercise_id, $scenario_id, $title, $learningObj_1, $learningObj_2, $learningObj_3, $learningObj_4, $scenarioQues, $question, $duration, $exerciseType, $difficulty_level, $hints, $link);
             if ($stmt->execute()) {
                 echo "<script>alert('Exercise added successfully.'); window.location.href='viewScenario.php?scenario_id=$scenario_id';</script>";
             } else {
@@ -124,16 +129,35 @@ if (isset($_GET['scenario_id'])) {
             <label for="learningObj_4">Learning Objective 4</label>
             <input type="text" id="learningObj_4" name="learningObj_4" placeholder="Enter learning objective 4">
 
+            <label for="scenarioQues">Question</label>
+            <input type="text" id="question" name="scenarioQues" placeholder="Enter question" required></input>
+
+            <label for="question">Scenario Question (Optional)</label>
+            <input type="text" id="scenarioQues" name="question" placeholder="Enter scenario question"></input>
+
             <label for="duration">Duration (in minutes)</label>
             <input type="number" id="duration" name="duration" placeholder="Enter duration in minutes" required>
+
+            <label for="exerciseType">Exercise Type</label>
+            <select id="exerciseType" name="exerciseType" required>
+                <option value="">Select exercise type</option>
+                <option value="Offensive Exercise">1 - Offensive</option>
+                <option value="Defensive Exercise">2 - Defensive</option>
+            </select>
 
             <label for="difficulty_level">Difficulty Level</label>
             <select id="difficulty_level" name="difficulty_level" required>
                 <option value="">Select difficulty level</option>
-                <option value="1">1 - Beginner</option>
-                <option value="2">2 - Intermediate</option>
-                <option value="3">3 - Advanced</option>
+                <option value="Beginner">1 - Beginner</option>
+                <option value="Intermediate">2 - Intermediate</option>
+                <option value="Advanced">3 - Advanced</option>
             </select>
+
+            <label for="hints">Hints</label>
+            <input type="text" id="hints" name="hints" placeholder="Enter hints" required></input>
+
+            <label for="link">Page Path Link</label>
+            <input type="text" id="link" name="link" placeholder="Enter link (e.g., pageName.php" required>
 
             <button type="submit" class="btn btn-submit">Add Exercise</button>
             <a href="viewScenario.php?scenario_id=<?php echo $scenario_id; ?>" class="btn btn-back">Back to Exercise List</a>

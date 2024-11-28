@@ -32,15 +32,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $learningObj_2 = $_POST['learningObj_2'];
     $learningObj_3 = $_POST['learningObj_3'];
     $learningObj_4 = $_POST['learningObj_4'];
+    $scenarioQues = $_POST['scenarioQues'] ?: NULL; // Optional field
+    $hints = $_POST['hints'];
+    $link = $_POST['link'];
     $duration = $_POST['duration'] . " minutes"; // Concatenate "minutes"
+    $exerciseType = $_POST['exerciseType'];
     $difficulty_level = $_POST['difficulty_level'];
 
-    // Update query with string type for exercise_id
-    $updateQuery = "UPDATE exercise SET title = ?, learningObj_1 = ?, learningObj_2 = ?, learningObj_3 = ?, learningObj_4 = ?, duration = ?, difficulty_level = ? WHERE exercise_id = ?";
+    // Update query with the new fields
+    $updateQuery = "UPDATE exercise SET title = ?, learningObj_1 = ?, learningObj_2 = ?, learningObj_3 = ?, learningObj_4 = ?, scenarioQues = ?, hints = ?, link = ?, duration = ?, exerciseType = ?, difficulty_level = ? WHERE exercise_id = ?";
     $stmt = $conn->prepare($updateQuery);
 
     // Bind the parameters
-    $stmt->bind_param("ssssssss", $title, $learningObj_1, $learningObj_2, $learningObj_3, $learningObj_4, $duration, $difficulty_level, $exercise_id);
+    $stmt->bind_param("ssssssssssss", $title, $learningObj_1, $learningObj_2, $learningObj_3, $learningObj_4, $scenarioQues, $hints, $link, $duration, $exerciseType, $difficulty_level, $exercise_id);
 
     if ($stmt->execute()) {
         echo "<script>alert('Exercise updated successfully.'); window.location.href='viewScenario.php?scenario_id=" . $exercise['scenario_id'] . "';</script>";
@@ -132,13 +136,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="number" id="duration" name="duration" value="<?php echo (int) $exercise['duration']; ?>" required>
             </div>
             <div class="form-group">
-                <label for="difficulty_level">Difficulty Level</label>
-                <select id="difficulty_level" name="difficulty_level" required>
-                    <option value="Beginner" <?php echo ($exercise['difficulty_level'] == 1) ? 'selected' : ''; ?>>1 (Beginner)</option>
-                    <option value="Intermediate" <?php echo ($exercise['difficulty_level'] == 2) ? 'selected' : ''; ?>>2 (Intermediate)</option>
-                    <option value="Advanced" <?php echo ($exercise['difficulty_level'] == 3) ? 'selected' : ''; ?>>3 (Advanced)</option>
-                </select>
-            </div>
+    <label for="scenarioQues">Scenario Question (Optional)</label>
+    <input type="text" id="scenarioQues" name="scenarioQues" value="<?php echo $exercise['scenarioQues']; ?>" placeholder="Enter scenario question">
+</div>
+<div class="form-group">
+    <label for="hints">Hints</label>
+    <input type="text" id="hints" name="hints" value="<?php echo $exercise['hints']; ?>" placeholder="Enter hints" required>
+</div>
+<div class="form-group">
+    <label for="link">Page Path Link</label>
+    <input type="text" id="link" name="link" value="<?php echo $exercise['link']; ?>" placeholder="Enter link (e.g., pageName.php)" required>
+</div>
+<div class="form-group">
+    <label for="exerciseType">Exercise Type</label>
+    <select id="exerciseType" name="exerciseType" required>
+        <option value="Offensive Exercise" <?php echo ($exercise['exerciseType'] == 'Offensive Exercise') ? 'selected' : ''; ?>>1 - Offensive</option>
+        <option value="Defensive Exercise" <?php echo ($exercise['exerciseType'] == 'Defensive Exercise') ? 'selected' : ''; ?>>2 - Defensive</option>
+    </select>
+</div>
+<div class="form-group">
+    <label for="difficulty_level">Difficulty Level</label>
+    <select id="difficulty_level" name="difficulty_level" required>
+        <option value="Beginner" <?php echo ($exercise['difficulty_level'] == 'Beginner') ? 'selected' : ''; ?>>1 - Beginner</option>
+        <option value="Intermediate" <?php echo ($exercise['difficulty_level'] == 'Intermediate') ? 'selected' : ''; ?>>2 - Intermediate</option>
+        <option value="Advanced" <?php echo ($exercise['difficulty_level'] == 'Advanced') ? 'selected' : ''; ?>>3 - Advanced</option>
+    </select>
+</div>
             <button type="submit" class="btn btn-submit">Update Exercise</button>
             <a href="viewScenario.php?scenario_id=<?php echo $exercise['scenario_id']; ?>" class="btn btn-back">Cancel</a>
         </form>
