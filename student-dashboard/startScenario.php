@@ -19,6 +19,15 @@ switch ($scenarioId) {
         header("Location: ldapattacka.php");
         break;
     case 3:
+        header("Location: testing1.php");
+        break;
+    case 4:
+        header("Location: testing2.php");
+        break;
+    case 5:
+        header("Location: testing3.php");
+        break;
+    case 6:
         header("Location: exerciseCustomization.php");
         break;
     default:
@@ -28,4 +37,3 @@ switch ($scenarioId) {
 
 // Stop further execution after redirection
 exit();
-?>
