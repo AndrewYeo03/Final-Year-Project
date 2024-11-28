@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
 
-        $exercise_id = $_SESSION['current_exercise_id'];
+        $exercise_id = $_SESSION['current_exercise_id']; //Ai
 
         // Check if already submitted
         $stmt = $conn->prepare("SELECT * FROM submitted_videos WHERE student_id = ? AND exercise_id = ?");
@@ -47,7 +47,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($result->num_rows > 0) {
             // User has already submitted, move to the next exercise
-            $_SESSION['current_exercise']++;
+            if ($exercises[$_SESSION['current_exercise']] != $exercise_id ){ //Ai
+                $_SESSION['current_exercise']; //3
+            }else{
+                $_SESSION['current_exercise']++; //Aii
+            }
+
             if ($_SESSION['current_exercise'] < count($exercises)) {
                 $nextExercise = $exercises[$_SESSION['current_exercise']];
                 echo "<script>alert('You have already submitted your work for this exercise.'); window.location.href = '$nextExercise';</script>";
