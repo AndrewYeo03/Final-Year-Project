@@ -3,6 +3,31 @@ $titleName = "Edit Scenario";
 include '../connection.php';
 include '../header_footer/header_instructor.php';
 
+//Get the username of the currently logged in lecturer
+$username = $_SESSION['username'];
+
+//Get the lecturer's information from the database
+$stmt = $conn->prepare("
+    SELECT i.id AS id
+    FROM instructors i
+    INNER JOIN users u ON i.user_id = u.id
+    WHERE u.username = ?
+");
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+$instructorData = $result->fetch_assoc();
+$stmt->close();
+
+//Check if the instructor data exists
+if (!$instructorData) {
+    echo "Error: Instructor data not found.";
+    exit();
+}
+
+//Get Instructor ID
+$instructorId = $instructorData['id'];
+
 // Fetch the scenario ID from the URL
 $scenario_id = $_GET['scenario_id'];
 
@@ -27,6 +52,17 @@ $instructorQuery = "
 ";
 $instructorResult = $conn->query($instructorQuery);
 
+//Fetch the list of classes under the instructor for the dropdown
+$stmt = $conn->prepare("
+    SELECT c.class_name
+    FROM instructor_classes ic
+    JOIN class c ON ic.class_name = c.class_name
+    WHERE ic.instructor_id = ?
+");
+$stmt->bind_param("i", $instructorId);
+$stmt->execute();
+$classResult = $stmt->get_result();
+
 // Handle the form submission for updating the scenario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'];
@@ -34,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $assigned_date = $_POST['assigned_date'];
     $due_date = $_POST['due_date'];
     $instructor_id = $_POST['instructor_id'];
+    $className = $_POST['class_name'];
 
     // Update the scenario in the database
     $updateQuery = "UPDATE scenario SET title = ?, description = ?, instructor_id = ?, assigned_date = ?, due_date = ? WHERE scenario_id = ?";
@@ -41,7 +78,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("ssissi", $title, $description, $instructor_id, $assigned_date, $due_date, $scenario_id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Scenario updated successfully.'); window.location.href='scenarioManagement.php';</script>";
+        $stmt = $conn->prepare("INSERT INTO class_scenarios (class_name, scenario_id) VALUES (?, ?)");
+        $stmt->bind_param("si", $className, $scenario_id);
+        if ($stmt->execute()) {
+            echo "<script>alert('Scenario updated and assign class successfully.'); window.location.href='scenarioManagement.php';</script>";
+        } else {
+            echo "<script>alert('Error updating scenario.'); window.location.href='editScenario.php?scenario_id=$scenario_id';</script>";
+        }
     } else {
         echo "<script>alert('Error updating scenario.'); window.location.href='editScenario.php?scenario_id=$scenario_id';</script>";
     }
@@ -182,6 +225,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php while ($instructor = $instructorResult->fetch_assoc()): ?>
                     <option value="<?php echo $instructor['id']; ?>" <?php echo $instructor['id'] == $scenario['instructor_id'] ? 'selected' : ''; ?>>
                         <?php echo $instructor['username']; ?> (<?php echo $instructor['instructor_id']; ?>)
+                    </option>
+                <?php endwhile; ?>
+            </select>
+
+            <label for="class_name">Assign Class:</label>
+            <select id="class_name" name="class_name" required>
+                <option value="">Select Class</option>
+                <?php while ($class = $classResult->fetch_assoc()): ?>
+                    <option value="<?php echo htmlspecialchars($class['class_name']); ?>">
+                        <?php echo htmlspecialchars($class['class_name']) ?>
                     </option>
                 <?php endwhile; ?>
             </select>

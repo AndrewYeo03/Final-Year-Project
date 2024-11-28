@@ -1,4 +1,29 @@
-<?php include  '../header_footer/header_instructor.php' ?>
+<?php 
+$titleName = "Student Response - TARUMT Cyber Range";
+include  '../header_footer/header_instructor.php';
+include '../connection.php';
+ 
+//Get the username of the currently logged in lecturer
+$username = $_SESSION['username'];
+
+//Get the lecturer's information from the database
+$stmt = $conn->prepare("
+    SELECT i.id AS id
+    FROM instructors i
+    INNER JOIN users u ON i.user_id = u.id
+    WHERE u.username = ?
+");
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+$instructorData = $result->fetch_assoc();
+$stmt->close();
+
+//Get Instructor ID
+$instructorId = $instructorData['id'];
+
+
+?>
 
 <style>
     button.blue {
