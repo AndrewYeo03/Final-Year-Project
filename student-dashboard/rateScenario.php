@@ -24,6 +24,25 @@ if (!$studentData || !isset($studentData['student_id'])) {
 }
 
 $studentId = $studentData['student_id'];
+
+//Radar chart
+$stmt = $conn->prepare("
+    SELECT s.title, AVG(((sr.part_a_rating + sr.part_b_rating + sr.part_c_rating) / 110)*100) AS avg_rating
+    FROM scenario s
+    INNER JOIN scenario_ratings sr ON s.scenario_id = sr.scenario_id
+    GROUP BY s.title
+    ORDER BY avg_rating DESC
+    LIMIT 5
+");
+$stmt->execute();
+$chartData = $stmt->get_result();
+$radarScenarios = [];
+$ratings = [];
+while ($row = $chartData->fetch_assoc()) {
+    $radarScenarios[] = $row['title'];
+    $ratings[] = $row['avg_rating'];
+}
+var_dump(json_encode($radarScenarios), json_encode($ratings));
 ?>
 
 <style>
@@ -229,15 +248,17 @@ $studentId = $studentData['student_id'];
     </div>
 </div>
 
+
+
 <!-- Include Chart.js Library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Static Data for Radar Chart (Top 5 Highest Rated Scenarios)
+    //Data for Radar Chart (Top 5 Highest Rated Scenarios)
     const radarData = {
-        labels: ['Scenario 1', 'Scenario 2', 'Scenario 3', 'Scenario 4', 'Scenario 5'],
+        labels: <?php echo json_encode($radarScenarios); ?>,
         datasets: [{
             label: 'Average Ratings',
-            data: [4.8, 4.5, 4.3, 4.2, 4.0],
+            data: <?php echo json_encode($ratings); ?>,
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
