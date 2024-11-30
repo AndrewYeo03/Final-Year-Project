@@ -4,7 +4,7 @@ include '../connection.php';
 include '../header_footer/header_student.php';
 
 
-$exercise_id = 't003';
+$exercise_id = 'xss01';
 $_SESSION['current_exercise_id'] = $exercise_id;
 // Query to fetch the exercise details
 $sql = "SELECT * FROM `exercise` WHERE `exercise_id` = '$exercise_id'";
