@@ -23,9 +23,9 @@ $result = $stmt->get_result();
 $studentData = $result->fetch_assoc();
 $stmt->close();
 
-//Calculate Total Scenarios
+//Calculate Total Assigned Scenarios
 $stmtTotal = $conn->prepare("
-    SELECT SUM(quantity) AS total_scenarios
+    SELECT COALESCE(SUM(quantity), 0) AS total_scenarios
     FROM (
         SELECT cs.class_name, COUNT(cs.scenario_id) AS quantity
         FROM class_scenarios cs
@@ -37,10 +37,10 @@ $stmtTotal = $conn->prepare("
 $stmtTotal->bind_param("i", $studentData['id']);
 $stmtTotal->execute();
 $resultTotal = $stmtTotal->get_result();
-$totalScenarios = $resultTotal->fetch_assoc()['total_scenarios'];
+$totalScenarios = $resultTotal->fetch_assoc()['total_scenarios'] ?? 0;
 $stmtTotal->close();
 
-// Calculate Submitted Scenarios
+// Calculate Total Completed Scenarios
 $stmtSubmitted = $conn->prepare("
     SELECT COUNT(DISTINCT cs.scenario_id) AS submitted_scenarios
     FROM class_scenarios cs
@@ -58,19 +58,26 @@ $resultSubmitted = $stmtSubmitted->get_result();
 $submittedScenarios = $resultSubmitted->fetch_assoc()['submitted_scenarios'];
 $stmtSubmitted->close();
 
-// Calculate Expired Scenarios
-$stmtExpired = $conn->prepare("
-    SELECT COUNT(*) AS expired_scenarios
+// Calculate Total Expired and Incomplete Scenarios
+$stmtExpiredIncomplete = $conn->prepare("
+    SELECT COUNT(DISTINCT cs.scenario_id) AS expired_incomplete_scenarios
     FROM class_scenarios cs
     INNER JOIN student_classes sc ON cs.class_name = sc.class_name
-    INNER JOIN scenario s ON cs.scenario_id = s.scenario_id 
-    WHERE sc.student_id = ? AND s.due_date < CURDATE()
+    INNER JOIN scenario s ON cs.scenario_id = s.scenario_id
+    LEFT JOIN exercise e ON e.scenario_id = cs.scenario_id
+    LEFT JOIN submitted_files sf ON sf.exercise_id = e.exercise_id AND sf.student_id = ?
+    LEFT JOIN submitted_videos sv ON sv.exercise_id = e.exercise_id AND sv.student_id = ?
+    WHERE sc.student_id = ?
+    AND (
+        s.due_date < CURDATE()
+        AND (sf.exercise_id IS NULL AND sv.exercise_id IS NULL)
+    )
 ");
-$stmtExpired->bind_param("i", $studentData['id']);
-$stmtExpired->execute();
-$resultExpired = $stmtExpired->get_result();
-$expiredScenarios = $resultExpired->fetch_assoc()['expired_scenarios'];
-$stmtExpired->close();
+$stmtExpiredIncomplete->bind_param("iii", $studentData['id'], $studentData['id'], $studentData['id']);
+$stmtExpiredIncomplete->execute();
+$resultExpiredIncomplete = $stmtExpiredIncomplete->get_result();
+$expiredIncompleteScenarios = $resultExpiredIncomplete->fetch_assoc()['expired_incomplete_scenarios'];
+$stmtExpiredIncomplete->close();
 ?>
 
 <div class="container-fluid px-4">
@@ -84,7 +91,7 @@ $stmtExpired->close();
         <div class="col-xl-4 col-md-6">
             <div class="card bg-primary text-white mb-4">
                 <div class="card-body">
-                    Total Scenarios
+                    Total Assigned Scenarios
                     <h3><?php echo $totalScenarios; ?></h3>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
@@ -96,7 +103,7 @@ $stmtExpired->close();
         <div class="col-xl-4 col-md-6">
             <div class="card bg-success text-white mb-4">
                 <div class="card-body">
-                    Submitted Scenarios
+                    Total Completed Scenarios
                     <h3><?php echo $submittedScenarios; ?></h3>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
@@ -108,11 +115,11 @@ $stmtExpired->close();
         <div class="col-xl-4 col-md-6">
             <div class="card bg-danger text-white mb-4">
                 <div class="card-body">
-                    Expired Scenarios
-                    <h3><?php echo $expiredScenarios; ?></h3>
+                    Total Expired and Incomplete Scenarios
+                    <h3><?php echo $expiredIncompleteScenarios; ?></h3>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="#">View Expired</a>
+                    <a class="small text-white stretched-link" href="expiredIncompleteScenario.php">View Details</a>
                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                 </div>
             </div>

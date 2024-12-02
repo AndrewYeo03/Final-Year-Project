@@ -7,8 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = md5($_POST['password']);
 
-    $sql = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
-    $result = $conn->query($sql);
+    $result = $conn->query("SELECT * FROM users WHERE email = '$email' AND password = '$password' AND is_verified = 1");
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
@@ -29,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: admin-dashboard/admin_dashboard.php");
         }
     } else {
-        echo "<script>alert('Login failed, email or password is incorrect');</script>";
+        echo "<script>alert('Login failed. Email or password is incorrect or has not been verified. ');</script>";
     }
 }
 ?>

@@ -53,6 +53,34 @@ if ($currentClass) {
     $stmt->execute();
     $students = $stmt->get_result();
 }
+
+// Handle adding a student to a class based on class code input
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['class_code'])) {
+    $classCode = $_POST['class_code'];
+
+    // Check if the class code exists in the class table
+    $checkClassQuery = "SELECT * FROM class WHERE class_code = ?";
+    $stmt = $conn->prepare($checkClassQuery);
+    $stmt->bind_param("s", $classCode);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Class code is valid, insert the student into the student_classes table
+        $className = $result->fetch_assoc()['class_name'];
+        $stmt = $conn->prepare("INSERT INTO student_classes (student_id, class_name) VALUES (?, ?)");
+        $stmt->bind_param("ss", $currentStudent['student_id'], $className);
+
+        if ($stmt->execute()) {
+            echo "<script>alert('Successfully joined the class!');</script>";
+        } else {
+            echo "<script>alert('Error: Unable to join the class.');</script>";
+        }
+    } else {
+        echo "<script>alert('Invalid class code.');</script>";
+    }
+    $stmt->close();
+}
 ?>
 
 <style>
@@ -98,6 +126,21 @@ if ($currentClass) {
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item active">Students</li>
     </ol>
+
+    <!-- Input field to join a class -->
+    <form method="POST" class="mb-4">
+        <div class="mb-3 row">
+            <label for="class-code" class="form-label col-sm-2">Enter Class Code:</label>
+        </div>
+        <div class="mb-3 row">
+            <div class="col-sm-8">
+                <input type="text" id="class-code" name="class_code" class="form-control" placeholder="Enter class code to join">
+            </div>
+            <div class="col-sm-4">
+                <button type="submit" class="btn btn-primary w-50">Join Class</button>
+            </div>
+        </div>
+    </form>
 
     <!-- Dropdown to switch classes -->
     <form method="POST" class="mb-4">
