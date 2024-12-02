@@ -12,16 +12,16 @@ if (!isset($_GET['scenario_id']) || empty($_GET['scenario_id'])) {
     die("Error: Scenario ID is required.");
 }
 
-include 'connection.php';
+include '../connection.php';
 
 $scenario_id = $_GET['scenario_id'];
 
 // Ensure the user has permission to delete the score (optional, depending on your setup)
-// Check if the user role is Instructor
-//if ($_SESSION['role_id'] != 2) {
-    //header("Location: ../unauthorized.php");
-    //exit();
-//}
+//Check if the user role is Instructor
+if ($_SESSION['role_id'] != 2) {
+    header("Location: ../unauthorized.php");
+    exit();
+}
 
 // Delete all scoring criteria for the given scenario_id
 $query = "DELETE FROM scoring_criteria WHERE scenario_id = ?";

@@ -1,6 +1,10 @@
 <?php
+
+// Start output buffering
+ob_start();
+
 session_start();
-// Check if the user role is Instructor
+//Check if the user role is Instructor
 if ($_SESSION['role_id'] != 2) {
     header("Location: ../unauthorized.php");
     exit();
@@ -11,18 +15,68 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
-//Check if the session has expired
-if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SESSION['timeout_duration']) {
-    //Clear the session and redirect to the login page
-    session_unset();
-    session_destroy();
-    echo "<script>alert('Session expired. Please log in again.');</script>";
-    header("Location: ../login.php");
+include '../connection.php';
+
+// Check if an ID is passed in the URL
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    echo "Invalid answer ID.";
     exit();
-} else {
-    //If the session has not expired, update login_time
-    $_SESSION['login_time'] = time();
 }
+
+$actual_answer_id = (int) $_GET['id'];
+
+// Query to fetch the current answer data
+$query = "
+    SELECT 
+        aa.id AS actual_answer_id, 
+        sc.title AS scenario_name, 
+        ex.title AS exercise_name, 
+        aa.expected_command
+    FROM 
+        actual_answers aa
+    JOIN 
+        exercise ex ON aa.exercise_id = ex.exercise_id
+    JOIN 
+        scenario sc ON ex.scenario_id = sc.scenario_id
+    WHERE 
+        aa.id = ?
+";
+
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $actual_answer_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 0) {
+    echo "Answer not found.";
+    exit();
+}
+
+$row = $result->fetch_assoc();
+
+// Check if form was submitted and handle the update
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $new_expected_command = trim($_POST['expected_command']);
+
+    // Check if there is a change
+    if ($new_expected_command !== $row['expected_command']) {
+        $update_query = "UPDATE actual_answers SET expected_command = ? WHERE id = ?";
+        $update_stmt = $conn->prepare($update_query);
+        $update_stmt->bind_param("si", $new_expected_command, $actual_answer_id);
+        if ($update_stmt->execute()) {
+            // Redirect to the answer list page after a successful update
+            header("Location: answerList.php");
+            exit();
+        } else {
+            // Display the failure message, but this output is captured by output buffering
+            echo "<div class='alert alert-danger'>Failed to update answer. Please try again.</div>";
+        }
+    } else {
+        // Display the no change message, but this output is captured by output buffering
+        echo "<div class='alert alert-warning'>No changes were made.</div>";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -34,7 +88,7 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title><?php echo htmlspecialchars($titleName); ?></title>
+    <title>Add Actual Answer for Scenario</title>
     <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon"/>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
@@ -92,13 +146,6 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
                                     Manage Student & Class
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
-                                <div class="collapse" id="pagesCollapseInstructors" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="createClass.php">Create Class</a>
-                                        <a class="nav-link" href="existingClass.php">Existing Classes</a>
-                                        <a class="nav-link" href="archivedClass.php">Archived Classes</a>
-                                    </nav>
-                                </div>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
                                     Manage Scenario
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -123,5 +170,105 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
                 </div>
             </nav>
         </div>
-        <div id="layoutSidenav_content">
-            <main>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4">Edit Answer for Scenario</h1>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-edit me-1"></i> Edit Answer Details
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <input type="hidden" name="id" value="<?php echo htmlspecialchars($row['actual_answer_id']); ?>">
+                            <div class="mb-3">
+                                <label for="scenario_name" class="form-label">Scenario Name</label>
+                                <input type="text" class="form-control" id="scenario_name" value="<?php echo htmlspecialchars($row['scenario_name']); ?>" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exercise_name" class="form-label">Exercise Name</label>
+                                <input type="text" class="form-control" id="exercise_name" value="<?php echo htmlspecialchars($row['exercise_name']); ?>" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expected_command" class="form-label">Actual Answer</label>
+                                <textarea class="form-control" id="expected_command" name="expected_command" rows="10"><?php echo htmlspecialchars($row['expected_command']); ?></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Answer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+<footer class="py-4 bg-light mt-auto">
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center justify-content-between small">
+            <div class="text-muted">Copyright &copy; TARUMT Cyber Range <?php echo date('Y'); ?></div>
+            <div>
+                <a href="#">Privacy Policy</a>
+                &middot;
+                <a href="#">Terms &amp; Conditions</a>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+<style>
+    #layoutSidenav {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+    }
+
+    #layoutSidenav_content {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    footer {
+        flex-shrink: 0;
+    }
+
+    #layoutSidenav .sb-sidenav {
+        width: 240px;
+        transition: width 0.3s;
+    }
+
+    #layoutSidenav .sb-sidenav.collapsed {
+        width: 58px;
+    }
+
+    #layoutSidenav_content {
+        margin-left: 240px;
+        transition: margin-left 0.3s;
+    }
+
+    #layoutSidenav .sb-sidenav.collapsed+#layoutSidenav_content {
+        margin-left: 58px;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="../js/scripts.js"></script>
+
+<!-- JS files required by DataTables -->
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+<script src="../js/datatables-simple-demo.js"></script>
+
+<script>
+    document.getElementById('sidebarToggle').addEventListener('click', function() {
+        const sidebar = document.querySelector('.sb-sidenav');
+        sidebar.classList.toggle('collapsed');
+    });
+</script>
+</body>
+</html> 
+
+<?php 
+// End output buffering and flush the output
+ob_end_flush(); 
+?>

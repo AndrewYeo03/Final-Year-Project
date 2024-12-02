@@ -84,6 +84,7 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="memberOfGroup.php">Member Of Groups</a>
                                 <a class="nav-link" href="allScenario.php">Scenarios</a>
+                                <a class="nav-link" href="studentReport.php">Report</a>
                                 <a class="nav-link" href="rateScenario.php">Rate Scenarios</a>
                             </nav>
                         </div>

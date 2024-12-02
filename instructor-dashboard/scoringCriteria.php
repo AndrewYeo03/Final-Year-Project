@@ -1,30 +1,30 @@
 <?php
 session_start();
 // Check if the user role is Instructor
-//if ($_SESSION['role_id'] != 2) {
-    //header("Location: ../unauthorized.php");
-    //exit();
-//}
+if ($_SESSION['role_id'] != 2) {
+    header("Location: ../unauthorized.php");
+    exit();
+}
 
 if (!isset($_SESSION['username'])) {
     header("Location: ../login.php");
     exit;
 }
 
-include 'connection.php';
+include '../connection.php';
 
 //Check if the session has expired
-//if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SESSION['timeout_duration']) {
+if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SESSION['timeout_duration']) {
     //Clear the session and redirect to the login page
-    //session_unset();
-    //session_destroy();
-    //echo "<script>alert('Session expired. Please log in again.');</script>";
-   // header("Location: ../login.php");
-    //exit();
-//} else {
+    session_unset();
+    session_destroy();
+    echo "<script>alert('Session expired. Please log in again.');</script>";
+   header("Location: ../login.php");
+    exit();
+} else {
     //If the session has not expired, update login_time
-    //$_SESSION['login_time'] = time();
-//}
+    $_SESSION['login_time'] = time();
+}
 
 // Check if the form is submitted to save scoring criteria
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -79,7 +79,7 @@ $result = mysqli_query($conn, $query);
     <title>Instructor Dashboard - TARUMT Cyber Range</title>
     <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon"/>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-    <link href="css/styles.css" rel="stylesheet" />
+    <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
     <script src="js/datatables-simple-demo.js"></script>
@@ -150,6 +150,9 @@ $result = mysqli_query($conn, $query);
                                     <nav class="sb-sidenav-menu-nested nav">
                                         <a class="nav-link" href="#">Create Scenario</a>
                                         <a class="nav-link" href="#">Manage Scenario</a>
+                                        <a class="nav-link" href="addAnswer.php">Add Answer to Scenario</a>
+                                        <a class="nav-link" href="scoringCriteria.php">Define Scoring Criteria</a>
+                                        <a class="nav-link" href="instructorReport.php">Student Report</a>
                                         <a class="nav-link" href="studentResponse.php">Student Response</a>
                                     </nav>
                                 </div>
@@ -202,7 +205,7 @@ $result = mysqli_query($conn, $query);
                                 </select>
                             </td>
                             <td>
-                                <select name="status[<?= $i ?>]" class="form-select" required onchange="updateStatusBullet(this, <?= $i ?>)">
+                                <select name="status[<?= $i ?>]" class="form-select" required>
                                     <option value="pass">PASS</option>
                                     <option value="fail">FAIL</option>
                                 </select>
@@ -277,13 +280,6 @@ $result = mysqli_query($conn, $query);
         width: 100px;  /* Set a smaller width for the status column */
         padding: 5px;  /* Reduce padding for more compact appearance */
         text-align: center;  /* Center-align the content */
-    }
-    .bullet {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-left: 10px;  /* Adds some space between dropdown and the bullet */
     }
 </style>
 <script>

@@ -1,83 +1,26 @@
 <?php
 session_start();
-// Check if the user role is Instructor
-//if ($_SESSION['role_id'] != 2) {
-    //header("Location: ../unauthorized.php");
-    //exit();
-//}
+//Check if the user role is Instructor
+if ($_SESSION['role_id'] != 2) {
+   header("Location: ../unauthorized.php");
+   exit();
+}
 
 if (!isset($_SESSION['username'])) {
     header("Location: ../login.php");
     exit;
 }
 
-include 'connection.php';
+include '../connection.php';
 
-// Initialize the noDataMessage variable
-$noDataMessage = "";
+// Fetch all scoring criteria
+$query = "SELECT sc.id, s.title AS scenario_title, sc.grade_range_min, sc.grade_range_max, sc.grade, sc.status, s.scenario_id
+FROM scoring_criteria sc 
+JOIN scenario s ON sc.scenario_id = s.scenario_id";
+$result = $conn->query($query);
 
-if (isset($_GET['scenario_id'])) {
-    $scenario_id = $_GET['scenario_id'];
-
-    $sql = "SELECT * FROM scoring_criteria WHERE scenario_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $scenario_id);
-
-    if ($stmt->execute()) {
-        $result = $stmt->get_result();
-        if ($result->num_rows == 0) {
-            $noDataMessage = "No scoring criteria found for this scenario.";
-        } else {
-            $noDataMessage = "";
-        }
-    } else {
-        echo "Error executing query: " . $stmt->error;
-    }
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['grade_range_min']) && isset($_POST['grade_range_max']) && isset($_POST['grade']) && isset($_POST['status'])) {
-        $grade_range_min = $_POST['grade_range_min'];
-        $grade_range_max = $_POST['grade_range_max'];
-        $grade = $_POST['grade'];
-        $status = $_POST['status'];
-
-        $update_sql = "UPDATE scoring_criteria SET grade_range_min = ?, grade_range_max = ?, grade = ?, status = ? WHERE scenario_id = ? AND id = ?";
-        $update_stmt = $conn->prepare($update_sql);
-
-        $changes_made = false;
-
-        $i = 0;
-        while ($row = $result->fetch_assoc()) {
-            $min = $grade_range_min[$i];
-            $max = $grade_range_max[$i];
-            $gradeValue = $grade[$i];
-            $statusValue = $status[$i];
-            $idValue = $row['id'];
-
-            // Compare if the values actually changed
-            if ($row['grade_range_min'] != $min || $row['grade_range_max'] != $max || $row['grade'] != $gradeValue || $row['status'] != $statusValue) {
-                $update_stmt->bind_param("iissii", $min, $max, $gradeValue, $statusValue, $scenario_id, $idValue);
-
-                if ($update_stmt->execute()) {
-                    if ($update_stmt->affected_rows > 0) {
-                        $changes_made = true;
-                    }
-                } else {
-                    echo "Error executing query for row $i: " . $update_stmt->error;
-                }
-            }
-            $i++;
-        }
-
-        if ($changes_made) {
-            echo "<script>alert('Scores updated successfully');</script>";
-            echo "<script>window.location.href='scoringResult.php';</script>";
-        } else {
-            echo "<script>alert('No changes were made');</script>";
-            echo "<script>window.location.href='scoringResult.php';</script>";
-        }
-    }
+if (!$result) {
+    die("Error executing query: " . $conn->error);
 }
 
 ?>
@@ -94,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Instructor Dashboard - TARUMT Cyber Range</title>
     <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon"/>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-    <link href="css/styles.css" rel="stylesheet" />
+    <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
     <script src="js/datatables-simple-demo.js"></script>
@@ -165,6 +108,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <nav class="sb-sidenav-menu-nested nav">
                                         <a class="nav-link" href="#">Create Scenario</a>
                                         <a class="nav-link" href="#">Manage Scenario</a>
+                                        <a class="nav-link" href="addAnswer.php">Add Answer to Scenario</a>
+                                        <a class="nav-link" href="scoringCriteria.php">Define Scoring Criteria</a>
+                                        <a class="nav-link" href="instructorReport.php">Student Report</a>
                                         <a class="nav-link" href="studentResponse.php">Student Response</a>
                                     </nav>
                                 </div>
@@ -179,62 +125,73 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </nav>
         </div>
         <div id="layoutSidenav_content">
-            <main class="container">
-                <!-- Main Content -->
-                <div class="container mt-5">
-                    <h1 class="mb-4">Reset Scoring Criteria</h1>
+        <main class="container">
+        <div class="container mt-4">
+        <h1>Scoring Criteria</h1>
+        <table id="dataTable" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Scenario</th>
+                    <th>Grade Range (Min-Max)</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+    <?php
+    $current_scenario = null; // To track the current scenario
+    $first_row = true; // To track if it's the first row of a group
 
-                    <form method="POST">
-                        <table class="table table-bordered mt-4">
-                            <thead>
-                                <tr>
-                                    <th>Grade Range Min(%)</th>
-                                    <th>Grade Range Max(%)</th>
-                                    <th>Grade</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php 
-                                    if (isset($result) && $result->num_rows > 0) {
-                                        $i = 0;
-                                        while ($row = $result->fetch_assoc()) {
-                                ?>
-                                <tr>
-                                    <td><input type="number" name="grade_range_min[<?= $i ?>]" class="form-control" value="<?= $row['grade_range_min'] ?>" required></td>
-                                    <td><input type="number" name="grade_range_max[<?= $i ?>]" class="form-control" value="<?= $row['grade_range_max'] ?>" required></td>
-                                    <td>
-                                        <select name="grade[<?= $i ?>]" class="form-select" required>
-                                            <option value="A" <?= $row['grade'] == 'A' ? 'selected' : '' ?>>A</option>
-                                            <option value="B" <?= $row['grade'] == 'B' ? 'selected' : '' ?>>B</option>
-                                            <option value="C" <?= $row['grade'] == 'C' ? 'selected' : '' ?>>C</option>
-                                            <option value="D" <?= $row['grade'] == 'D' ? 'selected' : '' ?>>D</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select name="status[<?= $i ?>]" class="form-select" required>
-                                            <option value="pass" <?= $row['status'] == 'pass' ? 'selected' : '' ?>>PASS</option>
-                                            <option value="fail" <?= $row['status'] == 'fail' ? 'selected' : '' ?>>FAIL</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <?php 
-                                        $i++;
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='4'>$noDataMessage</td></tr>";
-                                    }
-                                ?>
-                            </tbody>
-                        </table>
-                        <button type="submit" class="btn btn-primary mt-4">Update Score</button>
-                    </form>
-                </div>
-            </main>
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            // Check if the current row belongs to the same scenario group
+            if (isset($row['scenario_id'])) {
+                if ($current_scenario != $row['scenario_title']) {
+                    if (!$first_row) {
+                        echo "</tr>";
+                    }
+                    $current_scenario = $row['scenario_title'];
+                    $first_row = true;
+                }
+    
+                if ($first_row) {
+                    echo "<tr>
+                            <td rowspan='4'>{$row['scenario_title']}</td>
+                            <td>{$row['grade_range_min']} - {$row['grade_range_max']}</td>
+                            <td>{$row['grade']}</td>
+                            <td>{$row['status']}</td>
+                            <td rowspan='4'>
+                                <a href='editScore.php?scenario_id={$row['scenario_id']}' class='btn btn-sm btn-warning'>Edit</a>
+                                <a href='deleteScore.php?scenario_id={$row['scenario_id']}' class='btn btn-danger btn-sm' onclick='return confirmDelete();'>Delete</a>
+                            </td>
+                        </tr>";
+                    $first_row = false;
+                } else {
+                    echo "<tr>
+                            <td>{$row['grade_range_min']} - {$row['grade_range_max']}</td>
+                            <td>{$row['grade']}</td>
+                            <td>{$row['status']}</td>
+                        </tr>";
+                }
+            } else {
+                echo "<span class='text-danger'>No ID</span>";
+            }
+        }
+    } else { 
+        echo "<tr><td colspan='5' class='text-center'>No Scoring Criteria Found</td></tr>";
+    }
+    
+    if (!$first_row) {
+        echo "</tr>";
+    }
+    ?>
+    </tbody>
+        </table>
         </div>
-    </div>
-
-    <footer class="py-4 bg-light mt-auto">
+    
+</main>
+<footer class="py-4 bg-light mt-auto">
     <div class="container-fluid px-4">
         <div class="d-flex align-items-center justify-content-between small">
             <div class="text-muted">Copyright &copy; TARUMT Cyber Range <?php echo date('Y'); ?></div>
@@ -248,7 +205,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </footer>
 </div>
 </div>
-</body>
 
 <style>
     #layoutSidenav {
@@ -284,49 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     #layoutSidenav .sb-sidenav.collapsed+#layoutSidenav_content {
         margin-left: 58px;
     }
-    .status-box.pass {
-        background-color: green;
-        color: white;
-    }
-    .status-box.fail {
-        background-color: red;
-        color: white;
-    }
-    table th:nth-child(4), table td:nth-child(4) {
-        width: 100px;  /* Set a smaller width for the status column */
-        padding: 5px;  /* Reduce padding for more compact appearance */
-        text-align: center;  /* Center-align the content */
-    }
-    .bullet {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-left: 10px;  /* Adds some space between dropdown and the bullet */
-    }
 </style>
-<script>
-    function updateStatusBullet(selectElement, index) {
-    var bullet = document.getElementById("bullet-" + index);
-    var status = selectElement.value;
-
-    if (status === "pass") {
-        bullet.style.backgroundColor = "green"; // Green for PASS
-    } else if (status === "fail") {
-        bullet.style.backgroundColor = "red"; // Red for FAIL
-    }
-}
-
-// Initial color update when the page loads
-window.onload = function() {
-    var statusSelects = document.querySelectorAll("select[name^='status']");
-    statusSelects.forEach((select, index) => {
-        updateStatusBullet(select, index); // Update the bullet color based on the initial status
-    });
-};
-
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="../js/scripts.js"></script>
 
@@ -334,7 +248,11 @@ window.onload = function() {
 <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
 <script src="../js/datatables-simple-demo.js"></script>
-
+<script>
+function confirmDelete() {
+    return confirm('Are you sure you want to delete this scenario and its scores?');
+}
+</script>
 <script>
     document.getElementById('sidebarToggle').addEventListener('click', function() {
         const sidebar = document.querySelector('.sb-sidenav');
