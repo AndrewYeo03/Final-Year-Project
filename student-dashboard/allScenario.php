@@ -181,6 +181,12 @@ if ($studentData) {
                 </tfoot>
                 <tbody>
                     <?php foreach ($scenarios as $scenario): ?>
+                        <?php
+                        // Convert due_date to a timestamp and get the current time
+                        $dueDate = strtotime($scenario['due_date']);
+                        $currentDate = time();
+                        $isDueDatePassed = $dueDate < $currentDate;
+                        ?>
                         <tr>
                             <td><?= htmlspecialchars($scenario['scenario_title']); ?></td>
                             <td><?= htmlspecialchars($scenario['class_name']); ?></td>
@@ -188,9 +194,12 @@ if ($studentData) {
                             <td><?= htmlspecialchars($scenario['assigned_date']); ?></td>
                             <td><?= htmlspecialchars($scenario['due_date']); ?></td>
                             <td>
-                                <a href="startScenario.php?scenario_id=<?= $scenario['scenario_id']; ?>" class="blue">
+                                <button
+                                    onclick="window.location.href='startScenario.php?scenario_id=<?= $scenario['scenario_id']; ?>'"
+                                    <?= $isDueDatePassed ? 'disabled' : ''; ?>
+                                    style="<?= $isDueDatePassed ? 'color: gray; cursor: not-allowed;' : ''; ?> " class="blue">
                                     Start Scenario
-                                </a>
+                                </button>
                             </td>
                         </tr>
                     <?php endforeach; ?>

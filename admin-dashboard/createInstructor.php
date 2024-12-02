@@ -2,8 +2,10 @@
 $titleName = "Create Instructor - TAR UMT Cyber Range";
 include '../header_footer/header_admin.php';
 include '../connection.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
 require '../vendor/autoload.php';
 
 // Processing logic after submitting the form
@@ -31,70 +33,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->num_rows > 0) {
             $error = "This email address has been registered!";
         } else {
-            // Start transaction
-            $conn->begin_transaction();
-            try {
-                // Insert into users table
-                $hashed_password = md5($password);
-                $insertUserQuery = "INSERT INTO users (username, email, password, role_id) VALUES (?, ?, ?, (SELECT id FROM roles WHERE role_name = 'instructor'))";
-                $stmt = $conn->prepare($insertUserQuery);
-                $stmt->bind_param("sss", $username, $email, $hashed_password);
-                if (!$stmt->execute()) {
-                    throw new Exception("Unable to insert User information: " . $stmt->error);
-                }
-                $user_id = $stmt->insert_id;
-                $stmt->close();
 
-                // Insert into instructors table
-                $insertInstructorQuery = "INSERT INTO instructors (user_id, instructor_id, faculty) VALUES (?, ?, ?)";
-                $stmt = $conn->prepare($insertInstructorQuery);
-                $stmt->bind_param("iss", $user_id, $instructor_id, $faculty);
-                if (!$stmt->execute()) {
-                    throw new Exception("Unable to insert Instructor information: " . $stmt->error);
-                }
-                $stmt->close();
+            // Check if instructor id already exists
+            $instructorIDCheckQuery = "SELECT id FROM instructors WHERE instructor_id = ?";
+            $stmt = $conn->prepare($instructorIDCheckQuery);
+            $stmt->bind_param("s", $instructor_id);
+            $stmt->execute();
+            $stmt->store_result();
 
-                // Commit transaction
-                $conn->commit();
-
-                // Send email notification to users using PHPMailer
-                $mail = new PHPMailer(true);
+            if ($stmt->num_rows > 0) {
+                $error = "This instructor ID has already existed!";
+            } else {
+                // Start transaction
+                $conn->begin_transaction();
                 try {
-                    // Server settings
-                    $mail->isSMTP();
-                    $mail->Host = 'smtp.gmail.com'; // Gmail SMTP server
-                    $mail->SMTPAuth = true;
-                    $mail->Username = 'tarumtcyberrange@gmail.com'; // Your Gmail address
-                    $mail->Password = 'vppiisklkqaqozeb'; // Your Gmail app password
-                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                    $mail->Port = 587;
+                    // Insert into users table
+                    $hashed_password = md5($password);
+                    $insertUserQuery = "INSERT INTO users (username, email, password, role_id) VALUES (?, ?, ?, (SELECT id FROM roles WHERE role_name = 'instructor'))";
+                    $stmt = $conn->prepare($insertUserQuery);
+                    $stmt->bind_param("sss", $username, $email, $hashed_password);
+                    if (!$stmt->execute()) {
+                        throw new Exception("Unable to insert User information: " . $stmt->error);
+                    }
+                    $user_id = $stmt->insert_id;
+                    $stmt->close();
 
-                    // Recipients
-                    $mail->setFrom('no-reply@tarumt-cyber-range.com', 'TAR UMT Cyber Range');
-                    $mail->addAddress($email); // Add recipient
+                    // Insert into instructors table
+                    $insertInstructorQuery = "INSERT INTO instructors (user_id, instructor_id, faculty) VALUES (?, ?, ?)";
+                    $stmt = $conn->prepare($insertInstructorQuery);
+                    $stmt->bind_param("iss", $user_id, $instructor_id, $faculty);
+                    if (!$stmt->execute()) {
+                        throw new Exception("Unable to insert Instructor information: " . $stmt->error);
+                    }
+                    $stmt->close();
 
-                    // Content
-                    $mail->isHTML(true);
-                    $mail->Subject = "Welcome to TAR UMT Cyber Range";
-                    $mail->Body = "
-                        Dear $username,<br><br>
-                        Your account has been successfully created.<br><br>
-                        <strong>Username:</strong> $email<br>
-                        <strong>Password:</strong> $password<br><br>
-                        You may change your password after your first login.<br><br>
-                        Best regards,<br>
-                        <strong>TARUMT Cyber Range Team</strong>
-                    ";
+                    // Commit transaction
+                    $conn->commit();
 
-                    $mail->send();
-                    $success = "Instructor created successfully! Email has been sent to $email.";
+                    // Send email notification to users using PHPMailer
+                    $mail = new PHPMailer(true);
+                    try {
+                        // Server settings
+                        $mail->isSMTP();
+                        $mail->Host = 'smtp.gmail.com'; // Gmail SMTP server
+                        $mail->SMTPAuth = true;
+                        $mail->Username = 'tarumtcyberrange@gmail.com'; // Your Gmail address
+                        $mail->Password = 'vppiisklkqaqozeb'; // Your Gmail app password
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                        $mail->Port = 587;
+
+                        // Recipients
+                        $mail->setFrom('no-reply@tarumt-cyber-range.com', 'TAR UMT Cyber Range');
+                        $mail->addAddress($email); // Add recipient
+
+                        // Content
+                        $mail->isHTML(true);
+                        $mail->Subject = "Welcome to TAR UMT Cyber Range";
+                        $mail->Body = "
+                            Dear $username,<br><br>
+                            Your account has been successfully created.<br><br>
+                            <strong>Username:</strong> $email<br>
+                            <strong>Password:</strong> $password<br><br>
+                            You may change your password after your first login.<br><br>
+                            Best regards,<br>
+                            <strong>TARUMT Cyber Range Team</strong>
+                        ";
+
+                        $mail->send();
+                        $success = "Instructor created successfully! Email has been sent to $email.";
+                    } catch (Exception $e) {
+                        throw new Exception("Email could not be sent. Mailer Error: {$mail->ErrorInfo}");
+                    }
                 } catch (Exception $e) {
-                    throw new Exception("Email could not be sent. Mailer Error: {$mail->ErrorInfo}");
+                    // Rollback transaction
+                    $conn->rollback();
+                    $error = $e->getMessage();
                 }
-            } catch (Exception $e) {
-                // Rollback transaction
-                $conn->rollback();
-                $error = $e->getMessage();
             }
         }
     }

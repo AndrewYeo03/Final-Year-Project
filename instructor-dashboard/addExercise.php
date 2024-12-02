@@ -19,6 +19,7 @@ if (isset($_GET['scenario_id'])) {
         $question = $_POST['question'];
         $scenarioQues = $_POST['scenarioQues'] ?: NULL; // Optional field
         $duration = $_POST['duration'] . " minutes"; 
+        $exerciseOrder = $_POST['exerciseOrder'];
         $exerciseType = $_POST['exerciseType'];
         $difficulty_level = $_POST['difficulty_level'];
         $hints = $_POST['hints'];
@@ -35,10 +36,10 @@ if (isset($_GET['scenario_id'])) {
             echo "<script>alert('Exercise ID already exists. Please choose a different ID.');</script>";
         } else {
              // Insert into database
-             $insertQuery = "INSERT INTO exercise (exercise_id, scenario_id, title, learningObj_1, learningObj_2, learningObj_3, learningObj_4, scenarioQues, question, duration, exerciseType, difficulty_level, hints, link) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+             $insertQuery = "INSERT INTO exercise (exercise_id, scenario_id, title, learningObj_1, learningObj_2, learningObj_3, learningObj_4, scenarioQues, question, duration, exerciseOrder, exerciseType, difficulty_level, hints, link) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($insertQuery);
-$stmt->bind_param("sissssssssssss", $exercise_id, $scenario_id, $title, $learningObj_1, $learningObj_2, $learningObj_3, $learningObj_4, $scenarioQues, $question, $duration, $exerciseType, $difficulty_level, $hints, $link);
+$stmt->bind_param("sissssssssissss", $exercise_id, $scenario_id, $title, $learningObj_1, $learningObj_2, $learningObj_3, $learningObj_4, $scenarioQues, $question, $duration, $exerciseOrder, $exerciseType, $difficulty_level, $hints, $link);
             if ($stmt->execute()) {
                 echo "<script>alert('Exercise added successfully.'); window.location.href='viewScenario.php?scenario_id=$scenario_id';</script>";
             } else {
@@ -104,12 +105,27 @@ $stmt->bind_param("sissssssssssss", $exercise_id, $scenario_id, $title, $learnin
             color: white;
             margin-right: 10px;
         }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .page-title span {
+            display: inline-block;
+            color: #000000;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 5px;
+        }
     </style>
 </head>
 
 <body>
     <div class="mainContent">
-        <h1><?php echo $titleName; ?></h1>
+        <div class="page-title">
+            <span><?php echo $titleName; ?></span>
+        </div>
         <form method="POST">
             <label for="exercise_id">Exercise ID</label>
             <input type="text" id="exercise_id" name="exercise_id" placeholder="Enter unique Exercise ID" required>
@@ -137,6 +153,9 @@ $stmt->bind_param("sissssssssssss", $exercise_id, $scenario_id, $title, $learnin
 
             <label for="duration">Duration (in minutes)</label>
             <input type="number" id="duration" name="duration" placeholder="Enter duration in minutes" required>
+
+            <label for="duration">Exercise Order</label>
+            <input type="number" id="exerciseOrder" name="exerciseOrder" placeholder="Enter exercise order <page sequence>" required>
 
             <label for="exerciseType">Exercise Type</label>
             <select id="exerciseType" name="exerciseType" required>

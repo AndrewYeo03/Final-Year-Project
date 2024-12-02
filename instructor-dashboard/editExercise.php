@@ -36,15 +36,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $hints = $_POST['hints'];
     $link = $_POST['link'];
     $duration = $_POST['duration'] . " minutes"; // Concatenate "minutes"
+    $exerciseOrder = $_POST['exerciseOrder'];
     $exerciseType = $_POST['exerciseType'];
     $difficulty_level = $_POST['difficulty_level'];
 
     // Update query with the new fields
-    $updateQuery = "UPDATE exercise SET title = ?, learningObj_1 = ?, learningObj_2 = ?, learningObj_3 = ?, learningObj_4 = ?, scenarioQues = ?, hints = ?, link = ?, duration = ?, exerciseType = ?, difficulty_level = ? WHERE exercise_id = ?";
+    $updateQuery = "UPDATE exercise SET title = ?, learningObj_1 = ?, learningObj_2 = ?, learningObj_3 = ?, learningObj_4 = ?, scenarioQues = ?, hints = ?, link = ?, duration = ?, exerciseOrder = ?, exerciseType = ?, difficulty_level = ? WHERE exercise_id = ?";
     $stmt = $conn->prepare($updateQuery);
 
     // Bind the parameters
-    $stmt->bind_param("ssssssssssss", $title, $learningObj_1, $learningObj_2, $learningObj_3, $learningObj_4, $scenarioQues, $hints, $link, $duration, $exerciseType, $difficulty_level, $exercise_id);
+    $stmt->bind_param("sssssssssisss", $title, $learningObj_1, $learningObj_2, $learningObj_3, $learningObj_4, $scenarioQues, $hints, $link, $duration, $exerciseOrder, $exerciseType, $difficulty_level, $exercise_id);
 
     if ($stmt->execute()) {
         echo "<script>alert('Exercise updated successfully.'); window.location.href='viewScenario.php?scenario_id=" . $exercise['scenario_id'] . "';</script>";
@@ -104,12 +105,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             color: white;
             margin-right: 10px;
         }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .page-title span {
+            display: inline-block;
+            color: #000000;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 5px;
+        }
     </style>
 </head>
 
 <body>
     <div class="mainContent">
-        <h1><?php echo $titleName; ?></h1>
+    <div class="page-title">
+            <span><?php echo $titleName; ?></span>
+        </div>
         <form method="POST">
             <div class="form-group">
                 <label for="title">Exercise Title</label>
@@ -131,6 +147,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="learningObj_4">Learning Objective 4</label>
                 <input type="text" id="learningObj_4" name="learningObj_4" value="<?php echo $exercise['learningObj_4']; ?>">
             </div>
+            <div class="form-group">
+                <label for="duration">Exercise Order</label>
+                <input type="number" id="exerciseOrder" name="exerciseOrder" value="<?php echo (int) $exercise['exerciseOrder']; ?>" required>
+            </div>
+
             <div class="form-group">
                 <label for="duration">Duration (minutes)</label>
                 <input type="number" id="duration" name="duration" value="<?php echo (int) $exercise['duration']; ?>" required>

@@ -18,11 +18,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $due_date = $_POST['due_date'];
     $instructor_id = $_POST['instructor_id'];
 
-    // Insert the new scenario into the database
-    $insertQuery = "INSERT INTO scenario (title, description, instructor_id, assigned_date, due_date) 
-                    VALUES (?, ?, ?, ?, ?)";
+    // Find the lowest available scenario_id
+    $query = "SELECT MIN(scenario_id + 1) AS next_id FROM scenario WHERE (scenario_id + 1) NOT IN (SELECT scenario_id FROM scenario)";
+    $result = $conn->query($query);
+    $row = $result->fetch_assoc();
+    $next_id = $row['next_id'] ?: null;
+
+    // Insert the new scenario
+    $insertQuery = "INSERT INTO scenario (scenario_id, title, description, instructor_id, assigned_date, due_date)
+                VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($insertQuery);
-    $stmt->bind_param("ssiss", $title, $description, $instructor_id, $assigned_date, $due_date);
+
+    // Check if there is a gap in IDs
+    if ($next_id) {
+        $scenario_id = $next_id; // Use the missing ID
+    } else {
+        $scenario_id = null; // Let AUTO_INCREMENT handle it
+    }
+
+    $stmt->bind_param("ississ", $scenario_id, $title, $description, $instructor_id, $assigned_date, $due_date);
 
     if ($stmt->execute()) {
         echo "<script>alert('Scenario added successfully.'); window.location.href='scenarioManagement.php';</script>";
@@ -42,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="../css/styles.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script>
         // JavaScript function to check if Due Date is not earlier than Assigned Date
@@ -163,14 +177,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <textarea id="description" name="description" rows="5" required></textarea>
 
             <label for="instructor_id">Instructor:</label>
-<select id="instructor_id" name="instructor_id" class="searchable-dropdown" required>
-    <option value="">Select Instructor</option>
-    <?php while ($instructor = $instructorResult->fetch_assoc()): ?>
-        <option value="<?php echo $instructor['id']; ?>">
-            <?php echo $instructor['username']; ?> (<?php echo $instructor['instructor_id']; ?>)
-        </option>
-    <?php endwhile; ?>
-</select>
+            <select id="instructor_id" name="instructor_id" class="searchable-dropdown" required>
+                <option value="">Select Instructor</option>
+                <?php while ($instructor = $instructorResult->fetch_assoc()): ?>
+                    <option value="<?php echo $instructor['id']; ?>">
+                        <?php echo $instructor['username']; ?> (<?php echo $instructor['instructor_id']; ?>)
+                    </option>
+                <?php endwhile; ?>
+            </select>
 
             <label for="assigned_date">Assigned Date:</label>
             <input type="date" id="assigned_date" name="assigned_date" required>
@@ -186,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </body>
 <script>
     // Initialize Select2 on the dropdown
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const dropdown = document.querySelector('.searchable-dropdown');
         $(dropdown).select2({
             placeholder: 'Select Instructor',

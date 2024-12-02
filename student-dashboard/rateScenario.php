@@ -42,7 +42,7 @@ while ($row = $chartData->fetch_assoc()) {
     $radarScenarios[] = $row['title'];
     $ratings[] = $row['avg_rating'];
 }
-var_dump(json_encode($radarScenarios), json_encode($ratings));
+//var_dump(json_encode($radarScenarios), json_encode($ratings));
 ?>
 
 <style>

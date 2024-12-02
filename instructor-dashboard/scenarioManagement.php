@@ -69,7 +69,6 @@ $result = $conn->query($query);
 
         .page-title {
             font-size: 3rem;
-            /* Increased font size */
             font-weight: bold;
             margin-bottom: 10px;
             padding: 10px 15px;
