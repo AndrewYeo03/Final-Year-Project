@@ -24,66 +24,9 @@ if (!$studentData || !isset($studentData['student_id'])) {
 }
 
 $studentId = $studentData['student_id'];
-
-//Radar chart
-$stmt = $conn->prepare("
-    SELECT s.title, AVG(((sr.part_a_rating + sr.part_b_rating + sr.part_c_rating) / 110)*100) AS avg_rating
-    FROM scenario s
-    INNER JOIN scenario_ratings sr ON s.scenario_id = sr.scenario_id
-    GROUP BY s.title
-    ORDER BY avg_rating DESC
-    LIMIT 5
-");
-$stmt->execute();
-$chartData = $stmt->get_result();
-$radarScenarios = [];
-$ratings = [];
-while ($row = $chartData->fetch_assoc()) {
-    $radarScenarios[] = $row['title'];
-    $ratings[] = $row['avg_rating'];
-}
-//var_dump(json_encode($radarScenarios), json_encode($ratings));
 ?>
 
 <style>
-    .charts-container {
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #f1f1f1;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        text-align: center;
-        width: 80%;
-    }
-
-    .charts-container h3 {
-        font-size: 22px;
-        color: #333;
-        margin-bottom: 20px;
-    }
-
-    .charts {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-        flex-wrap: nowrap;
-    }
-
-    .chart {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        max-width: 45%;
-    }
-
-    canvas {
-        max-width: 100%;
-        height: auto;
-    }
-
     .evaluation-container {
         padding: 20px;
         background-color: #f1f1f1;
@@ -176,24 +119,6 @@ while ($row = $chartData->fetch_assoc()) {
     }
 </style>
 
-<!-- Top 5 Scenarios Chart Section -->
-<div class="charts-container">
-    <h3>Top Scenarios Analysis</h3>
-    <div class="charts">
-        <!-- Spider/Radar Chart for Top 5 Highest Rated Scenarios -->
-        <div class="chart">
-            <h4>Top 5 Scenarios by Rating</h4>
-            <canvas id="radarChart"></canvas>
-        </div>
-
-        <!-- Line Chart for Top 5 Scenarios by Experience -->
-        <div class="chart">
-            <h4>Top 5 Scenarios by Experience</h4>
-            <canvas id="lineChart"></canvas>
-        </div>
-    </div>
-</div>
-
 <div class="evaluation-container">
     <div class="evaluation-header">
         <h2>Scenario Evaluation <?php echo date('Y'); ?></h2>
@@ -247,94 +172,5 @@ while ($row = $chartData->fetch_assoc()) {
         </div>
     </div>
 </div>
-
-
-
-<!-- Include Chart.js Library -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    //Data for Radar Chart (Top 5 Highest Rated Scenarios)
-    const radarData = {
-        labels: <?php echo json_encode($radarScenarios); ?>,
-        datasets: [{
-            label: 'Average Ratings',
-            data: <?php echo json_encode($ratings); ?>,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-        }]
-    };
-
-    // Radar Chart Configuration
-    const radarConfig = {
-        type: 'radar',
-        data: radarData,
-        options: {
-            responsive: true,
-            scales: {
-                r: {
-                    angleLines: {
-                        display: true
-                    },
-                    suggestedMin: 0,
-                    suggestedMax: 5
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                },
-                tooltip: {
-                    enabled: true
-                }
-            }
-        }
-    };
-
-    // Static Data for Line Chart (Top 5 Scenarios by Experience Score)
-    const lineData = {
-        labels: ['Scenario 1', 'Scenario 2', 'Scenario 3', 'Scenario 4', 'Scenario 5'],
-        datasets: [{
-            label: 'Experience Score',
-            data: [90, 85, 80, 75, 70],
-            borderColor: 'rgba(75, 192, 192, 1)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderWidth: 2,
-            tension: 0.4
-        }]
-    };
-
-    // Line Chart Configuration
-    const lineConfig = {
-        type: 'line',
-        data: lineData,
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    beginAtZero: true
-                },
-                y: {
-                    min: 0,
-                    max: 100
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                },
-                tooltip: {
-                    enabled: true
-                }
-            }
-        }
-    };
-
-    // Render Charts
-    const radarChart = new Chart(document.getElementById('radarChart'), radarConfig);
-    const lineChart = new Chart(document.getElementById('lineChart'), lineConfig);
-</script>
 
 <?php include '../header_footer/footer.php' ?>
