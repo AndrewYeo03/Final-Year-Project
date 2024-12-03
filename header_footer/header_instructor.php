@@ -101,13 +101,12 @@ if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $_SES
                                     </nav>
                                 </div>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                    Manage Scenario
+                                    Manage Exercises
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
                                 <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="#">Create Scenario</a>
-                                        <a class="nav-link" href="#">Manage Scenario</a>
+                                        <a class="nav-link" href="scenarioManagement.php">Manage Scenario</a>
                                         <a class="nav-link" href="addAnswer.php">Add Answer to Scenario</a>
                                         <a class="nav-link" href="scoringCriteria.php">Define Scoring Criteria</a>
                                         <a class="nav-link" href="instructorReport.php">Student Report</a>
