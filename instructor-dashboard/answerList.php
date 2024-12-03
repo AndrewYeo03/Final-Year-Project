@@ -57,7 +57,6 @@ while ($row = $result->fetch_assoc()) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -67,7 +66,7 @@ while ($row = $result->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Actual Answer List for Scenario</title>
+    <title><?php echo htmlspecialchars($titleName); ?></title>
     <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon"/>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
@@ -130,16 +129,16 @@ while ($row = $result->fetch_assoc()) {
                                         <a class="nav-link" href="createClass.php">Create Class</a>
                                         <a class="nav-link" href="existingClass.php">Existing Classes</a>
                                         <a class="nav-link" href="archivedClass.php">Archived Classes</a>
+                                        <a class="nav-link" href="studentResponse.php">Student Response</a>
                                     </nav>
                                 </div>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                    Manage Scenario
+                                    Manage Exercises
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
                                 <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="#">Create Scenario</a>
-                                        <a class="nav-link" href="#">Manage Scenario</a>
+                                        <a class="nav-link" href="scenarioManagement.php">Manage Scenario</a>
                                         <a class="nav-link" href="addAnswer.php">Add Answer to Scenario</a>
                                         <a class="nav-link" href="scoringCriteria.php">Define Scoring Criteria</a>
                                         <a class="nav-link" href="instructorReport.php">Student Report</a>
