@@ -3,6 +3,8 @@ $titleName = "Instructor Dashboard - TARUMT Cyber Range";
 include  '../header_footer/header_instructor.php';
 include '../connection.php';
 
+date_default_timezone_set('Asia/Kuala_Lumpur');
+
 // Radar chart
 $stmt = $conn->prepare("
     SELECT s.title, AVG(((sr.part_a_rating + sr.part_b_rating + sr.part_c_rating) / 110)*100) AS avg_rating
@@ -79,24 +81,6 @@ while ($row = $PartCLineData->fetch_assoc()) {
 }
 $stmt->close();
 
-// Scatter chart for Scenario Part C Ratings
-$stmt = $conn->prepare("
-    SELECT s.student_id, sv.exercise_id, sv.submission_date 
-    FROM submitted_videos sv
-    INNER JOIN students s ON sv.student_id = s.id
-    ORDER BY sv.submission_date ASC
-");
-$stmt->execute();
-$submissionData = $stmt->get_result();
-$scatterData = [];
-while ($row = $submissionData->fetch_assoc()) {
-    $scatterData[] = [
-        'student_id' => $row['student_id'],
-        'exercise_id' => $row['exercise_id'],
-        'submission_date' => date('c', strtotime($row['submission_date']))
-    ];
-}
-$stmt->close();
 ?>
 
 <style>
@@ -165,13 +149,6 @@ $stmt->close();
         <div class="chart">
             <h4>Top 5 Scenarios (Best Experience and Facilities)</h4>
             <canvas id="lineChart"></canvas>
-        </div>
-    </div>
-
-    <div class="charts-row">
-        <div class="chart">
-            <h4>Student Submission Timeline</h4>
-            <canvas id="scatterChart"></canvas>
         </div>
     </div>
 </div>
@@ -348,70 +325,10 @@ $stmt->close();
         }
     };
 
-    // Scatter Chart Data (Timelines for All student exercise submission)
-    const scatterRawData = <?php echo json_encode($scatterData); ?>;
-    console.log("Scatter Raw Data:", scatterRawData);
-
-
-    const scatterData = scatterRawData.map(entry => ({
-        x: new Date(entry.submission_date),
-        y: parseInt(entry.exercise_id, 10),
-        student: entry.student_id
-    }));
-
-    // 打印数据进行调试
-    console.log("Formatted Scatter Data:", scatterData);
-
-    const scatterConfig = {
-        type: 'scatter',
-        data: {
-            datasets: [{
-                label: 'Submission Timeline',
-                data: scatterData,
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1,
-                pointRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'day'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Submission Date'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Exercise ID'
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: (context) => {
-                            const studentId = scatterData[context.dataIndex].student;
-                            return `Student ID: ${studentId}, Exercise ID: ${context.raw.y}`;
-                        }
-                    }
-                }
-            }
-        }
-    };
-
     // Render Charts
     new Chart(document.getElementById('polarChart').getContext('2d'), polarConfig);
     new Chart(document.getElementById('barChart'), barConfig);
     new Chart(document.getElementById('areaChart'), areaConfig);
     new Chart(document.getElementById('lineChart'), lineConfig);
-    new Chart(document.getElementById('scatterChart').getContext('2d'), scatterConfig);
 </script>
 <?php include '../header_footer/footer.php'; ?>
