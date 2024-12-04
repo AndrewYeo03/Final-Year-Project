@@ -256,7 +256,7 @@ if ($currentClass) {
                                     <button class="blue" onclick="window.open('<?php echo htmlspecialchars($submission['video_submission_link']); ?>', '_blank')">
                                         Recording Video
                                     </button>
-                                    <button class="green" onclick="openCommandLog('<?php echo htmlspecialchars($submission['file_content']); ?>')">
+                                    <button class="green" onclick="downloadLogButton('<?php echo htmlspecialchars($submission['file_content']); ?>')">
                                         Command Log
                                     </button>
                                 </div>
@@ -269,46 +269,17 @@ if ($currentClass) {
     </div>
 </div>
 
-<!-- Modal for displaying command log -->
-<div class="modal" id="commandLogModal" tabindex="-1" aria-labelledby="commandLogModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="commandLogModalLabel">Command Log</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="commandLogContent">
-                <!-- Command log content will be loaded here -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="downloadLogButton">Download as Text</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-    // JavaScript to handle opening of the command log modal
-    function openCommandLog(fileContent) {
-        console.log(fileContent);
-        // Load the file contents into the modal
-        document.getElementById('commandLogContent').textContent = fileContent;
-
-        // Open modal
-        var commandLogModal = new bootstrap.Modal(document.getElementById('commandLogModal'));
-        commandLogModal.show();
-    }
-
-    // Downloading log files
-    document.getElementById('downloadLogButton').addEventListener('click', function() {
-        var content = document.getElementById('commandLogContent').textContent;
-        var blob = new Blob([content], { type: 'text/plain' });
+    function downloadLogButton(fileContent) {
+        var content = document.getElementById(fileContent).textContent;
+        var blob = new Blob([content], {
+            type: 'text/plain'
+        });
         var link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = 'command_log.txt';
         link.click();
-    });
+    }
 </script>
 
 <!-- chart -->
