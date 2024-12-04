@@ -34,7 +34,7 @@ if (!$result) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Instructor Dashboard - TARUMT Cyber Range</title>
+    <title><?php echo htmlspecialchars($titleName); ?></title>
     <link rel="icon" href="../pictures/school_logo.ico" type="image/x-icon"/>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
@@ -46,7 +46,7 @@ if (!$result) {
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="index.php">TARUMT Cyber Range</a>
+        <a class="navbar-brand ps-3" href="../instructor-dashboard/instructor_dashboard.php">TAR UMT Cyber Range</a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
         <!-- Navbar Search-->
@@ -61,8 +61,7 @@ if (!$result) {
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#!">Settings</a></li>
-                    <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+                    <li><a class="dropdown-item" href="../editProfile.php">Edit Profile</a></li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
@@ -77,7 +76,7 @@ if (!$result) {
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Core</div>
-                        <a class="nav-link" href="index.php">
+                        <a class="nav-link" href="../instructor-dashboard/instructor_dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
@@ -90,24 +89,24 @@ if (!$result) {
                         <div class="collapse" id="collapseInstructors" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseInstructors" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                    Manage Student & Group
+                                    Manage Student & Class
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
                                 <div class="collapse" id="pagesCollapseInstructors" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="#">Add Student</a>
-                                        <a class="nav-link" href="#">Create Group</a>
-                                        <a class="nav-link" href="#">Owned Group</a>
+                                        <a class="nav-link" href="createClass.php">Create Class</a>
+                                        <a class="nav-link" href="existingClass.php">Existing Classes</a>
+                                        <a class="nav-link" href="archivedClass.php">Archived Classes</a>
+                                        <a class="nav-link" href="studentResponse.php">Student Response</a>
                                     </nav>
                                 </div>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                    Manage Scenario
+                                    Manage Exercises
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
                                 <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="#">Create Scenario</a>
-                                        <a class="nav-link" href="#">Manage Scenario</a>
+                                        <a class="nav-link" href="scenarioManagement.php">Manage Scenario</a>
                                         <a class="nav-link" href="addAnswer.php">Add Answer to Scenario</a>
                                         <a class="nav-link" href="scoringCriteria.php">Define Scoring Criteria</a>
                                         <a class="nav-link" href="instructorReport.php">Student Report</a>
