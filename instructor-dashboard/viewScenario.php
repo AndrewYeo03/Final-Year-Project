@@ -228,9 +228,12 @@ if (isset($_GET['scenario_id'])) {
                             <td><?php echo $exercise['duration']; ?></td>
                             <td><?php echo $exercise['difficulty_level']; ?></td>
                             <td>
-                                <a href="editExercise.php?exercise_id=<?php echo $exercise['exercise_id']; ?>" class="btn btn-edit">Edit</a>
-                                <button class="btn btn-delete" onclick="deleteExercise('<?php echo $exercise['exercise_id']; ?>')">Delete</button>
-                            </td>
+    <div style="display: flex; flex-direction: column; gap: 5px;">
+        <a href="editExercise.php?exercise_id=<?php echo $exercise['exercise_id']; ?>" class="btn btn-edit">Edit</a>
+        <button class="btn btn-delete" onclick="deleteExercise('<?php echo $exercise['exercise_id']; ?>')">Delete</button>
+    </div>
+</td>
+
                         </tr>
                     <?php endwhile; ?>
                 <?php else: ?>

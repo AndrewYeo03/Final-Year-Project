@@ -67,6 +67,35 @@ $result = $conn->query($query);
             color: white;
         }
 
+        /* Add this CSS to your style block */
+td > .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Adds space between buttons */
+}
+
+td > .action-buttons .btn {
+    flex-shrink: 0;
+    padding: 5px 12px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Prevent line breaks in Assigned Date and Due Date cells */
+td.date {
+    white-space: nowrap; /* Prevent line wrapping */
+    text-align: center;  /* Align text to center */
+}
+
+/* Allow multiline for description */
+td.description {
+    white-space: normal; /* Allow wrapping for description */
+    text-align: left;    /* Align text to the left */
+    word-break: break-word; /* Break long words if necessary */
+}
+
+
+
         .page-title {
             font-size: 3rem;
             font-weight: bold;
@@ -107,14 +136,17 @@ $result = $conn->query($query);
                             <tr>
                                 <td><?php echo $row['scenario_id']; ?></td>
                                 <td><?php echo $row['title']; ?></td>
-                                <td><?php echo $row['description']; ?></td>
-                                <td><?php echo $row['assigned_date']; ?></td>
-                                <td><?php echo $row['due_date']; ?></td>
-                                <td>
-                                    <a href="viewScenario.php?scenario_id=<?php echo $row['scenario_id']; ?>" class="btn btn-view">View</a>
-                                    <a href="editScenario.php?scenario_id=<?php echo $row['scenario_id']; ?>" class="btn btn-edit">Edit</a>
-                                    <a href="deleteScenario.php?scenario_id=<?php echo $row['scenario_id']; ?>" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this scenario? \n\nAttention: All the exercises will be deleted as well !');">Delete</a>
-                                </td>
+                                <td class="description"><?php echo $row['description']; ?></td>
+    <td class="date"><?php echo $row['assigned_date']; ?></td>
+    <td class="date"><?php echo $row['due_date']; ?></td>
+    <td>
+        <div class="action-buttons">
+            <a href="viewScenario.php?scenario_id=<?php echo $row['scenario_id']; ?>" class="btn btn-view">View</a>
+            <a href="editScenario.php?scenario_id=<?php echo $row['scenario_id']; ?>" class="btn btn-edit">Edit</a>
+            <a href="deleteScenario.php?scenario_id=<?php echo $row['scenario_id']; ?>" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this scenario? \n\nAttention: All the exercises will be deleted as well !');">Delete</a>
+        </div>
+    </td>
+
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
