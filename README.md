@@ -33,18 +33,18 @@ A training environment designed for TAR UMT students to enhance their cybersecur
 
 ### **🏠 Dashboard for Scenarios**
 The central hub to explore and start scenarios.  
-![Dashboard](https://github.com/user-attachments/assets/sample-dashboard.png)
+![Screenshot 2024-12-11 172648](https://github.com/user-attachments/assets/b940f091-3809-4541-abd3-a00422a836c9)
 
 ---
 
 ### **🛠️ Scenario Execution**
 Interactive and guided exercises for practical learning.  
-![Scenario](https://github.com/user-attachments/assets/sample-scenario.png)
+![Screenshot 2024-11-17 145449](https://github.com/user-attachments/assets/71bb714b-68bf-4e15-aabd-70095a6a805c)
 
 ---
 
 ### **✅ Flag Submission**
-Seamlessly submit flags and logs to complete exercises.  
-![Flag Submission](https://github.com/user-attachments/assets/sample-flag.png)
+Submit flags and logs to complete exercises.  
+![Screenshot 2024-12-02 175113](https://github.com/user-attachments/assets/dce92f7c-953c-484c-8422-3a14fe71d5de)
 
 ---
